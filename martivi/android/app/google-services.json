@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "698656596097",
+    "firebase_url": "https://martivi-ffa6f.firebaseio.com",
+    "project_id": "martivi-ffa6f",
+    "storage_bucket": "martivi-ffa6f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:698656596097:android:6bf009975e7f789f836d80",
+        "android_client_info": {
+          "package_name": "com.bsoft.martivi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "698656596097-sshhtk7a2nkqlsrg386dibljpm3vfqlb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHAos87gvD7g8noyK32GsOXhPke38yIiw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "698656596097-sshhtk7a2nkqlsrg386dibljpm3vfqlb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
