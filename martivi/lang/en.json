@@ -29,5 +29,12 @@
   "File upload failed": "File upload failed",
   "Please pick an image": "Please pick an image",
   "Please enter a name": "Please enter a name",
-  "Please enter a category name in primary language": "Please enter a category name in primary language"
+  "Please enter a category name in primary language": "Please enter a category name in primary language",
+  "Orders": "Orders",
+  "Cart": "Cart",
+  "Home": "Home",
+  "Contact us": "Contact us",
+  "Edit": "Edit",
+  "Delete": "Delete"
+
 }

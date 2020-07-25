@@ -29,5 +29,12 @@
   "File upload failed": "ფაილის ატვირთვა არ შესრულდა",
   "Please pick an image": "გთხოვთ მიამაგროთ სურათი",
   "Please enter a name": "გთხოვთ შეიყვანოთ სახელი",
-  "Please enter a category name in primary language": "გთხოვთ შეიყვანოთ კატეგორიის სახელი ძირითად ენაში"
+  "Please enter a category name in primary language": "გთხოვთ შეიყვანოთ კატეგორიის სახელი ძირითად ენაში",
+  "Orders": "შეკვეთები",
+  "Cart": "კალათა",
+  "Home": "მთავარი",
+  "Contact us": "მოგვწერე",
+  "Edit": "შეცვლა",
+  "Delete": "წაშლა"
+
 }

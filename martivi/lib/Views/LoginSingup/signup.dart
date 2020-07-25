@@ -4,10 +4,9 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
+import 'package:martivi/Views/HomePage.dart';
 import 'package:martivi/Widgets/Widgets.dart';
 import 'package:provider/provider.dart';
-
-import '../CategoryPage.dart';
 
 class SignUp extends StatelessWidget {
   @override
@@ -138,7 +137,7 @@ class SignUp extends StatelessWidget {
                                     .translate('Registration failed'));
                           });
                     } else {
-                      Navigator.of(context).pushNamed(CategoryPage.id);
+                      Navigator.of(context).pushNamed(HomePage.id);
                     }
                   } on PlatformException catch (pe) {
                     showDialog(

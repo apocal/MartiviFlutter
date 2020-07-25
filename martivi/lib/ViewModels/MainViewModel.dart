@@ -19,6 +19,7 @@ class MainViewModel extends ChangeNotifier {
   bool isConnected = false;
   ValueNotifier<bool> isSigningSignUping = ValueNotifier<bool>(false);
   ValueNotifier<User> databaseUser = ValueNotifier<User>(null);
+  ValueNotifier<List<Category>> categories = ValueNotifier<List<Category>>([]);
   MainViewModel() {
     init();
   }
@@ -72,10 +73,25 @@ class MainViewModel extends ChangeNotifier {
   }
 
   StreamSubscription<QuerySnapshot> databaseUserListener;
+  StreamSubscription<QuerySnapshot> categoryListener;
   Future init() async {
     auth.onAuthStateChanged.listen((event) {
       if (event != null) {
         user = event;
+
+        categoryListener?.cancel();
+        categoryListener = Firestore.instance
+            .collection('/categories')
+            .orderBy('order')
+            .snapshots()
+            .listen((event) {
+          List<Category> cs = [];
+          event.documents.forEach((element) {
+            var c = Category.fromJson(element.data);
+            cs.add(c);
+          });
+          categories.value = cs;
+        });
         databaseUserListener?.cancel();
         databaseUserListener = Firestore.instance
             .collection('/users')
@@ -101,10 +117,23 @@ class MainViewModel extends ChangeNotifier {
   }
 
   Future storeCategory(Category c) async {
+    c.order = categories.value.length > 0 ? categories.value.last.order + 1 : 1;
+
     await Firestore.instance
         .collection('/categories')
         .document(c.localizedName[AppLocalizations.supportedLocales.first])
         .setData(c.toJson(), merge: true);
+  }
+
+  Future switchCategoriesOrders(Category first, Category second) async {
+    Firestore.instance
+        .collection('/categories')
+        .document(first.localizedName[AppLocalizations.supportedLocales.first])
+        .updateData({'order': second.order});
+    Firestore.instance
+        .collection('/categories')
+        .document(second.localizedName[AppLocalizations.supportedLocales.first])
+        .updateData({'order': first.order});
   }
 
   Future storeNewUser(FirebaseUser user, UserType role) async {
@@ -113,5 +142,12 @@ class MainViewModel extends ChangeNotifier {
         .collection('/users')
         .document(user.uid)
         .setData(u.toMap(), merge: true);
+  }
+
+  Future deleteCategory(Category c) {
+    Firestore.instance
+        .collection('/categories')
+        .document(c.localizedName[AppLocalizations.supportedLocales.first])
+        .delete();
   }
 }

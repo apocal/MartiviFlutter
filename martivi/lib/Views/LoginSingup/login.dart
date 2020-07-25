@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
-import 'package:martivi/Views/CategoryPage.dart';
+import 'package:martivi/Views/HomePage.dart';
 import 'package:martivi/Widgets/Widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -133,7 +133,7 @@ class Login extends StatelessWidget {
                                     .translate('Sign in failed'));
                           });
                     } else {
-                      Navigator.of(context).pushNamed(CategoryPage.id);
+                      Navigator.of(context).pushNamed(HomePage.id);
                     }
                   } on PlatformException catch (pe) {
                     showDialog(

@@ -4,11 +4,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
-import 'package:martivi/Views/CategoryPage.dart';
 import 'package:martivi/Views/singup_loginPage.dart';
 import 'package:provider/provider.dart';
 
 import 'Localizations/app_localizations.dart';
+import 'Views/HomePage.dart';
 
 void main() => runApp(MartiviApp());
 
@@ -25,9 +25,9 @@ class MartiviApp extends StatelessWidget {
         )
       ],
       child: MaterialApp(
-        initialRoute: CategoryPage.id,
+        initialRoute: HomePage.id,
         routes: {
-          CategoryPage.id: (context) => CategoryPage(),
+          HomePage.id: (context) => HomePage(),
           SingUpLoginPage.id: (context) => SingUpLoginPage()
         },
         supportedLocales: [Locale('en', 'US'), Locale('ka', 'GE')],

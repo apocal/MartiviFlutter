@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
@@ -11,116 +11,211 @@ import 'package:martivi/Models/FirestoreImage.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
+import 'package:martivi/Widgets/FadeInWidget.dart';
 import 'package:martivi/Widgets/Widgets.dart';
 import 'package:path/path.dart' as ppp;
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
-import 'MainDrawer.dart';
+class CategoryPage extends StatefulWidget {
+  @override
+  _CategoryPageState createState() => _CategoryPageState();
+}
 
-class CategoryPage extends StatelessWidget {
-  static String id = 'CategoryPage';
+class _CategoryPageState extends State<CategoryPage> {
+  int categoryPagesIndex = 0;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context).translate('Categories')),
-      ),
-      drawer: MainDrawer(),
-      body: SafeArea(
-        child: Container(
-          child: Consumer<MainViewModel>(
-            builder: (context, viewModel, child) {
-              return ValueListenableBuilder<User>(
-                valueListenable: viewModel.databaseUser,
-                builder: (_, databaseUser, child) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Expanded(
-                        child: StreamBuilder<QuerySnapshot>(
-                          stream: Firestore.instance
-                              .collection('/categories')
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return ListView.builder(
-                                  itemCount: snapshot.data.documents.length,
-                                  itemBuilder: (context, index) {
-                                    var c = Category.fromJson(
-                                        snapshot.data.documents[index].data);
-                                    return CategoryItemWidget(
-                                      category: c,
-                                    );
-                                  });
-                            } else
-                              return Container();
-                          },
-                        ),
-                      ),
-                      if (databaseUser?.role == UserType.admin) child
-                    ],
-                  );
-                },
-                child: FlatButton(
-                  color: kPrimary,
-                  onPressed: () {
-                    showModalBottomSheet(
-                        context: context,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20),
-                          ),
-                        ),
-                        builder: (context) {
-                          return AddCategoryWidget(
-                            onAddClicked: (c) {
-                              viewModel.storeCategory(c);
-                            },
-                          );
-                        });
-                  },
-                  child: Text(
-                    AppLocalizations.of(context).translate('Add Category'),
-                    style: TextStyle(color: kIcons),
+    return FadeInWidget(
+      child: Consumer<MainViewModel>(
+        builder: (context, viewModel, child) {
+          return ValueListenableBuilder<User>(
+            valueListenable: viewModel.databaseUser,
+            builder: (_, databaseUser, child) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Expanded(
+                    child: ValueListenableBuilder<List<Category>>(
+                      valueListenable: viewModel.categories,
+                      builder: (_, categories, child) {
+                        return databaseUser?.role == UserType.admin
+                            ? ListView.builder(
+                                itemCount: viewModel.categories.value.length,
+                                itemBuilder: (context, index) {
+                                  return Slidable(
+                                    key: Key(viewModel.categories.value[index]
+                                            .localizedName[
+                                        AppLocalizations
+                                            .supportedLocales.first]),
+                                    actionPane: SlidableDrawerActionPane(),
+                                    actions: <Widget>[
+                                      IconSlideAction(
+                                        caption: AppLocalizations.of(context)
+                                            .translate('Edit'),
+                                        color: Colors.blue[500],
+                                        icon: Icons.edit,
+                                        onTap: () {},
+                                      ),
+                                    ],
+                                    secondaryActions: <Widget>[
+                                      IconSlideAction(
+                                        caption: AppLocalizations.of(context)
+                                            .translate('Delete'),
+                                        color: Colors.red,
+                                        icon: Icons.delete,
+                                        onTap: () {
+                                          viewModel.deleteCategory(viewModel
+                                              .categories.value[index]);
+                                        },
+                                      ),
+                                    ],
+                                    child: CategoryItemWidget(
+                                      onDownPress: categories.last !=
+                                              viewModel.categories.value[index]
+                                          ? () {
+                                              viewModel.switchCategoriesOrders(
+                                                  viewModel
+                                                      .categories.value[index],
+                                                  viewModel.categories
+                                                      .value[index + 1]);
+                                            }
+                                          : null,
+                                      onUpPress: categories.first !=
+                                              viewModel.categories.value[index]
+                                          ? () {
+                                              viewModel.switchCategoriesOrders(
+                                                  viewModel
+                                                      .categories.value[index],
+                                                  viewModel.categories
+                                                      .value[index - 1]);
+                                            }
+                                          : null,
+                                      category:
+                                          viewModel.categories.value[index],
+                                    ),
+                                  );
+                                })
+                            : ListView(
+                                children: <Widget>[
+                                  ...(categories.map((e) => CategoryItemWidget(
+                                        category: e,
+                                      )))
+                                ],
+                              );
+                      },
+                    ),
                   ),
-                ),
+                  if (databaseUser?.role == UserType.admin) child
+                ],
               );
             },
-          ),
-        ),
+            child: FlatButton(
+              color: kPrimary,
+              onPressed: () {
+                showModalBottomSheet(
+                    context: context,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                    ),
+                    builder: (context) {
+                      return AddCategoryWidget(
+                        onAddClicked: (c) {
+                          viewModel.storeCategory(c);
+                        },
+                      );
+                    });
+              },
+              child: Text(
+                AppLocalizations.of(context).translate('Add Category'),
+                style: TextStyle(color: kIcons),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 }
 
 class CategoryItemWidget extends StatelessWidget {
+  final Function onUpPress;
+  final Function onDownPress;
   final Category category;
-  const CategoryItemWidget({this.category});
+  const CategoryItemWidget({this.category, this.onDownPress, this.onUpPress});
 
   @override
   Widget build(BuildContext context) {
-    var locale = AppLocalizations.of(context).locale;
-    print(locale.languageCode);
-    return Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        Image(
-          image: NetworkImage(category.image.downloadUrl),
-          height: 200,
-          width: double.infinity,
-          fit: BoxFit.fill,
-        ),
-        Text(
-          category.localizedName[
-                  AppLocalizations.of(context).locale.languageCode] ??
-              category.localizedName[AppLocalizations.supportedLocales.first] ??
-              '',
-          style: TextStyle(
-              color: kIcons, fontSize: 18, fontWeight: FontWeight.w600),
-        ),
-      ],
+    return Container(
+      height: 200,
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          Image(
+            image: NetworkImage(category.image.downloadUrl),
+            height: 200,
+            width: double.infinity,
+            fit: BoxFit.fill,
+          ),
+          Text(
+            category.localizedName[
+                    AppLocalizations.of(context).locale.languageCode] ??
+                category
+                    .localizedName[AppLocalizations.supportedLocales.first] ??
+                '',
+            style: TextStyle(
+                color: kIcons, fontSize: 18, fontWeight: FontWeight.w600),
+          ),
+          Positioned.fill(
+              child: RawMaterialButton(
+            onPressed: () {},
+          )),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                if (onUpPress != null)
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: RawMaterialButton(
+                      onPressed: onUpPress,
+                      splashColor: kPrimary.withOpacity(0.3),
+                      shape: CircleBorder(),
+                      child: Icon(
+                        Icons.keyboard_arrow_up,
+                        color: kPrimary.withOpacity(0.3),
+                      ),
+                    ),
+                  ),
+                if (onDownPress != null)
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: RawMaterialButton(
+                      onPressed: onDownPress,
+                      splashColor: kPrimary.withOpacity(0.3),
+                      shape: CircleBorder(),
+                      child: Icon(
+                        Icons.keyboard_arrow_down,
+                        color: kPrimary.withOpacity(0.3),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }
