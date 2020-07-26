@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/Models/Category.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
@@ -88,6 +87,7 @@ class MainViewModel extends ChangeNotifier {
           List<Category> cs = [];
           event.documents.forEach((element) {
             var c = Category.fromJson(element.data);
+            c.documentId = element.documentID;
             cs.add(c);
           });
           categories.value = cs;
@@ -121,19 +121,27 @@ class MainViewModel extends ChangeNotifier {
 
     await Firestore.instance
         .collection('/categories')
-        .document(c.localizedName[AppLocalizations.supportedLocales.first])
+        .document()
         .setData(c.toJson(), merge: true);
   }
 
   Future switchCategoriesOrders(Category first, Category second) async {
     Firestore.instance
         .collection('/categories')
-        .document(first.localizedName[AppLocalizations.supportedLocales.first])
+        .document(first.documentId)
         .updateData({'order': second.order});
     Firestore.instance
         .collection('/categories')
-        .document(second.localizedName[AppLocalizations.supportedLocales.first])
+        .document(second.documentId)
         .updateData({'order': first.order});
+  }
+
+  Future updateCategory(Category oldCat, Category newCat) async {
+    var js = newCat.toJson();
+    Firestore.instance
+        .collection('/categories')
+        .document(oldCat.documentId)
+        .updateData(newCat.toJson());
   }
 
   Future storeNewUser(FirebaseUser user, UserType role) async {
@@ -147,7 +155,7 @@ class MainViewModel extends ChangeNotifier {
   Future deleteCategory(Category c) {
     Firestore.instance
         .collection('/categories')
-        .document(c.localizedName[AppLocalizations.supportedLocales.first])
+        .document(c.documentId)
         .delete();
   }
 }

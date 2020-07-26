@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
+import 'package:martivi/Models/Category.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
 import 'package:martivi/Views/ContactPage.dart';
 import 'package:martivi/Views/OrdersPage.dart';
+import 'package:martivi/Views/ProductPage.dart';
 import 'package:martivi/Views/singup_loginPage.dart';
+import 'package:martivi/Widgets/CategoryItemWidget.dart';
 import 'package:provider/provider.dart';
 
 import 'CartPage.dart';
@@ -66,6 +69,17 @@ class _HomePageState extends State<HomePage> {
                   return AppBar(
                     title: Text(
                         AppLocalizations.of(context).translate('Categories')),
+                    actions: <Widget>[
+                      IconButton(
+                        icon: Icon(Icons.search),
+                        onPressed: () {
+                          showSearch(
+                              context: context,
+                              delegate: CategorySearch(
+                                  categories: mainvViewModel.categories.value));
+                        },
+                      )
+                    ],
                   );
                 }
               case 1:
@@ -193,3 +207,88 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+class CategorySearch extends SearchDelegate<String> {
+  final List<Category> categories;
+  CategorySearch({this.categories});
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      )
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: AnimatedIcon(
+        icon: AnimatedIcons.menu_arrow,
+        progress: transitionAnimation,
+      ),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    // TODO: implement buildResults
+    throw UnimplementedError();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final List<Category> suggestionList = query.isEmpty
+        ? categories
+            .take(categories.length > 10 ? 10 : categories.length)
+            .toList()
+        : categories
+            .where((element) => element
+                .localizedName[AppLocalizations.of(context).locale.languageCode]
+                ?.contains(query))
+            .toList();
+    return ListView.builder(
+        itemCount: suggestionList.length,
+        itemBuilder: (context, index) {
+          return itemCard(
+            category: suggestionList[index],
+            onCategoryPress: () {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (BuildContext context) {
+                return ProductPage(
+                  category: suggestionList[index],
+                );
+              }));
+            },
+          );
+        });
+  }
+}
+
+//ListTile(
+//leading: Icon(Icons.location_city),
+//title: RichText(
+//text: TextSpan(
+//text: suggestionList[index]
+//.localizedName[
+//AppLocalizations.of(context).locale.languageCode]
+//.substring(0, query.length),
+//style: TextStyle(
+//color: Colors.black, fontWeight: FontWeight.bold),
+//children: [
+//TextSpan(
+//text: suggestionList[index]
+//.localizedName[AppLocalizations.of(context)
+//.locale
+//    .languageCode]
+//.substring(query.length),
+//style: TextStyle(color: Colors.grey))
+//]),
+//),
+//);

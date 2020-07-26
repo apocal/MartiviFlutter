@@ -1,6 +1,7 @@
 import 'package:martivi/Models/FirestoreImage.dart';
 
 class Product {
+  String documentId;
   Map<String, String> localizedName;
   List<FirestoreImage> images;
   String curencyMark;
@@ -9,6 +10,7 @@ class Product {
   int quantityInSupply;
   int quantity;
   Map<String, dynamic> toJson() => {
+        'documentId': documentId,
         'localizedName': localizedName,
         'quantityInSupply': quantityInSupply,
         'quantity': quantity,
@@ -19,6 +21,7 @@ class Product {
       };
 
   Product.fromJson(Map<String, dynamic> json) {
+    documentId = json['documentIds'];
     localizedName = json['localizedName'];
     price = json['price'] as double;
     localizedWeight = json['localizedWeight'];

@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
+import 'package:martivi/Views/ProductPage.dart';
 import 'package:martivi/Views/singup_loginPage.dart';
 import 'package:provider/provider.dart';
 
@@ -28,6 +29,7 @@ class MartiviApp extends StatelessWidget {
         initialRoute: HomePage.id,
         routes: {
           HomePage.id: (context) => HomePage(),
+          ProductPage.id: (context) => ProductPage(),
           SingUpLoginPage.id: (context) => SingUpLoginPage()
         },
         supportedLocales: [Locale('en', 'US'), Locale('ka', 'GE')],
