@@ -36,6 +36,11 @@
   "Contact us": "მოგვწერე",
   "Edit": "შეცვლა",
   "Delete": "წაშლა",
-  "Add changes": "ცვლილებების დამატება"
-
+  "Add changes": "ცვლილებების დამატება",
+  "Add Product": "პროდუქტის დამატება",
+  "Product Name": "პროდუქტის სახელი",
+  "Product Description": "პროდუქტის აღწერა",
+  "Product": "პროდუქტი",
+  "Product forms": "პროდუქტის ფორმები",
+  "Product form name": "პროდუქტის ფორმის სახელი"
 }

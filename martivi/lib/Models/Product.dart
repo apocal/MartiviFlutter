@@ -1,7 +1,6 @@
 import 'package:martivi/Models/FirestoreImage.dart';
 
-class Product {
-  String documentId;
+class ProductForm {
   Map<String, String> localizedName;
   List<FirestoreImage> images;
   String curencyMark;
@@ -10,7 +9,6 @@ class Product {
   int quantityInSupply;
   int quantity;
   Map<String, dynamic> toJson() => {
-        'documentId': documentId,
         'localizedName': localizedName,
         'quantityInSupply': quantityInSupply,
         'quantity': quantity,
@@ -19,9 +17,8 @@ class Product {
         'localizedWeight': localizedWeight,
         'curencyMark': curencyMark
       };
-
-  Product.fromJson(Map<String, dynamic> json) {
-    documentId = json['documentIds'];
+  ProductForm({this.localizedName});
+  ProductForm.fromJson(Map<String, dynamic> json) {
     localizedName = json['localizedName'];
     price = json['price'] as double;
     localizedWeight = json['localizedWeight'];
@@ -34,20 +31,24 @@ class Product {
   }
 }
 
-class ProductCategory {
+class Product {
+  String documentId;
   Map<String, String> localizedName;
   Map<String, String> localizedDescription;
-  List<Product> products;
+  List<ProductForm> productsForms;
   Map<String, dynamic> toJson() => {
+        'documentId': documentId,
         'localizedName': localizedName,
         'localizedDescription': localizedDescription,
-        'products': products?.map((e) => e.toJson())
+        'productsForms': productsForms?.map((e) => e.toJson())
       };
-  ProductCategory.fromJson(Map<String, dynamic> json) {
+  Product.fromJson(Map<String, dynamic> json) {
+    documentId = json['documentId'];
     localizedName = json['localizedName'];
     localizedDescription = json['localizedDescription'];
-    products = (json['products'] as List<Map<String, dynamic>>)
-        ?.map((e) => Product.fromJson(e))
+    productsForms = (json['productsForms'] as List<Map<String, dynamic>>)
+        ?.map((e) => ProductForm.fromJson(e))
         ?.toList();
   }
+  Product();
 }

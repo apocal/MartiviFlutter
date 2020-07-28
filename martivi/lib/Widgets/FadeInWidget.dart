@@ -21,6 +21,7 @@ class _FadeInWidgetState extends State<FadeInWidget>
     Animation curve =
         CurvedAnimation(parent: _controller, curve: Curves.easeOutQuart);
     _animation = Tween(begin: 0.0, end: 1.0).animate(curve);
+    _controller.forward(from: 0);
   }
 
   @override
@@ -32,7 +33,6 @@ class _FadeInWidgetState extends State<FadeInWidget>
 
   @override
   Widget build(BuildContext context) {
-    _controller.forward(from: 0);
     return FadeTransition(
       child: widget.child,
       opacity: _animation,
