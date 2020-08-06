@@ -1,54 +1,63 @@
 import 'package:martivi/Models/FirestoreImage.dart';
 
-class ProductForm {
+class Product {
+  int selectedIndex;
+  String documentId;
+  String productDocumentId;
   Map<String, String> localizedName;
+  Map<String, String> localizedDescription;
+  List<ProductForm> productsForms;
+  Map<String, dynamic> toJson() => {
+        'productDocumentId': productDocumentId,
+        'selectedIndex': selectedIndex,
+        'documentId': documentId,
+        'localizedName': localizedName,
+        'localizedDescription': localizedDescription,
+        'productsForms': productsForms?.map((e) => e.toJson())?.toList()
+      };
+  Product.fromJson(Map<String, dynamic> json) {
+    selectedIndex = json['selectedIndex'] as int ?? 0;
+    documentId = json['documentId'];
+    productDocumentId = json['productDocumentId'];
+    localizedName = Map<String, String>.from(json['localizedName']);
+    localizedDescription =
+        Map<String, String>.from(json['localizedDescription']);
+
+    var ff = (json['productsForms'] as List<dynamic>);
+    productsForms = (json['productsForms'] as List<dynamic>)
+        .map((e) => ProductForm.fromJson(e))
+        .toList();
+  }
+  Product();
+}
+
+class ProductForm {
+  Map<String, String> localizedFormName;
   List<FirestoreImage> images;
-  String curencyMark;
   double price;
   Map<String, String> localizedWeight;
   int quantityInSupply;
   int quantity;
   Map<String, dynamic> toJson() => {
-        'localizedName': localizedName,
+        'localizedFormName': localizedFormName,
         'quantityInSupply': quantityInSupply,
         'quantity': quantity,
         'images': images?.map((e) => e.toJson())?.toList(),
         'price': price,
         'localizedWeight': localizedWeight,
-        'curencyMark': curencyMark
       };
-  ProductForm({this.localizedName});
+  ProductForm({
+    this.localizedFormName,
+  });
   ProductForm.fromJson(Map<String, dynamic> json) {
-    localizedName = json['localizedName'];
-    price = json['price'] as double;
+    localizedFormName = Map<String, String>.from(json['localizedFormName']);
+    price = (json['price'] as num).toDouble();
     localizedWeight = json['localizedWeight'];
-    curencyMark = json['curencyMark'] as String;
     quantityInSupply = json['quantityInSupply'] as int;
-    quantity = json['quantity'] as int;
-    images = (json['images'] as List<Map<String, dynamic>>)
+    quantity = (json['quantity'] as num)?.toInt();
+    images = (json['images'] as List<dynamic>)
         ?.map((e) => FirestoreImage.fromJson(e))
         ?.toList();
+//    List m = json['images'];
   }
-}
-
-class Product {
-  String documentId;
-  Map<String, String> localizedName;
-  Map<String, String> localizedDescription;
-  List<ProductForm> productsForms;
-  Map<String, dynamic> toJson() => {
-        'documentId': documentId,
-        'localizedName': localizedName,
-        'localizedDescription': localizedDescription,
-        'productsForms': productsForms?.map((e) => e.toJson())
-      };
-  Product.fromJson(Map<String, dynamic> json) {
-    documentId = json['documentId'];
-    localizedName = json['localizedName'];
-    localizedDescription = json['localizedDescription'];
-    productsForms = (json['productsForms'] as List<Map<String, dynamic>>)
-        ?.map((e) => ProductForm.fromJson(e))
-        ?.toList();
-  }
-  Product();
 }

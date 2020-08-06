@@ -2,8 +2,12 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:martivi/Models/CartItem.dart';
 import 'package:martivi/Models/Category.dart';
+import 'package:martivi/Models/ChatMessage.dart';
+import 'package:martivi/Models/Product.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,6 +23,12 @@ class MainViewModel extends ChangeNotifier {
   ValueNotifier<bool> isSigningSignUping = ValueNotifier<bool>(false);
   ValueNotifier<User> databaseUser = ValueNotifier<User>(null);
   ValueNotifier<List<Category>> categories = ValueNotifier<List<Category>>([]);
+  ValueNotifier<List<Product>> products = ValueNotifier<List<Product>>([]);
+  ValueNotifier<List<CartItem>> cart = ValueNotifier<List<CartItem>>([]);
+  ValueNotifier<bool> newMessages = ValueNotifier<bool>(false);
+  ValueNotifier<List<ChatMessage>> userMessages =
+      ValueNotifier<List<ChatMessage>>([]);
+  ValueNotifier<List<User>> users = ValueNotifier<List<User>>([]);
   MainViewModel() {
     init();
   }
@@ -73,10 +83,36 @@ class MainViewModel extends ChangeNotifier {
 
   StreamSubscription<QuerySnapshot> databaseUserListener;
   StreamSubscription<QuerySnapshot> categoryListener;
+  StreamSubscription<QuerySnapshot> cartListener;
+  StreamSubscription<QuerySnapshot> productListener;
+  StreamSubscription<QuerySnapshot> chatListener;
+  StreamSubscription<QuerySnapshot> usersListener;
+  List<StreamSubscription<QuerySnapshot>> usersMessagesListener;
+  List<StreamSubscription<DocumentSnapshot>> usersNewMessagesListener;
+
   Future init() async {
     auth.onAuthStateChanged.listen((event) {
       if (event != null) {
         user = event;
+
+        cartListener?.cancel();
+        cartListener = Firestore.instance
+            .collection('/cart')
+            .where('userId', isEqualTo: user.uid)
+            .snapshots()
+            .listen((event) {
+          try {
+            List<CartItem> c = [];
+            event.documents.forEach((element) {
+              CartItem ci = CartItem.fromJson(element.data);
+              ci.documentId = element.documentID;
+              c.add(ci);
+            });
+            cart.value = c;
+          } catch (e) {
+            var exc = e;
+          }
+        });
 
         categoryListener?.cancel();
         categoryListener = Firestore.instance
@@ -95,13 +131,92 @@ class MainViewModel extends ChangeNotifier {
         databaseUserListener?.cancel();
         databaseUserListener = Firestore.instance
             .collection('/users')
-            .where('uid', isEqualTo: user.uid)
+            .where('uid', isEqualTo: user?.uid ?? '')
             .snapshots()
             .listen((event) {
           try {
             databaseUser.value = User.fromMap(event.documents
                 .firstWhere((element) => element.documentID == user.uid)
                 .data);
+
+            usersListener?.cancel();
+            chatListener?.cancel();
+            usersNewMessagesListener?.forEach((element) {
+              element?.cancel();
+            });
+            usersMessagesListener?.forEach((element) {
+              element?.cancel();
+            });
+            switch (databaseUser.value.role) {
+              case UserType.anonymous:
+              case UserType.user:
+                {
+                  Firestore.instance
+                      .collection('/newmessages')
+                      .document('to${databaseUser.value.uid}FromAdmin')
+                      .snapshots()
+                      .listen((event) {
+                    if (event.data != null) {
+                      try {
+                        newMessages.value =
+                            event.data['hasNewMessages'] as bool;
+                      } catch (e) {}
+                    }
+                  });
+                  chatListener = Firestore.instance
+                      .collection('/messages')
+                      .where(
+                        'pair',
+                        isEqualTo: 'admin${databaseUser.value.uid}',
+                      )
+                      .snapshots()
+                      .listen((event) {
+                    userMessages.value = event.documents
+                        .map((e) => ChatMessage.fromJson(e.data))
+                        .toList();
+                  });
+                  break;
+                }
+              case UserType.admin:
+                {
+                  usersListener = Firestore.instance
+                      .collection('/users')
+                      .snapshots()
+                      .listen((event) {
+                    users.value = event.documents
+                        .map((e) => User.fromMap(e.data))
+                        .toList();
+
+                    usersNewMessagesListener = users.value.map((e) {
+                      return Firestore.instance
+                          .collection('/newmessages')
+                          .document('toAdminFrom${e.uid}')
+                          .snapshots()
+                          .listen((event) {
+                        if (event.data != null) {
+                          e.hasNewMessages.value =
+                              event.data['hasNewMessages'] as bool;
+                        }
+                      });
+                    }).toList();
+                    usersMessagesListener = users.value.map((e) {
+                      return Firestore.instance
+                          .collection('/messages')
+                          .where(
+                            'pair',
+                            isEqualTo: 'admin${e.uid}',
+                          )
+                          .snapshots()
+                          .listen((event) {
+                        e.messages.value = event.documents
+                            .map((e) => ChatMessage.fromJson(e.data))
+                            .toList();
+                      });
+                    }).toList();
+                  });
+                  break;
+                }
+            }
           } catch (e) {}
         });
       } else {
@@ -116,6 +231,29 @@ class MainViewModel extends ChangeNotifier {
         '${prefs.getString('ServerBaseAddress')}CheckoutResult');
   }
 
+  Future listenProductsOfCategory(Category c) async {
+    productListener = Firestore.instance
+        .collection('/products')
+        .where('documentId', isEqualTo: c.documentId)
+        .snapshots()
+        .listen((event) {
+      try {
+        List<Product> tempProducts = [];
+        event.documents.forEach((element) {
+          var p = Product.fromJson(element.data);
+          p.productDocumentId = element.documentID;
+          tempProducts.add(p);
+        });
+        products.value = tempProducts;
+      } catch (e) {}
+    });
+  }
+
+  Future cancellistenProductsOfCategory() {
+    productListener?.cancel();
+    products.value = [];
+  }
+
   Future storeCategory(Category c) async {
     c.order = categories.value.length > 0 ? categories.value.last.order + 1 : 1;
 
@@ -123,6 +261,24 @@ class MainViewModel extends ChangeNotifier {
         .collection('/categories')
         .document()
         .setData(c.toJson(), merge: true);
+  }
+
+  Future storeProduct(
+    Product p,
+  ) async {
+    var json = p.toJson();
+    await Firestore.instance
+        .collection('/products')
+        .document()
+        .setData(p.toJson(), merge: true);
+  }
+
+  Future storeCart(Product p) async {
+    if (user == null) throw Exception('Unauthorized');
+    CartItem c = CartItem(userId: user.uid, product: p);
+    await Firestore.instance.collection('cart').document().setData(
+          c.toJson(),
+        );
   }
 
   Future switchCategoriesOrders(Category first, Category second) async {
@@ -157,5 +313,18 @@ class MainViewModel extends ChangeNotifier {
         .collection('/categories')
         .document(c.documentId)
         .delete();
+    FirebaseStorage.instance.ref().child(c.image.refPath).delete();
+  }
+
+  Future deleteProduct(Product product) {
+    Firestore.instance
+        .collection('/products')
+        .document(product.productDocumentId)
+        .delete();
+    product.productsForms.forEach((element) {
+      element.images.forEach((element) {
+        FirebaseStorage.instance.ref().child(element.refPath).delete();
+      });
+    });
   }
 }

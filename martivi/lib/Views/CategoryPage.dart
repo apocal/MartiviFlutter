@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:image/image.dart' as Img;
 import 'package:image_picker/image_picker.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
@@ -244,6 +245,7 @@ class _CategoryPageState extends State<CategoryPage> {
                                                       category: viewModel
                                                           .categories
                                                           .value[index],
+                                                      viewModel: viewModel,
                                                     )));
                                       },
                                       onDownPress: categories.last !=
@@ -274,6 +276,14 @@ class _CategoryPageState extends State<CategoryPage> {
                             : ListView(
                                 children: <Widget>[
                                   ...(categories.map((e) => itemCard(
+                                        onCategoryPress: () {
+                                          Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                                  builder: (c) => ProductPage(
+                                                        category: e,
+                                                        viewModel: viewModel,
+                                                      )));
+                                        },
                                         category: e,
                                       )))
                                 ],
@@ -561,6 +571,16 @@ class _AddCategoryWidgetState extends State<AddCategoryWidget> {
                                         .getImage(source: ImageSource.gallery);
                                     if (pickedImage != null) {
                                       File file = File(pickedImage.path);
+                                      Img.Image image_temp = Img.decodeImage(
+                                          file.readAsBytesSync());
+                                      Img.Image resized_img = Img.copyResize(
+                                          image_temp,
+                                          width: 800,
+                                          height: image_temp.height ~/
+                                              (image_temp.width / 800));
+                                      var data = Img.encodeJpg(resized_img,
+                                          quality: 60);
+
                                       String filename =
                                           '${Uuid().v4()}${ppp.basename(file.path)}';
                                       isUploading.value = true;
@@ -568,8 +588,9 @@ class _AddCategoryWidgetState extends State<AddCategoryWidget> {
                                           .ref()
                                           .child('images')
                                           .child(filename);
-                                      var uploadTask = imageRef
-                                          .putFile(File(pickedImage.path));
+                                      var uploadTask = imageRef.putData(data);
+//                                      var uploadTask = imageRef
+//                                          .putFile(File(pickedImage.path));
                                       category.image.refPath = imageRef.path;
                                       var res = await uploadTask.onComplete;
                                       if (!uploadTask.isSuccessful)

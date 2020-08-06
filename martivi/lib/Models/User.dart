@@ -1,8 +1,13 @@
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:martivi/Models/ChatMessage.dart';
 import 'package:martivi/Models/enums.dart';
 
 class User {
+  ValueNotifier<List<ChatMessage>> messages =
+      ValueNotifier<List<ChatMessage>>([]);
+  ValueNotifier<bool> hasNewMessages = ValueNotifier<bool>(false);
   String email;
   String uid;
   String displayName;

@@ -42,6 +42,11 @@
   "Product Description": "Product Description",
   "Product": "Product",
   "Product forms": "Product forms",
-  "Product form name": "Product form name"
-
+  "Product form name": "Product form name",
+  "Product form Price": "Product form Price",
+  "Quantity in supply": "Quantity in supply",
+  "Add to cart": "Add to cart",
+  "Users": "Users",
+  "Contact": "Contact",
+  "Profile": "Profile"
 }

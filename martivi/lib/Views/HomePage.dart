@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,10 +6,13 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/Models/Category.dart';
+import 'package:martivi/Models/User.dart';
+import 'package:martivi/Models/enums.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
 import 'package:martivi/Views/ContactPage.dart';
 import 'package:martivi/Views/OrdersPage.dart';
 import 'package:martivi/Views/ProductPage.dart';
+import 'package:martivi/Views/UsersPage.dart';
 import 'package:martivi/Views/singup_loginPage.dart';
 import 'package:martivi/Widgets/CategoryItemWidget.dart';
 import 'package:provider/provider.dart';
@@ -27,7 +31,6 @@ class _HomePageState extends State<HomePage> {
     CategoryPage(),
     OrdersPage(),
     CartPage(),
-    ContactPage()
   ];
   int pageIndex = 0;
   @override
@@ -56,7 +59,54 @@ class _HomePageState extends State<HomePage> {
                         title: Text(
                             AppLocalizations.of(context).translate('Orders'))),
                     BottomNavigationBarItem(
-                        icon: Icon(Icons.shopping_cart),
+                        icon: ValueListenableBuilder(
+                          valueListenable: mainvViewModel.cart,
+                          builder: (context, value, child) {
+                            return Container(
+                              width: double.infinity,
+                              child: Stack(
+                                  alignment: Alignment.center,
+                                  children: <Widget>[
+                                    mainvViewModel.cart.value.length > 0
+                                        ? Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 30, bottom: 10),
+                                            child: Material(
+                                              color: Colors.yellow,
+                                              elevation: 2,
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              child: new Container(
+                                                padding: EdgeInsets.all(1),
+                                                decoration: new BoxDecoration(
+                                                  color: Colors.transparent,
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                ),
+                                                constraints: BoxConstraints(
+                                                  minWidth: 12,
+                                                  minHeight: 12,
+                                                ),
+                                                child: new Text(
+                                                  mainvViewModel
+                                                      .cart.value.length
+                                                      .toString(),
+                                                  style: new TextStyle(
+                                                      color: kPrimary,
+                                                      fontSize: 8,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        : SizedBox(),
+                                    Icon(Icons.shopping_cart),
+                                  ]),
+                            );
+                          },
+                        ),
                         title: Text(
                             AppLocalizations.of(context).translate('Cart'))),
                   ],
@@ -95,11 +145,6 @@ class _HomePageState extends State<HomePage> {
                     title: Text(AppLocalizations.of(context).translate('Cart')),
                   );
                 }
-              case 3:
-                return AppBar(
-                  title: Text(
-                      AppLocalizations.of(context).translate('Contact us')),
-                );
               default:
                 {
                   return null;
@@ -158,16 +203,97 @@ class _HomePageState extends State<HomePage> {
                   },
                   title: Text(AppLocalizations.of(context).translate('Home')),
                 ),
-                ListTile(
-                  leading: Icon(Icons.chat_bubble),
-                  onTap: () {
-                    setState(() {
-                      pageIndex = 3;
-                      Navigator.pop(context);
-                    });
+                ValueListenableBuilder<User>(
+                  valueListenable: mainvViewModel.databaseUser,
+                  builder: (context, value, child) {
+                    if (value == null) return Container();
+                    switch (value.role) {
+                      case UserType.anonymous:
+                      case UserType.user:
+                        {
+                          return ListTile(
+                            leading: Icon(Icons.chat_bubble),
+                            onTap: () {
+                              setState(() {
+                                mainvViewModel.newMessages.value = false;
+                                Firestore.instance
+                                    .collection('/newmessages')
+                                    .document(
+                                        'to${mainvViewModel.databaseUser.value.uid}FromAdmin')
+                                    .setData({'hasNewMessages': false});
+
+                                Navigator.pop(context);
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => ContactPage(),
+                                ));
+                              });
+                            },
+                            title: ValueListenableBuilder<bool>(
+                              valueListenable: mainvViewModel.newMessages,
+                              builder: (context, value, child) {
+                                return Stack(
+                                  children: <Widget>[
+                                    Text(AppLocalizations.of(context)
+                                        .translate('Contact us')),
+                                    if (value) child
+                                  ],
+                                );
+                              },
+                              child: Align(
+                                alignment: Alignment.topRight,
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                      color: kPrimary, shape: BoxShape.circle),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                      case UserType.admin:
+                        {
+                          return ListTile(
+                            leading: Icon(FontAwesome.users),
+                            onTap: () {
+                              setState(() {
+                                mainvViewModel.newMessages.value = false;
+
+                                Navigator.pop(context);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => UsersPage(),
+                                    ));
+                              });
+                            },
+                            title: ValueListenableBuilder<bool>(
+                              valueListenable: mainvViewModel.newMessages,
+                              builder: (context, value, child) {
+                                return Stack(
+                                  children: <Widget>[
+                                    Text(AppLocalizations.of(context)
+                                        .translate('Users')),
+                                    if (value) child
+                                  ],
+                                );
+                              },
+                              child: Align(
+                                alignment: Alignment.topRight,
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                      color: kPrimary, shape: BoxShape.circle),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                      default:
+                        return Container();
+                    }
                   },
-                  title: Text(
-                      AppLocalizations.of(context).translate('Contact us')),
                 ),
                 Consumer<FirebaseUser>(
                   builder: (context, user, child) {
@@ -270,25 +396,3 @@ class CategorySearch extends SearchDelegate<String> {
         });
   }
 }
-
-//ListTile(
-//leading: Icon(Icons.location_city),
-//title: RichText(
-//text: TextSpan(
-//text: suggestionList[index]
-//.localizedName[
-//AppLocalizations.of(context).locale.languageCode]
-//.substring(0, query.length),
-//style: TextStyle(
-//color: Colors.black, fontWeight: FontWeight.bold),
-//children: [
-//TextSpan(
-//text: suggestionList[index]
-//.localizedName[AppLocalizations.of(context)
-//.locale
-//    .languageCode]
-//.substring(query.length),
-//style: TextStyle(color: Colors.grey))
-//]),
-//),
-//);
