@@ -268,7 +268,7 @@ class _HomePageState extends State<HomePage> {
                               });
                             },
                             title: ValueListenableBuilder<bool>(
-                              valueListenable: mainvViewModel.newMessages,
+                              valueListenable: mainvViewModel.adminNewMessages,
                               builder: (context, value, child) {
                                 return Stack(
                                   children: <Widget>[
@@ -299,7 +299,7 @@ class _HomePageState extends State<HomePage> {
                   builder: (context, user, child) {
                     if (user == null) {
                       return ListTile(
-                        leading: Icon(FontAwesome.sign_out),
+                        leading: Icon(FontAwesome.sign_in),
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(

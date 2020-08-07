@@ -71,7 +71,11 @@ class UserWidget extends StatelessWidget {
         builder: (context, value, child) {
           return Row(
             children: <Widget>[
-              Text(user.uid),
+              Text(user.isAnonymous
+                  ? AppLocalizations.of(context).translate('Guest')
+                  : (user.displayName?.length ?? 0) > 0
+                      ? user.displayName
+                      : user.email),
               SizedBox(
                 width: 10,
               ),

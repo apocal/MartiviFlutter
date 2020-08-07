@@ -3,13 +3,20 @@ class ChatMessage {
   String senderUserId;
   String targetUserId;
   String message;
-  ChatMessage({this.message, this.targetUserId, this.senderUserId, this.pair});
+  dynamic serverTime;
+  ChatMessage(
+      {this.message,
+      this.targetUserId,
+      this.senderUserId,
+      this.pair,
+      this.serverTime});
   Map<String, dynamic> toJson() {
     return {
       'pair': pair,
       'senderUserId': senderUserId,
       'targetUserId': targetUserId,
-      'message': message
+      'message': message,
+      'serverTime': serverTime
     };
   }
 
@@ -18,5 +25,6 @@ class ChatMessage {
     senderUserId = json['senderUserId'] as String;
     targetUserId = json['targetUserId'] as String;
     message = json['message'] as String;
+    serverTime = json['serverTime'];
   }
 }

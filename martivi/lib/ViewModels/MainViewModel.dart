@@ -26,6 +26,7 @@ class MainViewModel extends ChangeNotifier {
   ValueNotifier<List<Product>> products = ValueNotifier<List<Product>>([]);
   ValueNotifier<List<CartItem>> cart = ValueNotifier<List<CartItem>>([]);
   ValueNotifier<bool> newMessages = ValueNotifier<bool>(false);
+  ValueNotifier<bool> adminNewMessages = ValueNotifier<bool>(false);
   ValueNotifier<List<ChatMessage>> userMessages =
       ValueNotifier<List<ChatMessage>>([]);
   ValueNotifier<List<User>> users = ValueNotifier<List<User>>([]);
@@ -89,6 +90,7 @@ class MainViewModel extends ChangeNotifier {
   StreamSubscription<QuerySnapshot> usersListener;
   List<StreamSubscription<QuerySnapshot>> usersMessagesListener;
   List<StreamSubscription<DocumentSnapshot>> usersNewMessagesListener;
+  StreamSubscription<DocumentSnapshot> newMessagesListener;
 
   Future init() async {
     auth.onAuthStateChanged.listen((event) {
@@ -147,11 +149,13 @@ class MainViewModel extends ChangeNotifier {
             usersMessagesListener?.forEach((element) {
               element?.cancel();
             });
+
+            newMessagesListener?.cancel();
             switch (databaseUser.value.role) {
               case UserType.anonymous:
               case UserType.user:
                 {
-                  Firestore.instance
+                  newMessagesListener = Firestore.instance
                       .collection('/newmessages')
                       .document('to${databaseUser.value.uid}FromAdmin')
                       .snapshots()
@@ -169,6 +173,7 @@ class MainViewModel extends ChangeNotifier {
                         'pair',
                         isEqualTo: 'admin${databaseUser.value.uid}',
                       )
+                      .orderBy('serverTime', descending: false)
                       .snapshots()
                       .listen((event) {
                     userMessages.value = event.documents
@@ -194,11 +199,17 @@ class MainViewModel extends ChangeNotifier {
                           .snapshots()
                           .listen((event) {
                         if (event.data != null) {
-                          e.hasNewMessages.value =
-                              event.data['hasNewMessages'] as bool;
+                          try {
+                            e.hasNewMessages.value =
+                                event.data['hasNewMessages'] as bool;
+                            adminNewMessages.value = users.value
+                                .any((element) => element.hasNewMessages.value);
+                            print(adminNewMessages.value);
+                          } catch (e) {}
                         }
                       });
                     }).toList();
+
                     usersMessagesListener = users.value.map((e) {
                       return Firestore.instance
                           .collection('/messages')
@@ -206,6 +217,7 @@ class MainViewModel extends ChangeNotifier {
                             'pair',
                             isEqualTo: 'admin${e.uid}',
                           )
+                          .orderBy('serverTime', descending: false)
                           .snapshots()
                           .listen((event) {
                         e.messages.value = event.documents
