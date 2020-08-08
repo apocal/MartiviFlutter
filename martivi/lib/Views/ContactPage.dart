@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/Models/ChatMessage.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
+import 'package:martivi/Widgets/Widgets.dart';
 import 'package:provider/provider.dart';
 
 class MessageWidget extends StatelessWidget {
@@ -15,8 +17,14 @@ class MessageWidget extends StatelessWidget {
   MessageWidget({this.message, this.currentUser});
   @override
   Widget build(BuildContext context) {
-    bool isMe = currentUser.uid == message.senderUserId;
-    if()
+    bool isMe = false;
+
+    if (currentUser.role == UserType.admin &&
+        message.userType == UserType.admin)
+      isMe = true;
+    else
+      isMe = currentUser.uid == message.senderUserId;
+
     return Padding(
       padding: EdgeInsets.all(10),
       child: Column(
@@ -24,12 +32,17 @@ class MessageWidget extends StatelessWidget {
             isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           Text(
-            message.senderUserId,
+            message.userDisplayName,
+            style: TextStyle(color: Colors.black54),
+          ),
+          Text(
+            DateFormat.yMd().add_Hms().format(
+                (message.serverTime as Timestamp)?.toDate() ?? DateTime(0000)),
             style: TextStyle(color: Colors.black54),
           ),
           Material(
             elevation: 4,
-            color: isMe ? kPrimary : kPrimary.withOpacity(.8),
+            color: isMe ? kPrimary : Colors.white,
             borderRadius: BorderRadius.only(
                 bottomRight: Radius.circular(30),
                 bottomLeft: Radius.circular(30),
@@ -39,7 +52,7 @@ class MessageWidget extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Text(
                 message.message,
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: isMe ? Colors.white : Colors.black87),
               ),
             ),
           )
@@ -111,42 +124,86 @@ class _ContactPageState extends State<ContactPage> {
                                   ),
                                 ),
                                 TextField(
+                                  cursorColor: kPrimary,
                                   controller: sendMessageController,
                                   decoration: InputDecoration(
+                                      focusedBorder: UnderlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: kPrimary)),
+                                      enabledBorder: UnderlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: kPrimary)),
+                                      disabledBorder: UnderlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: kPrimary)),
                                       suffixIcon: Material(
-                                    child: InkWell(
-                                      onTap: () {
-                                        if (!((sendMessageController
-                                                    ?.text?.length ??
-                                                0) >
-                                            0)) return;
-                                        Firestore.instance
-                                            .collection('/messages')
-                                            .document()
-                                            .setData(ChatMessage(
-                                                    serverTime: FieldValue
-                                                        .serverTimestamp(),
-                                                    pair:
-                                                        'admin${firebaseUser.uid}',
-                                                    message:
-                                                        sendMessageController
+                                        child: InkWell(
+                                          onTap: () {
+                                            if (!((sendMessageController
+                                                        ?.text?.length ??
+                                                    0) >
+                                                0)) return;
+                                            Firestore.instance
+                                                .collection('/messages')
+                                                .document()
+                                                .setData(ChatMessage(
+                                                        userType: UserType.user,
+//                                            widget.user.displayName ?? widget.user.isAnonymous
+//                                                ? AppLocalizations.of(context).translate('Guest')
+//                                                : widget.user.email ??
+//                                                AppLocalizations.of(context).translate('Unknown User')
+                                                        userDisplayName: viewModel
+                                                                    .user.displayName ??
+                                                                viewModel.user
+                                                                    .isAnonymous
+                                                            ? AppLocalizations.of(
+                                                                    context)
+                                                                .translate(
+                                                                    'Guest')
+                                                            : viewModel.user
+                                                                    .email ??
+                                                                AppLocalizations.of(
+                                                                        context)
+                                                                    .translate(
+                                                                        'Unknown User'),
+                                                        serverTime: FieldValue
+                                                            .serverTimestamp(),
+                                                        pair:
+                                                            'admin${firebaseUser.uid}',
+                                                        message: sendMessageController
                                                             .value.text,
-                                                    senderUserId:
-                                                        firebaseUser.uid,
-                                                    targetUserId: 'admin')
-                                                .toJson());
-                                        Firestore.instance
-                                            .collection('/newmessages')
-                                            .document(
-                                                'toAdminFrom${firebaseUser.uid}')
-                                            .setData({'hasNewMessages': true});
-                                        sendMessageController.clear();
-                                        scrollController.jumpTo(scrollController
-                                            .position.maxScrollExtent);
-                                      },
-                                      child: Icon(Icons.send),
-                                    ),
-                                  )),
+                                                        senderUserId:
+                                                            firebaseUser.uid,
+                                                        targetUserId: 'admin')
+                                                    .toJson());
+                                            Firestore.instance
+                                                .collection('/newmessages')
+                                                .document(
+                                                    'toAdminFrom${firebaseUser.uid}')
+                                                .setData({
+                                              'hasNewMessages': true
+                                            }).catchError((err) {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) => OkDialog(
+                                                  title: AppLocalizations.of(
+                                                          context)
+                                                      .translate('Error'),
+                                                  content: err.toString(),
+                                                ),
+                                              );
+                                            });
+                                            sendMessageController.clear();
+                                            scrollController.jumpTo(
+                                                scrollController
+                                                    .position.maxScrollExtent);
+                                          },
+                                          child: Icon(
+                                            Icons.send,
+                                            color: kPrimary,
+                                          ),
+                                        ),
+                                      )),
                                 )
                               ],
                             ),

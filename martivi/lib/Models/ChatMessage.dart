@@ -1,4 +1,10 @@
+import 'package:enum_to_string/enum_to_string.dart';
+
+import 'enums.dart';
+
 class ChatMessage {
+  UserType userType;
+  String userDisplayName;
   String pair;
   String senderUserId;
   String targetUserId;
@@ -9,9 +15,13 @@ class ChatMessage {
       this.targetUserId,
       this.senderUserId,
       this.pair,
-      this.serverTime});
+      this.serverTime,
+      this.userType,
+      this.userDisplayName});
   Map<String, dynamic> toJson() {
     return {
+      'userType': EnumToString.parse(userType),
+      'userDisplayName': userDisplayName,
       'pair': pair,
       'senderUserId': senderUserId,
       'targetUserId': targetUserId,
@@ -21,6 +31,9 @@ class ChatMessage {
   }
 
   ChatMessage.fromJson(Map<String, dynamic> json) {
+    userDisplayName = json['userDisplayName'] as String;
+    userType =
+        EnumToString.fromString<UserType>(UserType.values, json['userType']);
     pair = json['pari'] as String;
     senderUserId = json['senderUserId'] as String;
     targetUserId = json['targetUserId'] as String;
