@@ -39,16 +39,14 @@ class _HomePageState extends State<HomePage> {
       builder: (_, mainvViewModel, child) {
         return Scaffold(
           bottomNavigationBar: pageIndex <= 2
-              ? ValueListenableBuilder<User>(
+              ? ValueListenableBuilder(
                   valueListenable: mainvViewModel.databaseUser,
-                  builder: (context, user, child) {
+                  builder: (context, value, child) {
                     return BottomNavigationBar(
                       unselectedItemColor: Colors.white54,
                       selectedItemColor: Colors.yellow,
                       backgroundColor: kPrimary,
-                      currentIndex: !(user?.role == UserType.admin)
-                          ? pageIndex > 1 ? 0 : pageIndex
-                          : pageIndex > 2 ? 0 : pageIndex,
+                      currentIndex: pageIndex > 2 ? 0 : pageIndex,
                       onTap: (index) {
                         setState(() {
                           pageIndex = index;
@@ -63,67 +61,60 @@ class _HomePageState extends State<HomePage> {
                             icon: Icon(FontAwesome.list),
                             title: Text(AppLocalizations.of(context)
                                 .translate('Orders'))),
-                        if (!(user?.role == UserType.admin))
-                          BottomNavigationBarItem(
-                              icon: ValueListenableBuilder(
-                                valueListenable: mainvViewModel.cart,
-                                builder: (context, value, child) {
-                                  return Container(
-                                    width: double.infinity,
-                                    child: Stack(
-                                        alignment: Alignment.center,
-                                        children: <Widget>[
-                                          mainvViewModel.cart.value.length > 0
-                                              ? Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 30, bottom: 10),
-                                                  child: Material(
-                                                    color: Colors.yellow,
-                                                    elevation: 2,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
-                                                    child: new Container(
-                                                      padding:
-                                                          EdgeInsets.all(1),
-                                                      decoration:
-                                                          new BoxDecoration(
-                                                        color:
-                                                            Colors.transparent,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(6),
-                                                      ),
-                                                      constraints:
-                                                          BoxConstraints(
-                                                        minWidth: 12,
-                                                        minHeight: 12,
-                                                      ),
-                                                      child: new Text(
-                                                        mainvViewModel
-                                                            .cart.value.length
-                                                            .toString(),
-                                                        style: new TextStyle(
-                                                            color: kPrimary,
-                                                            fontSize: 8,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
+                        BottomNavigationBarItem(
+                            icon: ValueListenableBuilder(
+                              valueListenable: mainvViewModel.cart,
+                              builder: (context, value, child) {
+                                return Container(
+                                  width: double.infinity,
+                                  child: Stack(
+                                      alignment: Alignment.center,
+                                      children: <Widget>[
+                                        mainvViewModel.cart.value.length > 0
+                                            ? Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 30, bottom: 10),
+                                                child: Material(
+                                                  color: Colors.yellow,
+                                                  elevation: 2,
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  child: new Container(
+                                                    padding: EdgeInsets.all(1),
+                                                    decoration:
+                                                        new BoxDecoration(
+                                                      color: Colors.transparent,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              6),
+                                                    ),
+                                                    constraints: BoxConstraints(
+                                                      minWidth: 12,
+                                                      minHeight: 12,
+                                                    ),
+                                                    child: new Text(
+                                                      mainvViewModel
+                                                          .cart.value.length
+                                                          .toString(),
+                                                      style: new TextStyle(
+                                                          color: kPrimary,
+                                                          fontSize: 8,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                      textAlign:
+                                                          TextAlign.center,
                                                     ),
                                                   ),
-                                                )
-                                              : SizedBox(),
-                                          Icon(Icons.shopping_cart),
-                                        ]),
-                                  );
-                                },
-                              ),
-                              title: Text(AppLocalizations.of(context)
-                                  .translate('Cart'))),
+                                                ),
+                                              )
+                                            : SizedBox(),
+                                        Icon(Icons.shopping_cart),
+                                      ]),
+                                );
+                              },
+                            ),
+                            title: Text(AppLocalizations.of(context)
+                                .translate('Cart'))),
                       ],
                     );
                   },
