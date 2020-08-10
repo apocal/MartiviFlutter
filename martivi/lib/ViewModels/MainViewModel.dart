@@ -261,7 +261,7 @@ class MainViewModel extends ChangeNotifier {
     });
   }
 
-  Future cancellistenProductsOfCategory() {
+  void cancellistenProductsOfCategory() {
     productListener?.cancel();
     products.value = [];
   }

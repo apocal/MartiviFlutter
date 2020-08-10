@@ -51,7 +51,6 @@ class _ProductPageState extends State<ProductPage> {
   void dispose() async {
     try {
       super.dispose();
-      widget.viewModel.cancellistenProductsOfCategory();
     } catch (e) {
       print(e);
     }

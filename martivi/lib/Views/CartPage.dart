@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/Models/CartItem.dart';
+import 'package:martivi/Models/Product.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
@@ -22,21 +23,41 @@ class _CartPageState extends State<CartPage> {
         return ValueListenableBuilder<List<CartItem>>(
           valueListenable: viewModel.cart,
           builder: (context, value, child) {
+            var pForms = value.expand<ProductForm>((element) => element
+                .product.productsForms
+                .where((element) => element.quantity > 0));
             return Column(
               children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: viewModel.cart.value.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.all(8),
-                        child: CartItemWidget(
-                          p: viewModel.cart.value[index],
-                        ),
-                      );
-                    },
+                Theme(
+                  data: ThemeData(
+                      accentColor: kPrimary,
+                      textTheme: Theme.of(context).textTheme.copyWith(
+                          subtitle1:
+                              TextStyle(color: Colors.black.withOpacity(.7)))),
+                  child: ExpansionTile(
+                    leading: Text(
+                      AppLocalizations.of(context).translate('Cart'),
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                            '${pForms.length.toString()} ${AppLocalizations.of(context).translate('Product')} | '),
+                        Text(
+                          '₾${pForms.fold<double>(0, (previousValue, element) => previousValue + element.quantity * element.price).toString()}',
+                        )
+                      ],
+                    ),
+                    children: [
+                      ...viewModel.cart.value
+                          .map((e) => CartItemWidget(
+                                p: e,
+                              ))
+                          .toList(),
+                    ],
                   ),
-                )
+                ),
               ],
             );
           },

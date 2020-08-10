@@ -12,6 +12,7 @@ import 'package:martivi/ViewModels/MainViewModel.dart';
 import 'package:martivi/Views/ContactPage.dart';
 import 'package:martivi/Views/OrdersPage.dart';
 import 'package:martivi/Views/ProductPage.dart';
+import 'package:martivi/Views/ProfilePage.dart';
 import 'package:martivi/Views/UsersPage.dart';
 import 'package:martivi/Views/singup_loginPage.dart';
 import 'package:martivi/Widgets/CategoryItemWidget.dart';
@@ -160,179 +161,184 @@ class _HomePageState extends State<HomePage> {
             }
           }(),
           drawer: Drawer(
-            child: ListView(
-              children: <Widget>[
-                Consumer<FirebaseUser>(
-                  builder: (context, user, child) {
-                    return ValueListenableBuilder<bool>(
-                      valueListenable: mainvViewModel.isSigningSignUping,
-                      builder: (context, value, child) {
-                        return DrawerHeader(
-                          decoration: BoxDecoration(color: kPrimary),
-                          child: Stack(
-                            children: <Widget>[
-                              Center(
-                                child: Text(
-                                  user == null
-                                      ? AppLocalizations.of(context)
-                                          .translate('Unauthorized')
-                                      : user.isAnonymous
+            child: ValueListenableBuilder<User>(
+              valueListenable: mainvViewModel.databaseUser,
+              builder: (context, user, child) {
+                return ListView(
+                  children: <Widget>[
+                    Consumer<FirebaseUser>(
+                      builder: (context, user, child) {
+                        return ValueListenableBuilder<bool>(
+                          valueListenable: mainvViewModel.isSigningSignUping,
+                          builder: (context, value, child) {
+                            return DrawerHeader(
+                              decoration: BoxDecoration(color: kPrimary),
+                              child: Stack(
+                                children: <Widget>[
+                                  Center(
+                                    child: Text(
+                                      user == null
                                           ? AppLocalizations.of(context)
-                                              .translate('Guest')
-                                          : (user.displayName?.length ?? 0) > 0
-                                              ? user.displayName
-                                              : user.email,
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 22),
-                                ),
+                                              .translate('Unauthorized')
+                                          : user.isAnonymous
+                                              ? AppLocalizations.of(context)
+                                                  .translate('Guest')
+                                              : (user.displayName?.length ??
+                                                          0) >
+                                                      0
+                                                  ? user.displayName
+                                                  : user.email,
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 22),
+                                    ),
+                                  ),
+                                  value
+                                      ? Center(
+                                          child: CircularProgressIndicator(
+                                            valueColor: AlwaysStoppedAnimation(
+                                                Colors.white),
+                                          ),
+                                        )
+                                      : Container()
+                                ],
                               ),
-                              value
-                                  ? Center(
-                                      child: CircularProgressIndicator(
-                                        valueColor: AlwaysStoppedAnimation(
-                                            Colors.white),
-                                      ),
-                                    )
-                                  : Container()
-                            ],
-                          ),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.home),
-                  onTap: () {
-                    setState(() {
-                      pageIndex = 0;
-                      Navigator.pop(context);
-                    });
-                  },
-                  title: Text(AppLocalizations.of(context).translate('Home')),
-                ),
-                ValueListenableBuilder<User>(
-                  valueListenable: mainvViewModel.databaseUser,
-                  builder: (context, value, child) {
-                    if (value == null) return Container();
-                    switch (value.role) {
-                      case UserType.anonymous:
-                      case UserType.user:
-                        {
-                          return ListTile(
-                            leading: Icon(Icons.chat_bubble),
-                            onTap: () {
-                              setState(() {
-                                mainvViewModel.newMessages.value = false;
-                                Firestore.instance
-                                    .collection('/newmessages')
-                                    .document(
-                                        'to${mainvViewModel.databaseUser.value.uid}FromAdmin')
-                                    .setData({'hasNewMessages': false});
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.home),
+                      onTap: () {
+                        setState(() {
+                          pageIndex = 0;
+                          Navigator.pop(context);
+                        });
+                      },
+                      title:
+                          Text(AppLocalizations.of(context).translate('Home')),
+                    ),
+                    if (user?.role == UserType.user ||
+                        user?.role == UserType.anonymous)
+                      ListTile(
+                        leading: Icon(Icons.chat_bubble),
+                        onTap: () {
+                          setState(() {
+                            mainvViewModel.newMessages.value = false;
+                            Firestore.instance
+                                .collection('/newmessages')
+                                .document(
+                                    'to${mainvViewModel.databaseUser.value.uid}FromAdmin')
+                                .setData({'hasNewMessages': false});
 
-                                Navigator.pop(context);
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => ContactPage(),
+                            Navigator.pop(context);
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ContactPage(),
+                            ));
+                          });
+                        },
+                        title: ValueListenableBuilder<bool>(
+                          valueListenable: mainvViewModel.newMessages,
+                          builder: (context, value, child) {
+                            return Stack(
+                              children: <Widget>[
+                                Text(AppLocalizations.of(context)
+                                    .translate('Contact us')),
+                                if (value) child
+                              ],
+                            );
+                          },
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                  color: kPrimary, shape: BoxShape.circle),
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (user?.role == UserType.admin)
+                      ListTile(
+                        leading: Icon(FontAwesome.users),
+                        onTap: () {
+                          setState(() {
+                            mainvViewModel.newMessages.value = false;
+
+                            Navigator.pop(context);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UsersPage(),
                                 ));
-                              });
-                            },
-                            title: ValueListenableBuilder<bool>(
-                              valueListenable: mainvViewModel.newMessages,
-                              builder: (context, value, child) {
-                                return Stack(
-                                  children: <Widget>[
-                                    Text(AppLocalizations.of(context)
-                                        .translate('Contact us')),
-                                    if (value) child
-                                  ],
-                                );
-                              },
-                              child: Align(
-                                alignment: Alignment.topRight,
-                                child: Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: BoxDecoration(
-                                      color: kPrimary, shape: BoxShape.circle),
-                                ),
-                              ),
+                          });
+                        },
+                        title: ValueListenableBuilder<bool>(
+                          valueListenable: mainvViewModel.adminNewMessages,
+                          builder: (context, value, child) {
+                            return Stack(
+                              children: <Widget>[
+                                Text(AppLocalizations.of(context)
+                                    .translate('Users')),
+                                if (value) child
+                              ],
+                            );
+                          },
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                  color: kPrimary, shape: BoxShape.circle),
                             ),
-                          );
-                        }
-                      case UserType.admin:
-                        {
+                          ),
+                        ),
+                      ),
+                    if (user?.role != null)
+                      ListTile(
+                        leading: Icon(FontAwesome.user),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ProfilePage(),
+                          ));
+                        },
+                        title: Text(
+                            AppLocalizations.of(context).translate('Profile')),
+                      ),
+                    Consumer<FirebaseUser>(
+                      builder: (context, user, child) {
+                        if (user == null) {
                           return ListTile(
-                            leading: Icon(FontAwesome.users),
+                            leading: Icon(FontAwesome.sign_in),
                             onTap: () {
-                              setState(() {
-                                mainvViewModel.newMessages.value = false;
-
-                                Navigator.pop(context);
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => UsersPage(),
-                                    ));
-                              });
-                            },
-                            title: ValueListenableBuilder<bool>(
-                              valueListenable: mainvViewModel.adminNewMessages,
-                              builder: (context, value, child) {
-                                return Stack(
-                                  children: <Widget>[
-                                    Text(AppLocalizations.of(context)
-                                        .translate('Users')),
-                                    if (value) child
-                                  ],
-                                );
-                              },
-                              child: Align(
-                                alignment: Alignment.topRight,
-                                child: Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: BoxDecoration(
-                                      color: kPrimary, shape: BoxShape.circle),
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => SingUpLoginPage(
+                                    login: true,
+                                  ),
                                 ),
-                              ),
-                            ),
+                              );
+                            },
+                            title: Text(AppLocalizations.of(context)
+                                .translate('Sign in')),
+                          );
+                        } else {
+                          return ListTile(
+                            leading: Icon(FontAwesome.sign_out),
+                            onTap: () {
+                              mainvViewModel.auth.signOut();
+                            },
+                            title: Text(AppLocalizations.of(context)
+                                .translate('Sign out')),
                           );
                         }
-                      default:
-                        return Container();
-                    }
-                  },
-                ),
-                Consumer<FirebaseUser>(
-                  builder: (context, user, child) {
-                    if (user == null) {
-                      return ListTile(
-                        leading: Icon(FontAwesome.sign_in),
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => SingUpLoginPage(
-                                login: true,
-                              ),
-                            ),
-                          );
-                        },
-                        title: Text(
-                            AppLocalizations.of(context).translate('Sign in')),
-                      );
-                    } else {
-                      return ListTile(
-                        leading: Icon(FontAwesome.sign_out),
-                        onTap: () {
-                          mainvViewModel.auth.signOut();
-                        },
-                        title: Text(
-                            AppLocalizations.of(context).translate('Sign out')),
-                      );
-                    }
-                  },
-                ),
-              ],
+                      },
+                    ),
+                  ],
+                );
+              },
             ),
           ),
           body: pages[pageIndex],
