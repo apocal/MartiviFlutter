@@ -48,5 +48,9 @@
   "Add to cart": "Add to cart",
   "Users": "Users",
   "Contact": "Contact",
-  "Profile": "Profile"
+  "Profile": "Profile",
+  "Name": "Name",
+  "Phone": "Phone",
+  "Addresses": "Addresses",
+  "Address": "Address"
 }
