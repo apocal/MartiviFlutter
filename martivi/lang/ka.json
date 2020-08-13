@@ -24,6 +24,7 @@
   "Guest": "სტუმარი",
   "Add Category": "კატეგორიის დამატება",
   "Add": "დამატება",
+  "Add address": "მისამართის დამატება",
   "Category Name": "კატეგორიის სახელი",
   "Category image": "კატეგორიის სურათი",
   "File upload failed": "ფაილის ატვირთვა არ შესრულდა",
@@ -37,6 +38,7 @@
   "Edit": "შეცვლა",
   "Delete": "წაშლა",
   "Add changes": "ცვლილებების დამატება",
+  "Apply changes": "ცვლილებების გამოყენება",
   "Add Product": "პროდუქტის დამატება",
   "Product Name": "პროდუქტის სახელი",
   "Product Description": "პროდუქტის აღწერა",
@@ -52,5 +54,12 @@
   "Name": "სახელი",
   "Phone": "ტელეფონი",
   "Addresses": "მისამართები",
-  "Address": "მისამართი"
+  "Address": "მისამართი",
+  "Map address": "რუკის მისამართი",
+  "Delivery address": "მიწოდების ადგილი",
+  "Address name(Home, Work..)": "მისამართის სახელი(სახლი, სამსახური..)",
+  "Location permission not granted": "ადგილმდებარეობაზე წვდომის უფლება არ არის დაშვებული",
+  "Location not enabled": "ლოკაცია არ არის ჩართული",
+  "latitude": "განედი",
+  "longitude": "გრძედი"
 }

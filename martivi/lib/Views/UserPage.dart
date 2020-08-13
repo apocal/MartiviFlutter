@@ -36,10 +36,12 @@ class _UserPageState extends State<UserPage> {
           length: 2,
           child: Scaffold(
             appBar: AppBar(
-              title: Text(widget.user.displayName ?? widget.user.isAnonymous
-                  ? AppLocalizations.of(context).translate('Guest')
-                  : widget.user.email ??
-                      AppLocalizations.of(context).translate('Unknown User')),
+              title: Text(widget.user.displayName ??
+                  (widget.user.isAnonymous
+                      ? AppLocalizations.of(context).translate('Guest')
+                      : widget.user.email ??
+                          AppLocalizations.of(context)
+                              .translate('Unknown User'))),
               bottom: TabBar(
                 indicatorColor: Colors.white,
                 tabs: <Widget>[

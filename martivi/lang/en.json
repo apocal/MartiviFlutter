@@ -24,6 +24,7 @@
   "Guest": "Guest",
   "Add Category": "Add Category",
   "Add": "Add",
+  "Add address": "Add address",
   "Category Name": "Category Name",
   "Category image": "Category image",
   "File upload failed": "File upload failed",
@@ -37,6 +38,7 @@
   "Edit": "Edit",
   "Delete": "Delete",
   "Add changes": "Add changes",
+  "Apply changes": "Apply changes",
   "Add Product": "Add Product",
   "Product Name": "Product Name",
   "Product Description": "Product Description",
@@ -52,5 +54,12 @@
   "Name": "Name",
   "Phone": "Phone",
   "Addresses": "Addresses",
-  "Address": "Address"
+  "Address": "Address",
+  "Map address": "Map address",
+  "Delivery address": "Delivery address",
+  "Address name(Home, Work..)": "Address name(Home, Work..)",
+  "Location permission not granted": "Location permission not granted",
+  "Location not enabled": "Location not enabled",
+  "latitude": "latitude",
+  "longitude": "longitude"
 }

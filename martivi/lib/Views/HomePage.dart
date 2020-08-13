@@ -163,7 +163,7 @@ class _HomePageState extends State<HomePage> {
           drawer: Drawer(
             child: ValueListenableBuilder<User>(
               valueListenable: mainvViewModel.databaseUser,
-              builder: (context, user, child) {
+              builder: (context, databaseUseruser, child) {
                 return ListView(
                   children: <Widget>[
                     Consumer<FirebaseUser>(
@@ -183,11 +183,12 @@ class _HomePageState extends State<HomePage> {
                                           : user.isAnonymous
                                               ? AppLocalizations.of(context)
                                                   .translate('Guest')
-                                              : (user.displayName?.length ??
+                                              : (databaseUseruser.displayName
+                                                              ?.length ??
                                                           0) >
                                                       0
-                                                  ? user.displayName
-                                                  : user.email,
+                                                  ? databaseUseruser.displayName
+                                                  : databaseUseruser.email,
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 22),
                                     ),
@@ -218,8 +219,8 @@ class _HomePageState extends State<HomePage> {
                       title:
                           Text(AppLocalizations.of(context).translate('Home')),
                     ),
-                    if (user?.role == UserType.user ||
-                        user?.role == UserType.anonymous)
+                    if (databaseUseruser?.role == UserType.user ||
+                        databaseUseruser?.role == UserType.anonymous)
                       ListTile(
                         leading: Icon(Icons.chat_bubble),
                         onTap: () {
@@ -259,7 +260,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
-                    if (user?.role == UserType.admin)
+                    if (databaseUseruser?.role == UserType.admin)
                       ListTile(
                         leading: Icon(FontAwesome.users),
                         onTap: () {
@@ -296,7 +297,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
-                    if (user?.role != null)
+                    if (databaseUseruser?.role != null)
                       ListTile(
                         leading: Icon(FontAwesome.user),
                         onTap: () {
