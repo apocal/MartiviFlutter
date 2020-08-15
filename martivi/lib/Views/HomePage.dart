@@ -13,6 +13,7 @@ import 'package:martivi/Views/ContactPage.dart';
 import 'package:martivi/Views/OrdersPage.dart';
 import 'package:martivi/Views/ProductPage.dart';
 import 'package:martivi/Views/ProfilePage.dart';
+import 'package:martivi/Views/SettingsPage.dart';
 import 'package:martivi/Views/UsersPage.dart';
 import 'package:martivi/Views/singup_loginPage.dart';
 import 'package:martivi/Widgets/CategoryItemWidget.dart';
@@ -183,12 +184,13 @@ class _HomePageState extends State<HomePage> {
                                           : user.isAnonymous
                                               ? AppLocalizations.of(context)
                                                   .translate('Guest')
-                                              : (databaseUseruser.displayName
+                                              : (databaseUseruser?.displayName
                                                               ?.length ??
                                                           0) >
                                                       0
                                                   ? databaseUseruser.displayName
-                                                  : databaseUseruser.email,
+                                                  : databaseUseruser?.email ??
+                                                      '',
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 22),
                                     ),
@@ -297,7 +299,23 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
-                    if (databaseUseruser?.role != null)
+                    if (databaseUseruser?.role == UserType.admin)
+                      ListTile(
+                        leading: Icon(Icons.settings),
+                        onTap: () {
+                          setState(() {
+                            Navigator.pop(context);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SettingsPage(),
+                                ));
+                          });
+                        },
+                        title: Text(
+                            AppLocalizations.of(context).translate('Settings')),
+                      ),
+                    if (databaseUseruser != null)
                       ListTile(
                         leading: Icon(FontAwesome.user),
                         onTap: () {

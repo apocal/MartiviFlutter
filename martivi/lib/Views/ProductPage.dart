@@ -23,10 +23,9 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class ProductPage extends StatefulWidget {
-  final MainViewModel viewModel;
   final Category category;
   static String id = 'ProductPage';
-  ProductPage({this.category, this.viewModel});
+  ProductPage({this.category});
 
   @override
   _ProductPageState createState() => _ProductPageState();
@@ -37,14 +36,14 @@ class _ProductPageState extends State<ProductPage> {
   void didUpdateWidget(ProductPage oldWidget) {
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
-    widget.viewModel.listenProductsOfCategory(widget.category);
+    context.read<MainViewModel>().listenProductsOfCategory(widget.category);
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    widget.viewModel.listenProductsOfCategory(widget.category);
+    context.read<MainViewModel>().listenProductsOfCategory(widget.category);
   }
 
   @override

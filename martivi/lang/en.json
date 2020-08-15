@@ -61,5 +61,21 @@
   "Location permission not granted": "Location permission not granted",
   "Location not enabled": "Location not enabled",
   "latitude": "latitude",
-  "longitude": "longitude"
+  "longitude": "longitude",
+  "Name field is empty": "Name field is empty",
+  "Address field is empty": "Address field is empty",
+  "Phone field is empty": "Phone field is empty",
+  "The delivery address is not selected on the map": "The delivery address is not selected on the map",
+  "Payment methods": "Payment methods",
+  "Delivery fee": "Delivery fee",
+  "Total price": "Total price",
+  "Price": "Price",
+  "Debit / Credit Card": "Debit / Credit Card",
+  "By Cash": "By Cash",
+  "Settings": "Settings",
+  "Stop ordering": "Stop ordering",
+  "Maximum order price": "Maximum order price",
+  "Minimum order price": "Minimum order price",
+  "Delivery fee under maximum order price": "Delivery fee under maximum order price",
+  "General": "General"
 }

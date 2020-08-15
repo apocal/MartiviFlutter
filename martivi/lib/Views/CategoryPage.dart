@@ -245,7 +245,6 @@ class _CategoryPageState extends State<CategoryPage> {
                                                       category: viewModel
                                                           .categories
                                                           .value[index],
-                                                      viewModel: viewModel,
                                                     )));
                                       },
                                       onDownPress: categories.last !=
@@ -281,7 +280,6 @@ class _CategoryPageState extends State<CategoryPage> {
                                               .push(MaterialPageRoute(
                                                   builder: (c) => ProductPage(
                                                         category: e,
-                                                        viewModel: viewModel,
                                                       )));
                                         },
                                         category: e,

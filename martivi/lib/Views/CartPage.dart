@@ -1,14 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
+import 'package:martivi/Models/Address.dart';
 import 'package:martivi/Models/CartItem.dart';
 import 'package:martivi/Models/Product.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
+import 'package:martivi/Widgets/AddressesList.dart';
 import 'package:provider/provider.dart';
+
+import 'AddAddressPage.dart';
 
 class CartPage extends StatefulWidget {
   @override
@@ -16,49 +21,187 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  PaymentMethods paymentMethod;
   @override
   Widget build(BuildContext context) {
-    return Consumer<MainViewModel>(
-      builder: (context, viewModel, child) {
+    return Consumer2<MainViewModel, FirebaseUser>(
+      builder: (context, viewModel, user, child) {
         return ValueListenableBuilder<List<CartItem>>(
           valueListenable: viewModel.cart,
           builder: (context, value, child) {
             var pForms = value.expand<ProductForm>((element) => element
                 .product.productsForms
                 .where((element) => element.quantity > 0));
-            return Column(
-              children: [
-                Theme(
-                  data: ThemeData(
-                      accentColor: kPrimary,
-                      textTheme: Theme.of(context).textTheme.copyWith(
-                          subtitle1:
-                              TextStyle(color: Colors.black.withOpacity(.7)))),
-                  child: ExpansionTile(
-                    leading: Text(
-                      AppLocalizations.of(context).translate('Cart'),
-                      style: TextStyle(fontWeight: FontWeight.bold),
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Theme(
+                      data: ThemeData(
+                        accentColor: kPrimary,
+                        textTheme: Theme.of(context).textTheme.copyWith(
+                            subtitle1:
+                                TextStyle(color: Colors.black.withOpacity(.7))),
+                      ),
+                      child: ExpansionTile(
+                        leading: Text(
+                          AppLocalizations.of(context).translate('Cart'),
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                                '${pForms.length.toString()} ${AppLocalizations.of(context).translate('Product')} | '),
+                            Text(
+                              '₾${pForms.fold<double>(0, (previousValue, element) => previousValue + element.quantity * element.price).toString()}',
+                            )
+                          ],
+                        ),
+                        children: [
+                          ...viewModel.cart.value
+                              .map((e) => CartItemWidget(
+                                    p: e,
+                                  ))
+                              .toList(),
+                        ],
+                      ),
                     ),
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                            '${pForms.length.toString()} ${AppLocalizations.of(context).translate('Product')} | '),
-                        Text(
-                          '₾${pForms.fold<double>(0, (previousValue, element) => previousValue + element.quantity * element.price).toString()}',
-                        )
-                      ],
+                    Theme(
+                      data: ThemeData(
+                        accentColor: kPrimary,
+                        textTheme: Theme.of(context).textTheme.copyWith(
+                              subtitle1: TextStyle(
+                                color: Colors.black.withOpacity(.7),
+                              ),
+                            ),
+                      ),
+                      child: ExpansionTile(
+                        title: Text(AppLocalizations.of(context)
+                            .translate('Addresses')),
+                        children: [
+                          StreamBuilder<QuerySnapshot>(
+                            stream: Firestore.instance
+                                .collection('userAddresses')
+                                .where('uid', isEqualTo: user.uid)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.data != null) {
+                                return AddressesList(
+                                  userAddresses: snapshot.data.documents
+                                      .map((e) => UserAddress.fromDocument(e))
+                                      .toList(),
+                                );
+                              }
+                              return Container();
+                            },
+                          ),
+                          FlatButton(
+                            splashColor: kPrimary.withOpacity(0.2),
+                            highlightColor: kPrimary.withOpacity(.2),
+                            onPressed: () async {
+                              var userAddress =
+                                  await Navigator.push<UserAddress>(
+                                      context,
+                                      MaterialPageRoute<UserAddress>(
+                                        builder: (context) => AddAddressPage(),
+                                      ));
+                              if (userAddress != null) {
+                                Firestore.instance
+                                    .collection('/userAddresses')
+                                    .document()
+                                    .setData(userAddress.toJson());
+                              }
+                            },
+                            child: Text(
+                              AppLocalizations.of(context)
+                                  .translate('Add address'),
+                              style: TextStyle(color: kPrimary),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    children: [
-                      ...viewModel.cart.value
-                          .map((e) => CartItemWidget(
-                                p: e,
-                              ))
-                          .toList(),
-                    ],
-                  ),
+                    Theme(
+                      data: ThemeData(
+                        accentColor: kPrimary,
+                        textTheme: Theme.of(context).textTheme.copyWith(
+                              subtitle1: TextStyle(
+                                color: Colors.black.withOpacity(.7),
+                              ),
+                            ),
+                      ),
+                      child: ExpansionTile(
+                        title: Text(AppLocalizations.of(context)
+                            .translate('Payment methods')),
+                        children: [
+                          RadioListTile(
+                            title: Text(AppLocalizations.of(context)
+                                .translate('Debit / Credit Card')),
+                            value: paymentMethod,
+                            groupValue: PaymentMethods.CreditCard,
+                            onChanged: (val) {
+                              setState(() {
+                                paymentMethod = PaymentMethods.CreditCard;
+                              });
+                            },
+                          ),
+                          RadioListTile(
+                            title: Text(AppLocalizations.of(context)
+                                .translate('By Cash')),
+                            value: paymentMethod,
+                            groupValue: PaymentMethods.ByCash,
+                            onChanged: (val) {
+                              setState(() {
+                                paymentMethod = PaymentMethods.ByCash;
+                              });
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                    Divider(
+                      height: 20,
+                      color: Colors.grey,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 16),
+                      child: Text(
+                        AppLocalizations.of(context).translate('Price'),
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 16, right: 16, top: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(AppLocalizations.of(context)
+                              .translate('Delivery fee')),
+                          Text('2')
+                        ],
+                      ),
+                    ),
+                    Divider(),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        right: 16,
+                        left: 16,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(AppLocalizations.of(context)
+                              .translate('Delivery fee')),
+                          Text('2')
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             );
           },
         );

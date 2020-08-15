@@ -61,5 +61,21 @@
   "Location permission not granted": "ადგილმდებარეობაზე წვდომის უფლება არ არის დაშვებული",
   "Location not enabled": "ლოკაცია არ არის ჩართული",
   "latitude": "განედი",
-  "longitude": "გრძედი"
+  "longitude": "გრძედი",
+  "Name field is empty": "სახელის ველი ცარიელია",
+  "Address field is empty": "მისამართის ველი ცარიელია",
+  "Phone field is empty": "ტელეფონის ველი ცარიელია",
+  "The delivery address is not selected on the map": "მიწოდების მისამართი არ არის შერჩეული რუკაზე",
+  "Payment methods": "გადახდის მეთოდები",
+  "Delivery fee": "მიწოდების საფასური",
+  "Total price": "ფასი სრულად",
+  "Price": "ფასი",
+  "Debit / Credit Card": "საკრედიტო ბარათით",
+  "By Cash": "ხელზე",
+  "Settings": "პარამეტრები",
+  "Stop ordering": "შეკვეთების შეჩერება",
+  "Maximum order price": "მაქსიმალური ღირებულება",
+  "Minimum order price": "მინიმალური ღირებულება",
+  "Delivery fee under maximum order price": "მიწოდების საფასური მინიმალური ღირებულების ქვემოთ",
+  "General": "ზოგადი"
 }

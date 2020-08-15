@@ -8,6 +8,7 @@ import 'package:martivi/Models/CartItem.dart';
 import 'package:martivi/Models/Category.dart';
 import 'package:martivi/Models/ChatMessage.dart';
 import 'package:martivi/Models/Product.dart';
+import 'package:martivi/Models/Settings.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,6 +30,7 @@ class MainViewModel extends ChangeNotifier {
   ValueNotifier<bool> adminNewMessages = ValueNotifier<bool>(false);
   ValueNotifier<List<ChatMessage>> userMessages =
       ValueNotifier<List<ChatMessage>>([]);
+  ValueNotifier<Settings> settings = ValueNotifier<Settings>(Settings());
   ValueNotifier<List<User>> users = ValueNotifier<List<User>>([]);
   MainViewModel() {
     init();
@@ -91,6 +93,7 @@ class MainViewModel extends ChangeNotifier {
   List<StreamSubscription<QuerySnapshot>> usersMessagesListener;
   List<StreamSubscription<DocumentSnapshot>> usersNewMessagesListener;
   StreamSubscription<DocumentSnapshot> newMessagesListener;
+  StreamSubscription<DocumentSnapshot> settingsListener;
 
   Future init() async {
     auth.onAuthStateChanged.listen((event) {
@@ -233,6 +236,20 @@ class MainViewModel extends ChangeNotifier {
         });
       } else {
         databaseUser.value = null;
+      }
+    });
+    settingsListener?.cancel();
+    settingsListener = Firestore.instance
+        .collection('/settings')
+        .document('settings')
+        .snapshots()
+        .listen((event) {
+      try {
+        if (event.data != null) {
+          settings.value = Settings.fromJson(event.data);
+        }
+      } catch (e) {
+        print(e);
       }
     });
     signAnonymouslyifNotSigned();

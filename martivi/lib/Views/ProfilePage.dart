@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,8 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image/image.dart' as Img;
 import 'package:image_picker/image_picker.dart';
 import 'package:martivi/Constants/Constants.dart';
@@ -18,11 +15,13 @@ import 'package:martivi/Models/Address.dart';
 import 'package:martivi/Models/FirestoreImage.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
+import 'package:martivi/Widgets/AddressesList.dart';
 import 'package:martivi/Widgets/Widgets.dart';
 import 'package:path/path.dart' as ppp;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+
+import 'AddAddressPage.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -80,7 +79,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Expanded(
+                              Flexible(
+                                flex: 2,
                                 child: SingleChildScrollView(
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
@@ -279,62 +279,75 @@ class _ProfilePageState extends State<ProfilePage> {
                                         Divider(
                                           height: 20,
                                         ),
-                                        Text(
-                                          AppLocalizations.of(context)
-                                              .translate('Addresses'),
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Divider(),
-                                        StreamBuilder<QuerySnapshot>(
-                                          stream: Firestore.instance
-                                              .collection('Addresses')
-                                              .where('uid',
-                                                  isEqualTo: databaseUser.uid)
-                                              .snapshots(),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.data != null) {
-                                              return Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.stretch,
-                                                children: [
-                                                  ...snapshot.data.documents
-                                                      .map((e) => Text(
-                                                          e.data.toString())),
-                                                  FlatButton(
-                                                    splashColor: kPrimary
-                                                        .withOpacity(0.2),
-                                                    highlightColor: kPrimary
-                                                        .withOpacity(.2),
-                                                    onPressed: () {
-                                                      Navigator.push<
-                                                              UserAddress>(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                AddAddressPage(),
-                                                          ));
-                                                    },
-                                                    child: Text(
-                                                      AppLocalizations.of(
-                                                              context)
-                                                          .translate(
-                                                              'Add address'),
-                                                      style: TextStyle(
-                                                          color: kPrimary),
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            }
-                                            return Container();
-                                          },
-                                        ),
                                       ],
                                     ],
                                   ),
                                 ),
+                              ),
+                              Flexible(
+                                flex: 1,
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        AppLocalizations.of(context)
+                                            .translate('Addresses'),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      StreamBuilder<QuerySnapshot>(
+                                        stream: Firestore.instance
+                                            .collection('userAddresses')
+                                            .where('uid',
+                                                isEqualTo: databaseUser.uid)
+                                            .snapshots(),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.data != null) {
+                                            return AddressesList(
+                                              userAddresses: snapshot
+                                                  .data.documents
+                                                  .map((e) =>
+                                                      UserAddress.fromDocument(
+                                                          e))
+                                                  .toList(),
+                                            );
+                                          }
+                                          return Container();
+                                        },
+                                      ),
+                                      FlatButton(
+                                        splashColor: kPrimary.withOpacity(0.2),
+                                        highlightColor:
+                                            kPrimary.withOpacity(.2),
+                                        onPressed: () async {
+                                          var userAddress =
+                                              await Navigator.push<UserAddress>(
+                                                  context,
+                                                  MaterialPageRoute<
+                                                      UserAddress>(
+                                                    builder: (context) =>
+                                                        AddAddressPage(),
+                                                  ));
+                                          if (userAddress != null) {
+                                            Firestore.instance
+                                                .collection('/userAddresses')
+                                                .document()
+                                                .setData(userAddress.toJson());
+                                          }
+                                        },
+                                        child: Text(
+                                          AppLocalizations.of(context)
+                                              .translate('Add address'),
+                                          style: TextStyle(color: kPrimary),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Divider(
+                                height: 2,
                               ),
                               FlatButton(
                                 onPressed: () async {
@@ -426,227 +439,6 @@ class _ProfilePageState extends State<ProfilePage> {
             },
           );
         },
-      ),
-    );
-  }
-}
-
-class AddAddressPage extends StatelessWidget {
-  Completer<GoogleMapController> _controller = Completer();
-  ValueNotifier<bool> isLocationGranted = ValueNotifier(false);
-  ValueNotifier<bool> isLocationEnabled = ValueNotifier(false);
-  ValueNotifier<LatLng> markedPosition = ValueNotifier(null);
-  ValueNotifier<String> markedPositionDisplayname = ValueNotifier(null);
-  @override
-  void checkPermissions() {
-    Permission.location.serviceStatus
-        .then((value) => isLocationEnabled.value = value.isEnabled);
-    Permission.location.status.then((value) {
-      isLocationGranted.value = value.isGranted;
-      if (!value.isGranted) {
-        Permission.location.request().then((value) {
-          print(value);
-          isLocationGranted.value = value.isGranted;
-        });
-      }
-    });
-  }
-
-  Future<void> gotoPosition(CameraPosition camPos, BuildContext context) async {
-    try {
-      final GoogleMapController controller = await _controller.future;
-      controller.animateCamera(CameraUpdate.newCameraPosition(camPos));
-      markedPosition.value = camPos.target;
-      Geolocator()
-          .placemarkFromCoordinates(
-              camPos.target.latitude, camPos.target.longitude)
-          .then((value) {
-        if (value?.first != null) {
-          markedPositionDisplayname.value =
-              '${value.first.country}, ${value.first.administrativeArea}, ${value.first.thoroughfare}\n ${AppLocalizations.of(context).translate('longitude')}: ${value.first.position.longitude} ${AppLocalizations.of(context).translate('latitude')}: ${value.first.position.latitude}';
-        } else {
-          markedPositionDisplayname.value = null;
-        }
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Widget build(BuildContext context) {
-    checkPermissions();
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context).translate('Add address')),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 12),
-                      height: 40,
-                      child: TextField(
-                        decoration: kOutlineInputText.copyWith(
-                            hintText: AppLocalizations.of(context)
-                                .translate('Address name(Home, Work..)')),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 12),
-                      height: 40,
-                      child: TextField(
-                        decoration: kOutlineInputText.copyWith(
-                            hintText:
-                                AppLocalizations.of(context).translate('Name')),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 12),
-                      height: 40,
-                      child: TextField(
-                        decoration: kOutlineInputText.copyWith(
-                            hintText: AppLocalizations.of(context)
-                                .translate('Address')),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 12),
-                      height: 40,
-                      child: TextField(
-                        decoration: kOutlineInputText.copyWith(
-                            hintText: AppLocalizations.of(context)
-                                .translate('Phone')),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: Colors.grey),
-                    borderRadius: BorderRadius.all(Radius.circular(8))),
-                padding: EdgeInsets.all(8),
-                child: Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 12),
-                      child: ValueListenableBuilder<String>(
-                          valueListenable: markedPositionDisplayname,
-                          builder: (context, value, child) => Text(
-                                value ??
-                                    AppLocalizations.of(context)
-                                        .translate('Map address'),
-                              )),
-                    ),
-                    Expanded(
-                      child: ValueListenableBuilder<bool>(
-                        valueListenable: isLocationEnabled,
-                        builder: (context, isLocationEnabled, child) {
-                          return ValueListenableBuilder<bool>(
-                            valueListenable: isLocationGranted,
-                            builder: (context, value, child) {
-                              return Stack(
-                                children: [
-                                  ValueListenableBuilder<LatLng>(
-                                    valueListenable: markedPosition,
-                                    builder: (context, marker, child) =>
-                                        GoogleMap(
-                                      markers: marker != null
-                                          ? Set<Marker>.from([
-                                              Marker(
-                                                position: marker,
-                                                markerId: MarkerId(
-                                                    AppLocalizations.of(context)
-                                                        .translate(
-                                                            'Delivery address')),
-                                                infoWindow: InfoWindow(
-                                                  title: AppLocalizations.of(
-                                                          context)
-                                                      .translate(
-                                                          'Delivery address'),
-                                                ),
-                                                visible: true,
-                                              )
-                                            ])
-                                          : null,
-                                      onMapCreated: (controller) =>
-                                          _controller.complete(controller),
-                                      onTap: (argument) {
-                                        gotoPosition(
-                                            CameraPosition(
-                                              target: argument,
-                                              bearing: 180,
-                                              tilt: 0,
-                                              zoom: 18,
-                                            ),
-                                            context);
-                                      },
-                                      myLocationEnabled: value,
-                                      mapType: MapType.hybrid,
-                                      initialCameraPosition: CameraPosition(
-                                        target: LatLng(41.638645, 42.987036),
-                                        bearing: 180,
-                                        tilt: 0,
-                                        zoom: 18,
-                                      ),
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      if (!value)
-                                        Container(
-                                          child: Text(AppLocalizations.of(
-                                                  context)
-                                              .translate(
-                                                  'Location permission not granted')),
-                                          decoration: BoxDecoration(
-                                              color: Colors.grey,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(1))),
-                                        ),
-                                      if (!isLocationEnabled)
-                                        Container(
-                                          child: Text(
-                                              AppLocalizations.of(context)
-                                                  .translate(
-                                                      'Location not enabled')),
-                                          decoration: BoxDecoration(
-                                              color: Colors.grey,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(1))),
-                                        ),
-                                    ],
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Divider(),
-            FlatButton(
-              child: Text(AppLocalizations.of(context).translate('Add')),
-              onPressed: () {
-                checkPermissions();
-              },
-            )
-          ],
-        ),
       ),
     );
   }
