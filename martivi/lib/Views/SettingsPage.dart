@@ -13,6 +13,13 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  double maximumOrderPrice;
+  double minimumOrderPrice;
+  double deliveryFeeUnderMaximumOrderPrice;
+  TextEditingController maximumOrderPriceController = TextEditingController();
+  TextEditingController minimumOrderPriceController = TextEditingController();
+  TextEditingController deliveryFeeUnderMaximumOrderPriceController =
+      TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,6 +29,12 @@ class _SettingsPageState extends State<SettingsPage> {
       body: Consumer<MainViewModel>(
         builder: (context, viewModel, child) {
           Settings settings = viewModel.settings.value;
+          deliveryFeeUnderMaximumOrderPriceController.text =
+              settings.deliveryFeeUnderMaximumOrderPrice?.toString();
+          maximumOrderPriceController.text =
+              settings.maximumOrderPrice?.toString();
+          minimumOrderPriceController.text =
+              settings.minimumOrderPrice?.toString();
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -72,7 +85,13 @@ class _SettingsPageState extends State<SettingsPage> {
                             .translate('Maximum order price'))
                       ],
                     ),
-                    Container(width: 20, child: TextField())
+                    Container(
+                        width: 50,
+                        child: TextField(
+                          controller: maximumOrderPriceController,
+                          cursorColor: kPrimary,
+                          decoration: kinputFiledDecoration,
+                        )),
                   ],
                 ),
                 Divider(),
@@ -91,7 +110,14 @@ class _SettingsPageState extends State<SettingsPage> {
                         Text(AppLocalizations.of(context)
                             .translate('Minimum order price')),
                       ],
-                    )
+                    ),
+                    Container(
+                        width: 50,
+                        child: TextField(
+                          controller: minimumOrderPriceController,
+                          cursorColor: kPrimary,
+                          decoration: kinputFiledDecoration,
+                        )),
                   ],
                 ),
                 Divider(),
@@ -117,7 +143,15 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                         ],
                       ),
-                    )
+                    ),
+                    Container(
+                        width: 50,
+                        child: TextField(
+                          controller:
+                              deliveryFeeUnderMaximumOrderPriceController,
+                          cursorColor: kPrimary,
+                          decoration: kinputFiledDecoration,
+                        )),
                   ],
                 ),
                 FlatButton(
@@ -126,10 +160,29 @@ class _SettingsPageState extends State<SettingsPage> {
                     style: TextStyle(color: kPrimary),
                   ),
                   onPressed: () {
+                    settings.minimumOrderPrice =
+                        double.tryParse(minimumOrderPriceController.text);
+                    settings.maximumOrderPrice =
+                        double.tryParse(maximumOrderPriceController.text);
+                    settings.deliveryFeeUnderMaximumOrderPrice =
+                        double.tryParse(
+                            deliveryFeeUnderMaximumOrderPriceController.text);
                     Firestore.instance
                         .collection('/settings')
                         .document('settings')
-                        .setData(settings.toJson());
+                        .setData(settings.toJson())
+                        .then((value) =>
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text(AppLocalizations.of(context)
+                                  .translate('Data saved')),
+                              backgroundColor: kPrimary,
+                            )))
+                          ..catchError((arg) =>
+                              Scaffold.of(context).showSnackBar(SnackBar(
+                                content: Text(AppLocalizations.of(context)
+                                    .translate('Error')),
+                                backgroundColor: kPrimary,
+                              )));
                   },
                 ),
               ],

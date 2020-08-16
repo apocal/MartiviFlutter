@@ -39,15 +39,12 @@ class MartiviApp extends StatelessWidget {
           AppLocalizations.delegate
         ],
         localeResolutionCallback: (locale, supportedLocales) {
-          // Check if the current device locale is supported
           for (var supportedLocale in supportedLocales) {
             if (supportedLocale.languageCode == locale.languageCode &&
                 supportedLocale.countryCode == locale.countryCode) {
               return supportedLocale;
             }
           }
-          // If the locale of the device is not supported, use the first one
-          // from the list (English, in this case).
           return supportedLocales.first;
         },
         title: 'Martivi',

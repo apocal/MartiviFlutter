@@ -16,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class MainViewModel extends ChangeNotifier {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  int lastOrderId;
   FirebaseUser user;
   final auth = FirebaseAuth.instance;
   AuthResult authResult;
@@ -94,6 +95,7 @@ class MainViewModel extends ChangeNotifier {
   List<StreamSubscription<DocumentSnapshot>> usersNewMessagesListener;
   StreamSubscription<DocumentSnapshot> newMessagesListener;
   StreamSubscription<DocumentSnapshot> settingsListener;
+  StreamSubscription<DocumentSnapshot> ordersCounterListener;
 
   Future init() async {
     auth.onAuthStateChanged.listen((event) {
@@ -238,6 +240,22 @@ class MainViewModel extends ChangeNotifier {
         databaseUser.value = null;
       }
     });
+
+    ordersCounterListener?.cancel();
+    ordersCounterListener = Firestore.instance
+        .collection('/settings')
+        .document('ordersCounterDocument')
+        .snapshots()
+        .listen((event) {
+      try {
+        if (event?.data != null) {
+          lastOrderId = event.data['ordersCounterField'] as int;
+          print(lastOrderId);
+        } else {
+          lastOrderId = null;
+        }
+      } catch (e) {}
+    });
     settingsListener?.cancel();
     settingsListener = Firestore.instance
         .collection('/settings')
@@ -268,10 +286,12 @@ class MainViewModel extends ChangeNotifier {
         .listen((event) {
       try {
         List<Product> tempProducts = [];
-        event.documents.forEach((element) {
-          var p = Product.fromJson(element.data);
-          p.productDocumentId = element.documentID;
-          tempProducts.add(p);
+        event.documents?.forEach((element) {
+          try {
+            var p = Product.fromJson(element.data);
+            p.productDocumentId = element.documentID;
+            tempProducts.add(p);
+          } catch (e) {}
         });
         products.value = tempProducts;
       } catch (e) {}

@@ -153,25 +153,25 @@ class _ContactPageState extends State<ContactPage> {
 //                                                : widget.user.email ??
 //                                                AppLocalizations.of(context).translate('Unknown User')
                                                         userDisplayName: viewModel
-                                                                    .user.displayName ??
-                                                                viewModel.user
+                                                                .user
+                                                                .displayName ??
+                                                            (viewModel.user
                                                                     .isAnonymous
-                                                            ? AppLocalizations.of(
-                                                                    context)
-                                                                .translate(
-                                                                    'Guest')
-                                                            : viewModel.user
-                                                                    .email ??
-                                                                AppLocalizations.of(
-                                                                        context)
+                                                                ? AppLocalizations.of(context)
                                                                     .translate(
-                                                                        'Unknown User'),
+                                                                        'Guest')
+                                                                : viewModel.user
+                                                                        .email ??
+                                                                    AppLocalizations.of(context)
+                                                                        .translate(
+                                                                            'Unknown User')),
                                                         serverTime: FieldValue
                                                             .serverTimestamp(),
                                                         pair:
                                                             'admin${firebaseUser.uid}',
-                                                        message: sendMessageController
-                                                            .value.text,
+                                                        message:
+                                                            sendMessageController
+                                                                .value.text,
                                                         senderUserId:
                                                             firebaseUser.uid,
                                                         targetUserId: 'admin')

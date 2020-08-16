@@ -4,8 +4,9 @@ import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/Models/Address.dart';
 
 class AddressesList extends StatefulWidget {
+  final Function(UserAddress) addressSelected;
   final List<UserAddress> userAddresses;
-  AddressesList({this.userAddresses});
+  AddressesList({this.userAddresses, this.addressSelected});
   @override
   _AddressesListState createState() => _AddressesListState();
 }
@@ -19,6 +20,7 @@ class _AddressesListState extends State<AddressesList> {
       for (int i = 0; i < widget.userAddresses.length; i++) {
         if (widget.userAddresses[i].isPrimary ?? false) {
           selectedValue = i;
+          widget.addressSelected?.call(widget.userAddresses[i]);
           break;
         }
       }
@@ -69,6 +71,7 @@ class _AddressesListState extends State<AddressesList> {
           } catch (e) {}
 
           e.referance.updateData({'isPrimary': true});
+          widget.addressSelected?.call(e);
           setState(() {
             selectedValue = widget.userAddresses.indexOf(e);
           });

@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/Models/ChatMessage.dart';
+import 'package:martivi/Models/Order.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
 import 'package:martivi/Widgets/Widgets.dart';
 import 'package:provider/provider.dart';
 
 import 'ContactPage.dart';
+import 'OrdersPage.dart';
 
 class UserPage extends StatefulWidget {
   final User user;
@@ -33,7 +35,7 @@ class _UserPageState extends State<UserPage> {
     return Consumer<MainViewModel>(
       builder: (context, viewModel, child) {
         return DefaultTabController(
-          length: 2,
+          length: 3,
           child: Scaffold(
             appBar: AppBar(
               title: Text(widget.user.displayName ??
@@ -50,6 +52,9 @@ class _UserPageState extends State<UserPage> {
                   ),
                   Tab(
                     text: AppLocalizations.of(context).translate('Profile'),
+                  ),
+                  Tab(
+                    text: AppLocalizations.of(context).translate('Orders'),
                   ),
                 ],
               ),
@@ -147,6 +152,36 @@ class _UserPageState extends State<UserPage> {
                   ),
                 ),
                 Container(),
+                StreamBuilder<QuerySnapshot>(
+                  stream: Firestore.instance
+                      .collection('orders')
+                      .where('uid', isEqualTo: widget.user.uid)
+                      .orderBy('serverTime', descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.data != null) {
+                      return snapshot.data.documents.length > 0
+                          ? ListView.builder(
+                              physics: BouncingScrollPhysics(),
+                              itemCount: snapshot.data.documents.length,
+                              itemBuilder: (context, index) {
+                                var order = Order.fromJson(
+                                    snapshot.data.documents[index].data);
+                                order.documentId =
+                                    snapshot.data.documents[index].documentID;
+                                return OrderWidget(
+                                  order: order,
+                                );
+                              },
+                            )
+                          : Center(
+                              child: Text('No data'),
+                            );
+                    } else
+                      return Align(
+                          alignment: Alignment.center, child: Text('No Data'));
+                  },
+                ),
               ],
             ),
           ),

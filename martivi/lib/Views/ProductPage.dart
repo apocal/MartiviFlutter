@@ -343,7 +343,9 @@ class _ProductPageState extends State<ProductPage> {
                             return AddProductWidget(
                               onAddClicked: (p) {
                                 p.documentId = widget.category.documentId;
-                                viewModel.storeProduct(p);
+                                viewModel.storeProduct(p).catchError((error) {
+                                   showDialog(context: context,builder: (context) => OkDialog(title: AppLocalizations.of(context).translate('Error'),content: error.toString(),),);
+                                  });
                               },
                             );
                           });
@@ -405,7 +407,7 @@ class _ProductItemState extends State<ProductItem> {
                 height: 140,
                 width: 160,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(4),
                     image: DecorationImage(
                       fit: BoxFit.cover,
                       image: NetworkImage(widget
@@ -648,6 +650,7 @@ class _ProductItemState extends State<ProductItem> {
                                                           .productsForms[widget
                                                               .p.selectedIndex]
                                                           .quantity ??= 0;
+
                                                       inCartProduct
                                                           .product
                                                           .productsForms[widget
@@ -720,9 +723,9 @@ class _AddProductWidgetState extends State<AddProductWidget> {
   TextEditingController productTextController = TextEditingController();
   TextEditingController productDescriptionController = TextEditingController();
   TextEditingController productFormNameController = TextEditingController();
+  TextEditingController productFormDescriptionController =
+      TextEditingController();
   TextEditingController productFormPriceController = TextEditingController();
-  TextEditingController productFormquantityInSupplyController =
-      TextEditingController(text: '0');
   TextEditingController productFormWeightController = TextEditingController();
   String selectedLocal = AppLocalizations.supportedLocales.first;
   ValueNotifier<bool> isUploading = ValueNotifier<bool>(false);
@@ -750,10 +753,11 @@ class _AddProductWidgetState extends State<AddProductWidget> {
       productFormNameController.text =
           pc.productsForms[pc.selectedIndex].localizedFormName[selectedLocal] ??
               '';
+      productFormDescriptionController.text = pc.productsForms[pc.selectedIndex]
+              .localizedFormDescription[selectedLocal] ??
+          '';
       productFormPriceController.text =
           pc.productsForms[pc.selectedIndex].price?.toString() ?? '';
-      productFormquantityInSupplyController.text =
-          pc.productsForms[pc.selectedIndex].quantityInSupply?.toString() ?? '';
     }
   }
 
@@ -991,14 +995,16 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                           onTap: () {
                             setState(() {
                               pc.productsForms ??= [];
-                              pc.productsForms
-                                  .add(ProductForm(localizedFormName: {
-                                AppLocalizations.of(context)
-                                        .locale
-                                        .languageCode:
+                              pc.productsForms.add(ProductForm(
+                                  localizedFormDescription:
+                                      Map.of(pc.localizedDescription),
+                                  localizedFormName: {
                                     AppLocalizations.of(context)
-                                        .translate('Product')
-                              }));
+                                            .locale
+                                            .languageCode:
+                                        AppLocalizations.of(context)
+                                            .translate('Product')
+                                  }));
                             });
                           },
                         ),
@@ -1024,6 +1030,23 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                               .translate("Product form name")),
                     ),
                     TextField(
+                      maxLines: null,
+                      controller: productFormDescriptionController,
+                      onChanged: (value) {
+                        setState(() {
+                          pc.productsForms[pc.selectedIndex]
+                              .localizedFormDescription ??= {};
+                          pc.productsForms[pc.selectedIndex]
+                              .localizedFormDescription[selectedLocal] = value;
+                        });
+                      },
+                      style: TextStyle(),
+                      cursorColor: kPrimary,
+                      decoration: kinputFiledDecoration.copyWith(
+                          hintText: AppLocalizations.of(context)
+                              .translate("Product form name description")),
+                    ),
+                    TextField(
                       keyboardType: TextInputType.number,
                       maxLines: null,
                       controller: productFormPriceController,
@@ -1039,22 +1062,6 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                           suffixText: curencyMark,
                           hintText: AppLocalizations.of(context)
                               .translate("Product form Price")),
-                    ),
-                    TextField(
-                      keyboardType: TextInputType.number,
-                      maxLines: null,
-                      controller: productFormquantityInSupplyController,
-                      onChanged: (value) {
-                        setState(() {
-                          pc.productsForms[pc.selectedIndex].quantityInSupply =
-                              int.tryParse(value) ?? 0;
-                        });
-                      },
-                      style: TextStyle(),
-                      cursorColor: kPrimary,
-                      decoration: kinputFiledDecoration.copyWith(
-                          hintText: AppLocalizations.of(context)
-                              .translate("Quantity in supply")),
                     ),
                     SingleChildScrollView(
                       physics: BouncingScrollPhysics(),
@@ -1218,6 +1225,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                 color: kPrimary,
                 onPressed: () {
                   widget.onAddClicked(pc);
+                  Navigator.pop(context);
                 },
                 child: Text(
                   AppLocalizations.of(context).translate('Add'),
