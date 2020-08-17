@@ -216,8 +216,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                                                   ?.length ??
                                                               0) >
                                                           0
-                                                      ? databaseUser.displayName
-                                                      : databaseUser.email,
+                                                      ? databaseUser
+                                                              .displayName ??
+                                                          ''
+                                                      : databaseUser.email ??
+                                                          '',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                               color: Colors.grey.shade700),

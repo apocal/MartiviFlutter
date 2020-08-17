@@ -111,5 +111,12 @@
   "RETURNED": "Returned",
   "UNKNOWN": "Unknown",
   "Order id": "Order id",
-  "Product added": "Product added"
+  "Product added": "Product added",
+  "User info": "User info",
+  "User type":"User type",
+  "User name": "User name",
+  "E-mail": "E-mail",
+  "User addresses": "User addresses",
+  "admin": "Administrator",
+  "user": "User"
 }

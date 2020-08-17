@@ -36,290 +36,288 @@ class _CategoryPageState extends State<CategoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FadeInWidget(
-      child: Consumer<MainViewModel>(
-        builder: (context, viewModel, child) {
-          return ValueListenableBuilder<User>(
-            valueListenable: viewModel.databaseUser,
-            builder: (_, databaseUser, child) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(
-                    child: ValueListenableBuilder<List<Category>>(
-                      valueListenable: viewModel.categories,
-                      builder: (_, categories, child) {
-                        return databaseUser?.role == UserType.admin
-                            ? ListView.builder(
-                                itemCount: viewModel.categories.value.length,
-                                itemBuilder: (context, index) {
-                                  return Slidable(
-                                    key: Key(viewModel.categories.value[index]
-                                            .localizedName[
-                                        AppLocalizations
-                                            .supportedLocales.first]),
-                                    actionPane: SlidableDrawerActionPane(),
-                                    actions: <Widget>[
-                                      SlideAction(
-                                        onTap: () {
-                                          var cat = Category.fromJson(viewModel
-                                              .categories.value[index]
-                                              .toJson());
-                                          showModalBottomSheet(
-                                              context: context,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(20),
-                                                  topRight: Radius.circular(20),
-                                                ),
+    return Consumer<MainViewModel>(
+      builder: (context, viewModel, child) {
+        return ValueListenableBuilder<User>(
+          valueListenable: viewModel.databaseUser,
+          builder: (_, databaseUser, child) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Expanded(
+                  child: ValueListenableBuilder<List<Category>>(
+                    valueListenable: viewModel.categories,
+                    builder: (_, categories, child) {
+                      return databaseUser?.role == UserType.admin
+                          ? ListView.builder(
+                              itemCount: viewModel.categories.value.length,
+                              itemBuilder: (context, index) {
+                                return Slidable(
+                                  key: Key(viewModel.categories.value[index]
+                                          .localizedName[
+                                      AppLocalizations
+                                          .supportedLocales.first]),
+                                  actionPane: SlidableDrawerActionPane(),
+                                  actions: <Widget>[
+                                    SlideAction(
+                                      onTap: () {
+                                        var cat = Category.fromJson(viewModel
+                                            .categories.value[index]
+                                            .toJson());
+                                        showModalBottomSheet(
+                                            context: context,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(20),
+                                                topRight: Radius.circular(20),
                                               ),
-                                              builder: (c) {
-                                                return EditCategoryWidget(
-                                                  category: cat,
-                                                  onEditClicked: (c) {
-                                                    viewModel.updateCategory(
-                                                        viewModel.categories
-                                                            .value[index],
-                                                        c);
-                                                  },
-                                                );
-                                              });
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(15.0))),
-                                            child: Material(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(15))),
-                                              child: DecoratedBox(
+                                            ),
+                                            builder: (c) {
+                                              return EditCategoryWidget(
+                                                category: cat,
+                                                onEditClicked: (c) {
+                                                  viewModel.updateCategory(
+                                                      viewModel.categories
+                                                          .value[index],
+                                                      c);
+                                                },
+                                              );
+                                            });
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(15.0))),
+                                          child: Material(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.all(
+                                                        Radius.circular(15))),
+                                            child: DecoratedBox(
+                                              decoration: BoxDecoration(
+                                                color: Colors.blue,
+                                                borderRadius:
+                                                    BorderRadius.all(
+                                                        Radius.circular(
+                                                            15.0)),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Color(0xFFABABAB)
+                                                        .withOpacity(0.7),
+                                                    blurRadius: 4.0,
+                                                    spreadRadius: 3.0,
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Container(
                                                 decoration: BoxDecoration(
-                                                  color: Colors.blue,
                                                   borderRadius:
                                                       BorderRadius.all(
                                                           Radius.circular(
                                                               15.0)),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Color(0xFFABABAB)
-                                                          .withOpacity(0.7),
-                                                      blurRadius: 4.0,
-                                                      spreadRadius: 3.0,
-                                                    ),
-                                                  ],
+                                                  color: Colors.black12
+                                                      .withOpacity(0.1),
                                                 ),
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                15.0)),
-                                                    color: Colors.black12
-                                                        .withOpacity(0.1),
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Container(
-                                                      child: Center(
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: <Widget>[
-                                                            Icon(
-                                                              Icons.edit,
-                                                              color: kIcons,
-                                                            ),
-                                                            Text(
-                                                              AppLocalizations.of(
-                                                                      context)
-                                                                  .translate(
-                                                                      'Edit'),
-                                                              style: TextStyle(
-                                                                  color:
-                                                                      kIcons),
-                                                            )
-                                                          ],
-                                                        ),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(
+                                                          8.0),
+                                                  child: Container(
+                                                    child: Center(
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: <Widget>[
+                                                          Icon(
+                                                            Icons.edit,
+                                                            color: kIcons,
+                                                          ),
+                                                          Text(
+                                                            AppLocalizations.of(
+                                                                    context)
+                                                                .translate(
+                                                                    'Edit'),
+                                                            style: TextStyle(
+                                                                color:
+                                                                    kIcons),
+                                                          )
+                                                        ],
                                                       ),
                                                     ),
                                                   ),
-                                                  height: double.infinity,
                                                 ),
+                                                height: double.infinity,
                                               ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ],
-                                    secondaryActions: <Widget>[
-                                      SlideAction(
-                                        onTap: () {
-                                          viewModel.deleteCategory(viewModel
-                                              .categories.value[index]);
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(15.0))),
-                                            child: Material(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(15))),
-                                              child: DecoratedBox(
+                                    ),
+                                  ],
+                                  secondaryActions: <Widget>[
+                                    SlideAction(
+                                      onTap: () {
+                                        viewModel.deleteCategory(viewModel
+                                            .categories.value[index]);
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(15.0))),
+                                          child: Material(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.all(
+                                                        Radius.circular(15))),
+                                            child: DecoratedBox(
+                                              decoration: BoxDecoration(
+                                                color: Colors.red,
+                                                borderRadius:
+                                                    BorderRadius.all(
+                                                        Radius.circular(
+                                                            15.0)),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Color(0xFFABABAB)
+                                                        .withOpacity(0.7),
+                                                    blurRadius: 4.0,
+                                                    spreadRadius: 3.0,
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Container(
                                                 decoration: BoxDecoration(
-                                                  color: Colors.red,
                                                   borderRadius:
                                                       BorderRadius.all(
                                                           Radius.circular(
                                                               15.0)),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Color(0xFFABABAB)
-                                                          .withOpacity(0.7),
-                                                      blurRadius: 4.0,
-                                                      spreadRadius: 3.0,
-                                                    ),
-                                                  ],
+                                                  color: Colors.black12
+                                                      .withOpacity(0.1),
                                                 ),
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                15.0)),
-                                                    color: Colors.black12
-                                                        .withOpacity(0.1),
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Container(
-                                                      child: Center(
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: <Widget>[
-                                                            Icon(
-                                                              Icons.delete,
-                                                              color: kIcons,
-                                                            ),
-                                                            Text(
-                                                              AppLocalizations.of(
-                                                                      context)
-                                                                  .translate(
-                                                                      'Delete'),
-                                                              style: TextStyle(
-                                                                  color:
-                                                                      kIcons),
-                                                            )
-                                                          ],
-                                                        ),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(
+                                                          8.0),
+                                                  child: Container(
+                                                    child: Center(
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: <Widget>[
+                                                          Icon(
+                                                            Icons.delete,
+                                                            color: kIcons,
+                                                          ),
+                                                          Text(
+                                                            AppLocalizations.of(
+                                                                    context)
+                                                                .translate(
+                                                                    'Delete'),
+                                                            style: TextStyle(
+                                                                color:
+                                                                    kIcons),
+                                                          )
+                                                        ],
                                                       ),
                                                     ),
                                                   ),
-                                                  height: double.infinity,
                                                 ),
+                                                height: double.infinity,
                                               ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ],
-                                    child: itemCard(
+                                    ),
+                                  ],
+                                  child: itemCard(
+                                    onCategoryPress: () {
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (c) => ProductPage(
+                                                    category: viewModel
+                                                        .categories
+                                                        .value[index],
+                                                  )));
+                                    },
+                                    onDownPress: categories.last !=
+                                            viewModel.categories.value[index]
+                                        ? () {
+                                            viewModel.switchCategoriesOrders(
+                                                viewModel
+                                                    .categories.value[index],
+                                                viewModel.categories
+                                                    .value[index + 1]);
+                                          }
+                                        : null,
+                                    onUpPress: categories.first !=
+                                            viewModel.categories.value[index]
+                                        ? () {
+                                            viewModel.switchCategoriesOrders(
+                                                viewModel
+                                                    .categories.value[index],
+                                                viewModel.categories
+                                                    .value[index - 1]);
+                                          }
+                                        : null,
+                                    category:
+                                        viewModel.categories.value[index],
+                                  ),
+                                );
+                              })
+                          : ListView(
+                              children: <Widget>[
+                                ...(categories.map((e) => itemCard(
                                       onCategoryPress: () {
                                         Navigator.of(context)
                                             .push(MaterialPageRoute(
                                                 builder: (c) => ProductPage(
-                                                      category: viewModel
-                                                          .categories
-                                                          .value[index],
+                                                      category: e,
                                                     )));
                                       },
-                                      onDownPress: categories.last !=
-                                              viewModel.categories.value[index]
-                                          ? () {
-                                              viewModel.switchCategoriesOrders(
-                                                  viewModel
-                                                      .categories.value[index],
-                                                  viewModel.categories
-                                                      .value[index + 1]);
-                                            }
-                                          : null,
-                                      onUpPress: categories.first !=
-                                              viewModel.categories.value[index]
-                                          ? () {
-                                              viewModel.switchCategoriesOrders(
-                                                  viewModel
-                                                      .categories.value[index],
-                                                  viewModel.categories
-                                                      .value[index - 1]);
-                                            }
-                                          : null,
-                                      category:
-                                          viewModel.categories.value[index],
-                                    ),
-                                  );
-                                })
-                            : ListView(
-                                children: <Widget>[
-                                  ...(categories.map((e) => itemCard(
-                                        onCategoryPress: () {
-                                          Navigator.of(context)
-                                              .push(MaterialPageRoute(
-                                                  builder: (c) => ProductPage(
-                                                        category: e,
-                                                      )));
-                                        },
-                                        category: e,
-                                      )))
-                                ],
-                              );
-                      },
+                                      category: e,
+                                    )))
+                              ],
+                            );
+                    },
+                  ),
+                ),
+                if (databaseUser?.role == UserType.admin) child
+              ],
+            );
+          },
+          child: FlatButton(
+            color: kPrimary,
+            onPressed: () {
+              showModalBottomSheet(
+                  context: context,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
                     ),
                   ),
-                  if (databaseUser?.role == UserType.admin) child
-                ],
-              );
+                  builder: (context) {
+                    return AddCategoryWidget(
+                      onAddClicked: (c) {
+                        viewModel.storeCategory(c);
+                      },
+                    );
+                  });
             },
-            child: FlatButton(
-              color: kPrimary,
-              onPressed: () {
-                showModalBottomSheet(
-                    context: context,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                    ),
-                    builder: (context) {
-                      return AddCategoryWidget(
-                        onAddClicked: (c) {
-                          viewModel.storeCategory(c);
-                        },
-                      );
-                    });
-              },
-              child: Text(
-                AppLocalizations.of(context).translate('Add Category'),
-                style: TextStyle(color: kIcons),
-              ),
+            child: Text(
+              AppLocalizations.of(context).translate('Add Category'),
+              style: TextStyle(color: kIcons),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

@@ -1,4 +1,7 @@
-enum UserType { user, admin, anonymous }
+enum UserType {
+  user,
+  admin,
+}
 enum PaymentMethods { CreditCard, ByCash }
 enum PaymentStatus {
   NotPaid,

@@ -32,6 +32,7 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
+  MainViewModel vm;
   @override
   void didUpdateWidget(ProductPage oldWidget) {
     // TODO: implement didUpdateWidget
@@ -43,7 +44,8 @@ class _ProductPageState extends State<ProductPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    context.read<MainViewModel>().listenProductsOfCategory(widget.category);
+    vm = context.read<MainViewModel>();
+    vm.listenProductsOfCategory(widget.category);
   }
 
   @override
@@ -52,6 +54,8 @@ class _ProductPageState extends State<ProductPage> {
       super.dispose();
     } catch (e) {
       print(e);
+    } finally {
+      vm.products.value?.clear();
     }
   }
 
@@ -344,8 +348,15 @@ class _ProductPageState extends State<ProductPage> {
                               onAddClicked: (p) {
                                 p.documentId = widget.category.documentId;
                                 viewModel.storeProduct(p).catchError((error) {
-                                   showDialog(context: context,builder: (context) => OkDialog(title: AppLocalizations.of(context).translate('Error'),content: error.toString(),),);
-                                  });
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => OkDialog(
+                                      title: AppLocalizations.of(context)
+                                          .translate('Error'),
+                                      content: error.toString(),
+                                    ),
+                                  );
+                                });
                               },
                             );
                           });

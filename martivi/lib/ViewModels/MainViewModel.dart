@@ -157,7 +157,6 @@ class MainViewModel extends ChangeNotifier {
 
             newMessagesListener?.cancel();
             switch (databaseUser.value.role) {
-              case UserType.anonymous:
               case UserType.user:
                 {
                   newMessagesListener = Firestore.instance

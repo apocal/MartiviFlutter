@@ -4,9 +4,11 @@ import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/Models/Address.dart';
 
 class AddressesList extends StatefulWidget {
+  final bool isReadOnly;
   final Function(UserAddress) addressSelected;
   final List<UserAddress> userAddresses;
-  AddressesList({this.userAddresses, this.addressSelected});
+  AddressesList(
+      {this.userAddresses, this.addressSelected, this.isReadOnly = false});
   @override
   _AddressesListState createState() => _AddressesListState();
 }
@@ -64,18 +66,20 @@ class _AddressesListState extends State<AddressesList> {
         activeColor: kPrimary,
         value: selectedValue,
         groupValue: widget.userAddresses.indexOf(e),
-        onChanged: (val) {
-          try {
-            widget.userAddresses[val].referance
-                .updateData({'isPrimary': false});
-          } catch (e) {}
+        onChanged: widget.isReadOnly
+            ? (val) {
+                try {
+                  widget.userAddresses[val].referance
+                      .updateData({'isPrimary': false});
+                } catch (e) {}
 
-          e.referance.updateData({'isPrimary': true});
-          widget.addressSelected?.call(e);
-          setState(() {
-            selectedValue = widget.userAddresses.indexOf(e);
-          });
-        },
+                e.referance.updateData({'isPrimary': true});
+                widget.addressSelected?.call(e);
+                setState(() {
+                  selectedValue = widget.userAddresses.indexOf(e);
+                });
+              }
+            : null,
       );
     }).toList());
   }

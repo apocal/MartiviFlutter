@@ -64,7 +64,9 @@ class UserWidget extends StatelessWidget {
             ));
       },
       leading: (user.photoUrl?.length ?? 0) > 0
-          ? Image.network(user.photoUrl)
+          ? CircleAvatar(
+              backgroundImage: NetworkImage(user.photoUrl),
+            )
           : Icon(FontAwesome.user),
       title: ValueListenableBuilder<bool>(
         valueListenable: user.hasNewMessages,

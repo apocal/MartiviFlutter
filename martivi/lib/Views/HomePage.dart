@@ -221,8 +221,7 @@ class _HomePageState extends State<HomePage> {
                       title:
                           Text(AppLocalizations.of(context).translate('Home')),
                     ),
-                    if (databaseUseruser?.role == UserType.user ||
-                        databaseUseruser?.role == UserType.anonymous)
+                    if (databaseUseruser?.role == UserType.user)
                       ListTile(
                         leading: Icon(Icons.chat_bubble),
                         onTap: () {
