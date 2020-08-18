@@ -66,7 +66,7 @@ class _AddressesListState extends State<AddressesList> {
         activeColor: kPrimary,
         value: selectedValue,
         groupValue: widget.userAddresses.indexOf(e),
-        onChanged: widget.isReadOnly
+        onChanged: !widget.isReadOnly
             ? (val) {
                 try {
                   widget.userAddresses[val].referance

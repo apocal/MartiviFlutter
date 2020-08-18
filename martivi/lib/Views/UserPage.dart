@@ -428,6 +428,7 @@ class UserProfilePage extends StatelessWidget {
 
                                   return addresses != null
                                       ? AddressesList(
+                                          isReadOnly: true,
                                           userAddresses: addresses,
                                         )
                                       : Container();

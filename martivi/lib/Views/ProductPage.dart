@@ -16,6 +16,7 @@ import 'package:martivi/Models/Product.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
+import 'package:martivi/Views/ProductDetailPage.dart';
 import 'package:martivi/Widgets/FadeInWidget.dart';
 import 'package:martivi/Widgets/Widgets.dart';
 import 'package:path/path.dart' as ppp;
@@ -398,304 +399,350 @@ class _ProductItemState extends State<ProductItem> {
   Widget build(BuildContext context) {
     return Consumer<MainViewModel>(
       builder: (context, viewModel, child) {
-        return Container(
-          padding: EdgeInsets.only(top: 8, left: 8),
-          decoration: BoxDecoration(
+        return Material(
+          borderRadius: BorderRadius.circular(4),
+          type: MaterialType.transparency,
+          child: InkWell(
             borderRadius: BorderRadius.circular(4),
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12.withOpacity(0.2),
-                blurRadius: 3.5,
-                spreadRadius: 0.4,
-              )
-            ],
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                height: 140,
-                width: 160,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(widget
-                              .p
-                              ?.productsForms[widget.p.selectedIndex]
-                              ?.images
-                              ?.first
-                              ?.downloadUrl ??
-                          ''),
-                    )),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProductDetailPage(
+                      p: widget.p,
+                    ),
+                  ));
+            },
+            child: Container(
+              margin: EdgeInsets.all(1),
+              padding: EdgeInsets.only(top: 8, left: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12.withOpacity(0.2),
+                    blurRadius: 3.5,
+                    spreadRadius: 0.4,
+                  )
+                ],
               ),
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.only(left: 12, top: 12),
-                  child: ValueListenableBuilder<User>(
-                    builder: (context, user, child) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            widget.p.localizedName[AppLocalizations.of(context)
-                                .locale
-                                .languageCode],
-                            style: TextStyle(
-                                fontFamily: "Sans",
-                                color: Colors.black87,
-                                fontWeight: FontWeight.w700),
-                          ),
-                          Text(
-                            widget.p.localizedDescription[
-                                AppLocalizations.of(context)
-                                    .locale
-                                    .languageCode],
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12.0,
-                            ),
-                          ),
-                          Text(
-                            '₾${widget.p.productsForms[widget.p.selectedIndex].price.toString()}',
-                            style: TextStyle(),
-                          ),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: <Widget>[
-                                ...widget.p.productsForms.map(
-                                  (e) => Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 5, right: 5, left: 8, bottom: 8),
-                                    child: Material(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8)),
-                                      elevation: 2,
-                                      child: AnimatedContainer(
-                                        height: 40,
-                                        duration: Duration(milliseconds: 200),
-                                        decoration: BoxDecoration(
-                                            color: widget.p.productsForms[widget
-                                                        .p.selectedIndex] ==
-                                                    e
-                                                ? kPrimary
-                                                : kIcons,
-                                            borderRadius:
-                                                BorderRadius.circular(8)),
-                                        child: RawMaterialButton(
-                                          constraints:
-                                              BoxConstraints(minHeight: 0),
-                                          splashColor: Colors.red,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8)),
-                                          onPressed: () {
-                                            setState(() {
-                                              widget.p.selectedIndex = widget
-                                                  .p.productsForms
-                                                  .indexOf(e);
-                                            });
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.all(4),
-                                            child: Text(
-                                              e.localizedFormName[
-                                                  AppLocalizations.of(context)
-                                                      .locale
-                                                      .languageCode],
-                                              style: TextStyle(
-                                                  color: e ==
-                                                          widget.p.productsForms[
-                                                              widget.p
-                                                                  .selectedIndex]
-                                                      ? Colors.white
-                                                      : Colors.black87),
-                                              maxLines: null,
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        height: 140,
+                        width: 160,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(widget
+                                      .p
+                                      ?.productsForms[widget.p.selectedIndex]
+                                      ?.images
+                                      ?.first
+                                      ?.downloadUrl ??
+                                  ''),
+                            )),
+                      ),
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.only(left: 12, top: 12),
+                          child: ValueListenableBuilder<User>(
+                            builder: (context, user, child) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    widget.p.localizedName[
+                                        AppLocalizations.of(context)
+                                            .locale
+                                            .languageCode],
+                                    style: TextStyle(
+                                        fontFamily: "Sans",
+                                        color: Colors.black87,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                  Text(
+                                    widget.p.localizedDescription[
+                                        AppLocalizations.of(context)
+                                            .locale
+                                            .languageCode],
+                                    style: TextStyle(
+                                      color: Colors.black54,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12.0,
+                                    ),
+                                  ),
+                                  Text(
+                                    '₾${widget.p.productsForms[widget.p.selectedIndex].price.toString()}',
+                                    style: TextStyle(),
+                                  ),
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: <Widget>[
+                                        ...widget.p.productsForms.map(
+                                          (e) => Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 5,
+                                                right: 5,
+                                                left: 8,
+                                                bottom: 8),
+                                            child: Material(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8)),
+                                              elevation: 2,
+                                              child: AnimatedContainer(
+                                                height: 40,
+                                                duration:
+                                                    Duration(milliseconds: 200),
+                                                decoration: BoxDecoration(
+                                                    color: widget.p.productsForms[
+                                                                widget.p
+                                                                    .selectedIndex] ==
+                                                            e
+                                                        ? kPrimary
+                                                        : kIcons,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8)),
+                                                child: RawMaterialButton(
+                                                  constraints: BoxConstraints(
+                                                      minHeight: 0),
+                                                  splashColor: Colors.red,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8)),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      widget.p.selectedIndex =
+                                                          widget.p.productsForms
+                                                              .indexOf(e);
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    padding: EdgeInsets.all(4),
+                                                    child: Text(
+                                                      e.localizedFormName[
+                                                          AppLocalizations.of(
+                                                                  context)
+                                                              .locale
+                                                              .languageCode],
+                                                      style: TextStyle(
+                                                          color: e ==
+                                                                  widget.p.productsForms[
+                                                                      widget.p
+                                                                          .selectedIndex]
+                                                              ? Colors.white
+                                                              : Colors.black87),
+                                                      maxLines: null,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (user?.role == UserType.user) child,
-                        ],
-                      );
-                    },
-                    valueListenable: viewModel.databaseUser,
-                    child: Align(
-                        alignment: Alignment.topRight,
-                        child: ValueListenableBuilder<List<CartItem>>(
-                          builder: (context, value, child) {
-                            return Container(
-                              child: () {
-                                CartItem inCartProduct = value.firstWhere(
-                                    (element) =>
-                                        element.product.productDocumentId ==
-                                        widget.p.productDocumentId,
-                                    orElse: () => null);
-                                return inCartProduct == null
-                                    ? FlatButton(
-                                        child: Text(
-                                          AppLocalizations.of(context)
-                                              .translate('Add to cart'),
-                                          style: TextStyle(
-                                              color:
-                                                  Colors.black.withOpacity(.8)),
-                                        ),
-                                        onPressed: () {
-                                          widget.p.productsForms
-                                              .forEach((element) {
-                                            element.quantity = 0;
-                                          });
-                                          widget
-                                              .p
-                                              .productsForms[
-                                                  widget.p.selectedIndex]
-                                              .quantity = 1;
-                                          viewModel.storeCart(widget.p);
-                                        },
-                                      )
-                                    : Container(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              color: Colors.white70,
-                                              border: Border.all(
-                                                  color: Colors.black12
-                                                      .withOpacity(0.1))),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: <Widget>[
-                                              /// Decrease of value item
-                                              Material(
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    try {
-                                                      inCartProduct
-                                                          .product
-                                                          .productsForms[widget
-                                                              .p.selectedIndex]
-                                                          .quantity ??= 0;
-                                                      if (inCartProduct
-                                                              .product
-                                                              .productsForms[widget
-                                                                  .p
-                                                                  .selectedIndex]
-                                                              .quantity ==
-                                                          0) {
-                                                        return;
-                                                      }
-                                                      inCartProduct
-                                                          .product
-                                                          .productsForms[widget
-                                                              .p.selectedIndex]
-                                                          .quantity--;
-                                                      if (!inCartProduct
-                                                          .product.productsForms
-                                                          .any((element) =>
-                                                              element.quantity >
-                                                              0)) {
-                                                        Firestore.instance
-                                                            .collection('/cart')
-                                                            .document(
-                                                                inCartProduct
-                                                                    .documentId)
-                                                            .delete();
-                                                        return;
-                                                      }
-                                                      Firestore.instance
-                                                          .collection('/cart')
-                                                          .document(
+                                  if (user?.role == UserType.user) child,
+                                ],
+                              );
+                            },
+                            valueListenable: viewModel.databaseUser,
+                            child: Align(
+                                alignment: Alignment.topRight,
+                                child: ValueListenableBuilder<List<CartItem>>(
+                                  builder: (context, value, child) {
+                                    return Container(
+                                      child: () {
+                                        CartItem inCartProduct =
+                                            value.firstWhere(
+                                                (element) =>
+                                                    element.product
+                                                        .productDocumentId ==
+                                                    widget.p.productDocumentId,
+                                                orElse: () => null);
+                                        return inCartProduct == null
+                                            ? FlatButton(
+                                                child: Text(
+                                                  AppLocalizations.of(context)
+                                                      .translate('Add to cart'),
+                                                  style: TextStyle(
+                                                      color: Colors.black
+                                                          .withOpacity(.8)),
+                                                ),
+                                                onPressed: () {
+                                                  widget.p.productsForms
+                                                      .forEach((element) {
+                                                    element.quantity = 0;
+                                                  });
+                                                  widget
+                                                      .p
+                                                      .productsForms[widget
+                                                          .p.selectedIndex]
+                                                      .quantity = 1;
+                                                  viewModel.storeCart(widget.p);
+                                                },
+                                              )
+                                            : Container(
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white70,
+                                                      border: Border.all(
+                                                          color: Colors.black12
+                                                              .withOpacity(
+                                                                  0.1))),
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: <Widget>[
+                                                      /// Decrease of value item
+                                                      Material(
+                                                        child: InkWell(
+                                                          onTap: () {
+                                                            try {
                                                               inCartProduct
-                                                                  .documentId)
-                                                          .setData(
+                                                                  .product
+                                                                  .productsForms[
+                                                                      widget.p
+                                                                          .selectedIndex]
+                                                                  .quantity ??= 0;
+                                                              if (inCartProduct
+                                                                      .product
+                                                                      .productsForms[
+                                                                          widget
+                                                                              .p
+                                                                              .selectedIndex]
+                                                                      .quantity ==
+                                                                  0) {
+                                                                return;
+                                                              }
                                                               inCartProduct
-                                                                  .toJson(),
-                                                              merge: true);
-                                                    } catch (e) {}
-                                                  },
-                                                  child: Container(
-                                                    height: 30.0,
-                                                    width: 30.0,
-                                                    decoration: BoxDecoration(
-                                                        border: Border(
-                                                            right: BorderSide(
-                                                                color: Colors
-                                                                    .black12
-                                                                    .withOpacity(
-                                                                        0.1)))),
-                                                    child: Center(
-                                                        child: Text("-")),
+                                                                  .product
+                                                                  .productsForms[
+                                                                      widget.p
+                                                                          .selectedIndex]
+                                                                  .quantity--;
+                                                              if (!inCartProduct
+                                                                  .product
+                                                                  .productsForms
+                                                                  .any((element) =>
+                                                                      element
+                                                                          .quantity >
+                                                                      0)) {
+                                                                Firestore
+                                                                    .instance
+                                                                    .collection(
+                                                                        '/cart')
+                                                                    .document(
+                                                                        inCartProduct
+                                                                            .documentId)
+                                                                    .delete();
+                                                                return;
+                                                              }
+                                                              Firestore.instance
+                                                                  .collection(
+                                                                      '/cart')
+                                                                  .document(
+                                                                      inCartProduct
+                                                                          .documentId)
+                                                                  .setData(
+                                                                      inCartProduct
+                                                                          .toJson(),
+                                                                      merge:
+                                                                          true);
+                                                            } catch (e) {}
+                                                          },
+                                                          child: Container(
+                                                            height: 30.0,
+                                                            width: 30.0,
+                                                            decoration: BoxDecoration(
+                                                                border: Border(
+                                                                    right: BorderSide(
+                                                                        color: Colors
+                                                                            .black12
+                                                                            .withOpacity(0.1)))),
+                                                            child: Center(
+                                                                child:
+                                                                    Text("-")),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal:
+                                                                    18.0),
+                                                        child: Text(inCartProduct
+                                                                .product
+                                                                .productsForms[
+                                                                    widget.p
+                                                                        .selectedIndex]
+                                                                .quantity
+                                                                ?.toString() ??
+                                                            '0'),
+                                                      ),
+
+                                                      /// Increasing value of item
+                                                      Material(
+                                                        child: InkWell(
+                                                          onTap: () {
+                                                            try {
+                                                              inCartProduct
+                                                                  .product
+                                                                  .productsForms[
+                                                                      widget.p
+                                                                          .selectedIndex]
+                                                                  .quantity ??= 0;
+
+                                                              inCartProduct
+                                                                  .product
+                                                                  .productsForms[
+                                                                      widget.p
+                                                                          .selectedIndex]
+                                                                  .quantity++;
+                                                              Firestore.instance
+                                                                  .collection(
+                                                                      '/cart')
+                                                                  .document(
+                                                                      inCartProduct
+                                                                          .documentId)
+                                                                  .setData(
+                                                                      inCartProduct
+                                                                          .toJson(),
+                                                                      merge:
+                                                                          true);
+                                                            } catch (e) {}
+                                                          },
+                                                          child: Container(
+                                                            height: 30.0,
+                                                            width: 28.0,
+                                                            decoration: BoxDecoration(
+                                                                border: Border(
+                                                                    left: BorderSide(
+                                                                        color: Colors
+                                                                            .black12
+                                                                            .withOpacity(0.1)))),
+                                                            child: Center(
+                                                                child:
+                                                                    Text("+")),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 18.0),
-                                                child: Text(inCartProduct
-                                                        .product
-                                                        .productsForms[widget
-                                                            .p.selectedIndex]
-                                                        .quantity
-                                                        ?.toString() ??
-                                                    '0'),
-                                              ),
-
-                                              /// Increasing value of item
-                                              Material(
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    try {
-                                                      inCartProduct
-                                                          .product
-                                                          .productsForms[widget
-                                                              .p.selectedIndex]
-                                                          .quantity ??= 0;
-
-                                                      inCartProduct
-                                                          .product
-                                                          .productsForms[widget
-                                                              .p.selectedIndex]
-                                                          .quantity++;
-                                                      Firestore.instance
-                                                          .collection('/cart')
-                                                          .document(
-                                                              inCartProduct
-                                                                  .documentId)
-                                                          .setData(
-                                                              inCartProduct
-                                                                  .toJson(),
-                                                              merge: true);
-                                                    } catch (e) {}
-                                                  },
-                                                  child: Container(
-                                                    height: 30.0,
-                                                    width: 28.0,
-                                                    decoration: BoxDecoration(
-                                                        border: Border(
-                                                            left: BorderSide(
-                                                                color: Colors
-                                                                    .black12
-                                                                    .withOpacity(
-                                                                        0.1)))),
-                                                    child: Center(
-                                                        child: Text("+")),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
 //                                              child: Text(inCartProduct
 //                                                      .product
 //                                                      .productsForms[widget
@@ -703,18 +750,22 @@ class _ProductItemState extends State<ProductItem> {
 //                                                      .quantity
 //                                                      ?.toString() ??
 //                                                  '0'),
-                                      );
-                                return Container();
-                              }(),
-                            );
-                          },
-                          valueListenable: viewModel.cart,
-                        )),
-                  ),
+                                              );
+                                        return Container();
+                                      }(),
+                                    );
+                                  },
+                                  valueListenable: viewModel.cart,
+                                )),
+                          ),
 //
-                ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         );
       },
