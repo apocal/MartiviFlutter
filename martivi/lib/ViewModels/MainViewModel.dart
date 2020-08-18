@@ -317,7 +317,7 @@ class MainViewModel extends ChangeNotifier {
     var json = p.toJson();
     await Firestore.instance
         .collection('/products')
-        .document()
+        .document(p.productDocumentId)
         .setData(p.toJson(), merge: true);
   }
 

@@ -23,6 +23,8 @@ import 'package:path/path.dart' as ppp;
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
+import 'CartPage.dart';
+
 class ProductPage extends StatefulWidget {
   final Category category;
   static String id = 'ProductPage';
@@ -80,7 +82,71 @@ class _ProductPageState extends State<ProductPage> {
                       delegate:
                           ProductsSearch(products: viewModel.products.value));
                 },
-              )
+              ),
+              ValueListenableBuilder<List<CartItem>>(
+                valueListenable: viewModel.cart,
+                builder: (context, cart, child) {
+                  return Padding(
+                    padding: EdgeInsets.only(top: 4, right: 2),
+                    child: Stack(
+                      children: [
+                        child,
+                        if ((cart?.length ?? 0) > 0)
+                          Positioned.fill(
+                              child: Align(
+                                  alignment: Alignment.topRight,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(right: 3, top: 3),
+                                    child: Material(
+                                      color: Colors.yellow,
+                                      elevation: 2,
+                                      borderRadius: BorderRadius.circular(6),
+                                      child: new Container(
+                                        padding: EdgeInsets.all(1),
+                                        decoration: new BoxDecoration(
+                                          color: Colors.transparent,
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                        constraints: BoxConstraints(
+                                          minWidth: 12,
+                                          minHeight: 12,
+                                        ),
+                                        child: new Text(
+                                          viewModel.cart.value.length
+                                              .toString(),
+                                          style: new TextStyle(
+                                              color: kPrimary,
+                                              fontSize: 8,
+                                              fontWeight: FontWeight.bold),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                  )))
+                      ],
+                    ),
+                  );
+                },
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return Scaffold(
+                            appBar: AppBar(
+                              title: Text(AppLocalizations.of(context)
+                                  .translate('Cart')),
+                            ),
+                            body: CartPage(),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.shopping_cart),
+                ),
+              ),
             ],
           ),
           body: Builder(
@@ -119,15 +185,32 @@ class _ProductPageState extends State<ProductPage> {
                                                       ),
                                                     ),
                                                     builder: (c) {
-                                                      return EditProductWidget(
-//                                                      category: ,: cat,
-//                                                      onEditClicked: (c) {
-//                                                        viewModel.updateCategory(
-//                                                            viewModel.categories
-//                                                                .value[index],
-//                                                            c);
-//                                                      },
-                                                          );
+                                                      return AddProductWidget(
+                                                        onAddClicked: (p) {
+                                                          viewModel
+                                                              .storeProduct(p)
+                                                              .catchError(
+                                                                  (error) {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (context) =>
+                                                                      OkDialog(
+                                                                title: AppLocalizations.of(
+                                                                        context)
+                                                                    .translate(
+                                                                        'Error'),
+                                                                content: error
+                                                                    .toString(),
+                                                              ),
+                                                            );
+                                                          });
+                                                        },
+                                                        pc: viewModel.products
+                                                            .value[index],
+
+//
+                                                      );
                                                     });
                                               },
                                               child: Padding(
@@ -775,8 +858,8 @@ class _ProductItemState extends State<ProductItem> {
 
 class AddProductWidget extends StatefulWidget {
   final Function(Product) onAddClicked;
-  AddProductWidget({this.onAddClicked});
-
+  AddProductWidget({this.onAddClicked, this.pc});
+  Product pc;
   @override
   _AddProductWidgetState createState() => _AddProductWidgetState();
 }
@@ -791,35 +874,49 @@ class _AddProductWidgetState extends State<AddProductWidget> {
   TextEditingController productFormWeightController = TextEditingController();
   String selectedLocal = AppLocalizations.supportedLocales.first;
   ValueNotifier<bool> isUploading = ValueNotifier<bool>(false);
-  Product pc = Product();
   bool addClicked = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    selectedLocal ?? AppLocalizations.supportedLocales.first;
+    widget.pc ??= Product();
+    localeSelected();
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-//    try {
-//      if (!addClicked && (category.image.refPath?.length ?? 0) > 0) {
-//        FirebaseStorage.instance
-//            .ref()
-//            .child(category.image.refPath)
-//            .delete()
-//            .whenComplete(() {
-//          category.image.refPath = null;
-//        });
-//      }
-//    } catch (e) {}
+//
+  }
+
+  void localeSelected() {
+    setTextControllers();
+    widget.pc.localizedDescription ??= {};
+    productDescriptionController.text =
+        widget.pc.localizedDescription[selectedLocal] ?? '';
+
+    widget.pc.localizedName ??= {};
+
+    productTextController.text = widget.pc.localizedName[selectedLocal] ?? '';
   }
 
   void setTextControllers() {
-    if (pc.selectedIndex != null) {
-      productFormNameController.text =
-          pc.productsForms[pc.selectedIndex].localizedFormName[selectedLocal] ??
-              '';
-      productFormDescriptionController.text = pc.productsForms[pc.selectedIndex]
+    if (widget.pc.selectedIndex != null) {
+      productFormNameController.text = widget
+              .pc
+              .productsForms[widget.pc.selectedIndex]
+              .localizedFormName[selectedLocal] ??
+          '';
+      productFormDescriptionController.text = widget
+              .pc
+              .productsForms[widget.pc.selectedIndex]
               .localizedFormDescription[selectedLocal] ??
           '';
       productFormPriceController.text =
-          pc.productsForms[pc.selectedIndex].price?.toString() ?? '';
+          widget.pc.productsForms[widget.pc.selectedIndex].price?.toString() ??
+              '';
     }
   }
 
@@ -858,17 +955,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                                 onPressed: () {
                                   setState(() {
                                     selectedLocal = e;
-                                    setTextControllers();
-                                    pc.localizedDescription ??= {};
-                                    productDescriptionController.text =
-                                        pc.localizedDescription[
-                                                selectedLocal] ??
-                                            '';
-
-                                    pc.localizedName ??= {};
-
-                                    productTextController.text =
-                                        pc.localizedName[selectedLocal] ?? '';
+                                    localeSelected();
                                   });
                                 },
                                 padding: EdgeInsets.all(0),
@@ -889,8 +976,8 @@ class _AddProductWidgetState extends State<AddProductWidget> {
               TextField(
                 controller: productTextController,
                 onChanged: (value) {
-                  pc.localizedName ??= {};
-                  pc.localizedName[selectedLocal] = value;
+                  widget.pc.localizedName ??= {};
+                  widget.pc.localizedName[selectedLocal] = value;
                 },
                 style: TextStyle(),
                 cursorColor: kPrimary,
@@ -912,8 +999,8 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                 maxLines: null,
                 controller: productDescriptionController,
                 onChanged: (value) {
-                  pc.localizedDescription ??= {};
-                  pc.localizedDescription[selectedLocal] = value;
+                  widget.pc.localizedDescription ??= {};
+                  widget.pc.localizedDescription[selectedLocal] = value;
                 },
                 style: TextStyle(),
                 cursorColor: kPrimary,
@@ -942,7 +1029,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                   ),
                   Wrap(
                     children: <Widget>[
-                      ...?pc.productsForms?.map(
+                      ...?widget.pc?.productsForms?.map(
                         (e) => FadeInWidget(
                           child: Stack(
                             children: <Widget>[
@@ -957,10 +1044,11 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                                     height: 40,
                                     duration: Duration(milliseconds: 200),
                                     decoration: BoxDecoration(
-                                        color: pc.selectedIndex == null
+                                        color: widget.pc.selectedIndex == null
                                             ? null
-                                            : pc.productsForms?.elementAt(
-                                                        pc.selectedIndex) ==
+                                            : widget.pc.productsForms
+                                                        ?.elementAt(widget.pc
+                                                            .selectedIndex) ==
                                                     e
                                                 ? kPrimary
                                                 : kIcons,
@@ -973,8 +1061,9 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                                               BorderRadius.circular(8)),
                                       onPressed: () {
                                         setState(() {
-                                          pc.selectedIndex =
-                                              pc.productsForms.indexOf(e);
+                                          widget.pc.selectedIndex = widget
+                                              .pc.productsForms
+                                              .indexOf(e);
                                           setTextControllers();
                                         });
                                       },
@@ -986,11 +1075,14 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                                                   .locale
                                                   .languageCode],
                                           style: TextStyle(
-                                              color: pc.selectedIndex == null
+                                              color: widget.pc.selectedIndex ==
+                                                      null
                                                   ? null
                                                   : e ==
-                                                          pc?.productsForms
-                                                              ?.elementAt(pc
+                                                          widget
+                                                              .pc?.productsForms
+                                                              ?.elementAt(widget
+                                                                  .pc
                                                                   .selectedIndex)
                                                       ? Colors.white
                                                       : Colors.black87),
@@ -1013,12 +1105,14 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                                       borderRadius: BorderRadius.circular(10),
                                       onTap: () {
                                         setState(() {
-                                          if (pc.selectedIndex ==
-                                              pc.productsForms.indexOf(e))
+                                          if (widget.pc.selectedIndex ==
+                                              widget.pc.productsForms
+                                                  .indexOf(e))
                                             try {
-                                              pc
+                                              widget
+                                                  .pc
                                                   ?.productsForms[
-                                                      pc.selectedIndex]
+                                                      widget.pc.selectedIndex]
                                                   ?.images
                                                   ?.forEach((element) {
                                                 FirebaseStorage.instance
@@ -1027,8 +1121,8 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                                                     .delete();
                                               });
                                             } catch (e) {}
-                                          pc.selectedIndex = null;
-                                          pc.productsForms.remove(e);
+                                          widget.pc.selectedIndex = null;
+                                          widget.pc.productsForms.remove(e);
                                         });
                                       },
                                       child: Icon(
@@ -1056,10 +1150,10 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                           ),
                           onTap: () {
                             setState(() {
-                              pc.productsForms ??= [];
-                              pc.productsForms.add(ProductForm(
+                              widget.pc.productsForms ??= [];
+                              widget.pc.productsForms.add(ProductForm(
                                   localizedFormDescription:
-                                      Map.of(pc.localizedDescription),
+                                      Map.of(widget.pc.localizedDescription),
                                   localizedFormName: {
                                     AppLocalizations.of(context)
                                             .locale
@@ -1073,15 +1167,15 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                       ),
                     ],
                   ),
-                  if (pc.selectedIndex != null) ...[
+                  if (widget.pc.selectedIndex != null) ...[
                     TextField(
                       maxLines: null,
                       controller: productFormNameController,
                       onChanged: (value) {
                         setState(() {
-                          pc.productsForms[pc.selectedIndex]
+                          widget.pc.productsForms[widget.pc.selectedIndex]
                               .localizedFormName ??= {};
-                          pc.productsForms[pc.selectedIndex]
+                          widget.pc.productsForms[widget.pc.selectedIndex]
                               .localizedFormName[selectedLocal] = value;
                         });
                       },
@@ -1096,9 +1190,9 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                       controller: productFormDescriptionController,
                       onChanged: (value) {
                         setState(() {
-                          pc.productsForms[pc.selectedIndex]
+                          widget.pc.productsForms[widget.pc.selectedIndex]
                               .localizedFormDescription ??= {};
-                          pc.productsForms[pc.selectedIndex]
+                          widget.pc.productsForms[widget.pc.selectedIndex]
                               .localizedFormDescription[selectedLocal] = value;
                         });
                       },
@@ -1114,8 +1208,8 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                       controller: productFormPriceController,
                       onChanged: (value) {
                         setState(() {
-                          pc.productsForms[pc.selectedIndex].price =
-                              double.tryParse(value);
+                          widget.pc.productsForms[widget.pc.selectedIndex]
+                              .price = double.tryParse(value);
                         });
                       },
                       style: TextStyle(),
@@ -1130,8 +1224,8 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: <Widget>[
-                          ...?pc.productsForms
-                              ?.elementAt(pc.selectedIndex)
+                          ...?widget.pc.productsForms
+                              ?.elementAt(widget.pc.selectedIndex)
                               ?.images
                               ?.map((e) => Stack(
                                     children: <Widget>[
@@ -1192,9 +1286,10 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                                                     .child(e.refPath)
                                                     .delete();
                                                 setState(() {
-                                                  pc
-                                                      .productsForms[
-                                                          pc.selectedIndex]
+                                                  widget
+                                                      .pc
+                                                      .productsForms[widget
+                                                          .pc.selectedIndex]
                                                       .images
                                                       .remove(e);
                                                 });
@@ -1256,9 +1351,14 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                                   }
                                   setState(() {
                                     im.downloadUrl = url;
-                                    pc.productsForms[pc.selectedIndex]
+                                    widget
+                                        .pc
+                                        .productsForms[widget.pc.selectedIndex]
                                         .images ??= [];
-                                    pc.productsForms[pc.selectedIndex].images
+                                    widget
+                                        .pc
+                                        .productsForms[widget.pc.selectedIndex]
+                                        .images
                                         .add(im);
                                   });
                                 }
@@ -1286,7 +1386,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
               FlatButton(
                 color: kPrimary,
                 onPressed: () {
-                  widget.onAddClicked(pc);
+                  widget.onAddClicked(widget.pc);
                   Navigator.pop(context);
                 },
                 child: Text(
@@ -1297,265 +1397,6 @@ class _AddProductWidgetState extends State<AddProductWidget> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class EditProductWidget extends StatefulWidget {
-  final Category category;
-  final Function(Category) onEditClicked;
-  EditProductWidget({@required this.onEditClicked, @required this.category});
-
-  @override
-  _EditProductWidgetState createState() => _EditProductWidgetState();
-}
-
-class _EditProductWidgetState extends State<EditProductWidget> {
-  String selectedLocal = AppLocalizations.supportedLocales.first;
-  TextEditingController categoryController;
-  ValueNotifier<bool> isUploading = ValueNotifier<bool>(false);
-  @override
-  void initState() {
-    super.initState();
-    categoryController = TextEditingController(
-        text: widget.category.localizedName[selectedLocal]);
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    print(widget.category.localizedName);
-    return Container(
-      padding: EdgeInsets.all(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                ...AppLocalizations.supportedLocales.map((e) => Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Card(
-                        shape: CircleBorder(),
-                        elevation: 4,
-                        child: AnimatedContainer(
-                          padding: EdgeInsets.all(0),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: e == selectedLocal ? kPrimary : kIcons,
-                          ),
-                          duration: Duration(milliseconds: 200),
-                          child: RawMaterialButton(
-                            constraints:
-                                BoxConstraints(minWidth: 50, minHeight: 50),
-                            shape: CircleBorder(),
-                            onPressed: () {
-                              setState(() {
-                                selectedLocal = e;
-                                categoryController.text = widget.category
-                                        .localizedName[selectedLocal] ??
-                                    '';
-                              });
-                            },
-                            padding: EdgeInsets.all(0),
-                            child: Text(
-                              e,
-                              style: TextStyle(
-                                color: e == selectedLocal ? kIcons : kPrimary,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    )),
-              ],
-            ),
-          ),
-          TextField(
-            controller: categoryController,
-            onChanged: (value) {
-              widget.category.localizedName[selectedLocal] = value;
-            },
-            style: TextStyle(),
-            cursorColor: kPrimary,
-            decoration: InputDecoration(
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: kPrimary),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: kPrimary),
-                ),
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: kPrimary),
-                ),
-                hintStyle: TextStyle(),
-                hintText:
-                    AppLocalizations.of(context).translate("Category Name")),
-          ),
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.only(top: 8),
-              child: Column(
-                children: <Widget>[
-                  Text(
-                      AppLocalizations.of(context).translate('Category image')),
-                  Expanded(
-                    child: ValueListenableBuilder<bool>(
-                      valueListenable: isUploading,
-                      builder: (context, value, child) {
-                        return value
-                            ? Center(
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation(kPrimary),
-                                ),
-                              )
-                            : child;
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: (widget.category.image.downloadUrl?.length ??
-                                    0) >
-                                0
-                            ? Stack(
-                                children: <Widget>[
-                                  Center(
-                                    child: Image(
-                                      image: NetworkImage(
-                                          widget.category.image.downloadUrl),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.topRight,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: RawMaterialButton(
-                                        shape: CircleBorder(),
-                                        onPressed: () {
-                                          setState(() {
-                                            widget.category.image.refPath =
-                                                null;
-                                            widget.category.image.downloadUrl =
-                                                null;
-                                          });
-                                        },
-                                        child: Icon(
-                                          Icons.close,
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : IconButton(
-                                onPressed: () async {
-                                  try {
-                                    var pickedImage = await ImagePicker()
-                                        .getImage(source: ImageSource.gallery);
-                                    if (pickedImage != null) {
-                                      File file = File(pickedImage.path);
-                                      String filename =
-                                          '${Uuid().v4()}${ppp.basename(file.path)}';
-                                      isUploading.value = true;
-                                      var imageRef = FirebaseStorage.instance
-                                          .ref()
-                                          .child('images')
-                                          .child(filename);
-                                      var uploadTask = imageRef
-                                          .putFile(File(pickedImage.path));
-                                      widget.category.image.refPath =
-                                          imageRef.path;
-                                      var res = await uploadTask.onComplete;
-                                      if (!uploadTask.isSuccessful)
-                                        throw Exception(AppLocalizations.of(
-                                                context)
-                                            .translate('File upload failed'));
-                                      String url =
-                                          await res.ref.getDownloadURL();
-                                      String refPath = imageRef.path;
-                                      if (!((url?.length ?? 0) > 0)) {
-                                        throw Exception(AppLocalizations.of(
-                                                context)
-                                            .translate('File upload failed'));
-                                      }
-                                      setState(() {
-                                        widget.category.image.downloadUrl = url;
-                                      });
-                                    }
-                                  } catch (e) {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return OkDialog(
-                                              title:
-                                                  AppLocalizations.of(context)
-                                                      .translate('Error'),
-                                              content: e.message);
-                                        });
-                                  } finally {
-                                    isUploading.value = false;
-                                  }
-                                },
-                                icon: Icon(Icons.add),
-                              ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          FlatButton(
-            color: kPrimary,
-            onPressed: () {
-              if (!((widget.category.image.downloadUrl?.length ?? 0) > 0 ||
-                  (widget.category.image.refPath?.length ?? 0) > 0)) {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return OkDialog(
-                          title:
-                              AppLocalizations.of(context).translate('Error'),
-                          content: AppLocalizations.of(context)
-                              .translate('Please pick an image'));
-                    });
-                return;
-              }
-              if (!((widget
-                          .category
-                          .localizedName[
-                              AppLocalizations.of(context).locale.languageCode]
-                          ?.length ??
-                      0) >
-                  0)) {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return OkDialog(
-                          title:
-                              AppLocalizations.of(context).translate('Error'),
-                          content: AppLocalizations.of(context).translate(
-                              'Please enter a category name in primary language'));
-                    });
-                return;
-              }
-              widget.onEditClicked(widget.category);
-              Navigator.pop(context);
-            },
-            child: Text(
-              AppLocalizations.of(context).translate('Add changes'),
-              style: TextStyle(color: kIcons),
-            ),
-          ),
-        ],
       ),
     );
   }

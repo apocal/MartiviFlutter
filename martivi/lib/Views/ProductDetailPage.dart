@@ -428,7 +428,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 Row(
                   children: [
                     Text(
-                      "Photo",
+                      AppLocalizations.of(context).translate('Photos'),
                       style: TextStyle(
                           fontFamily: "Sofia",
                           fontSize: 20.0,
@@ -440,49 +440,45 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           Navigator.of(context).push(PageRouteBuilder(
                             opaque: false,
                             pageBuilder: (BuildContext context, _, __) {
-                              return PageView(
-                                controller: PageController(
-                                  initialPage: 0,
+                              return Scaffold(
+                                appBar: AppBar(
+                                  title: Text(widget.p.localizedName[
+                                      AppLocalizations.of(context)
+                                          .locale
+                                          .languageCode]),
                                 ),
-                                scrollDirection: Axis.horizontal,
-                                physics: BouncingScrollPhysics(),
-                                pageSnapping: true,
-                                children: <Widget>[
-                                  ...?widget
-                                      .p
-                                      .productsForms[widget.p.selectedIndex]
-                                      .images
-                                      .map((e) => Scaffold(
-                                            appBar: AppBar(
-                                              title: Text(widget
-                                                      .p.localizedName[
-                                                  AppLocalizations.of(context)
-                                                      .locale
-                                                      .languageCode]),
-                                            ),
-                                            body: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 8.0,
-                                                  bottom: 5.0,
-                                                  left: 5.0,
-                                                  right: 5.0),
-                                              child: Container(
+                                body: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 8.0,
+                                      bottom: 5.0,
+                                      left: 5.0,
+                                      right: 5.0),
+                                  child: PageView(
+                                    physics: BouncingScrollPhysics(),
+                                    children: [
+                                      ...?widget
+                                          .p
+                                          .productsForms[widget.p.selectedIndex]
+                                          .images
+                                          .map((e) => Container(
                                                 decoration: BoxDecoration(
                                                   image: DecorationImage(
                                                       image: NetworkImage(
                                                           e.downloadUrl),
                                                       fit: BoxFit.cover),
                                                 ),
-                                              ),
-                                            ),
-                                          ))
-                                      .toList()
-                                ],
+                                              ))
+                                    ],
+                                    controller: PageController(initialPage: 0),
+                                    scrollDirection: Axis.horizontal,
+                                  ),
+                                ),
                               );
                             },
                           ));
                         },
-                        child: Text("See All",
+                        child: Text(
+                            AppLocalizations.of(context).translate('See all'),
                             style: TextStyle(
                                 fontFamily: "Sofia",
                                 fontSize: 15.0,
