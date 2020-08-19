@@ -13,6 +13,7 @@ import 'package:martivi/ViewModels/MainViewModel.dart';
 import 'package:martivi/Widgets/AddressesList.dart';
 import 'package:martivi/Widgets/Widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'ContactPage.dart';
 import 'OrdersPage.dart';
@@ -376,7 +377,16 @@ class UserProfilePage extends StatelessWidget {
                                 children: [
                                   Text(AppLocalizations.of(context)
                                       .translate('Phone')),
-                                  Text(streamUser.phoneNumber ?? ''),
+                                  SelectableText(
+                                    streamUser.phoneNumber ?? '',
+                                    onTap: () async {
+                                      if (await canLaunch(
+                                          'tel:${streamUser.phoneNumber ?? ''}')) {
+                                        launch(
+                                            'tel:${streamUser.phoneNumber ?? ''}');
+                                      }
+                                    },
+                                  ),
                                 ],
                               ),
                             ],

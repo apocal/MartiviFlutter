@@ -581,7 +581,8 @@ class _ProductItemState extends State<ProductItem> {
                                                       BorderRadius.circular(8)),
                                               elevation: 2,
                                               child: AnimatedContainer(
-                                                height: 40,
+                                                constraints: BoxConstraints(
+                                                    maxWidth: 110),
                                                 duration:
                                                     Duration(milliseconds: 200),
                                                 decoration: BoxDecoration(

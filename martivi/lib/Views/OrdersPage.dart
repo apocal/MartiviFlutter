@@ -55,6 +55,10 @@ class _OrdersPageState extends State<OrdersPage> {
                               order.documentId =
                                   snapshot.data.documents[index].documentID;
                               return OrderWidget(
+                                showIsSeenIcon:
+                                    databaseUser.role == UserType.admin
+                                        ? true
+                                        : false,
                                 order: order,
                               );
                             },
@@ -75,8 +79,9 @@ class _OrdersPageState extends State<OrdersPage> {
 }
 
 class OrderWidget extends StatelessWidget {
+  final bool showIsSeenIcon;
   final Order order;
-  OrderWidget({this.order});
+  OrderWidget({this.order, this.showIsSeenIcon = false});
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -88,6 +93,13 @@ class OrderWidget extends StatelessWidget {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             onPressed: () {
+              if (showIsSeenIcon) {
+                if (order.isSeen)
+                  Firestore.instance
+                      .collection('/orders')
+                      .document(order.documentId)
+                      .updateData({'isSeen': true});
+              }
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => OrderDetailPage(
                   order: order,
@@ -119,6 +131,11 @@ class OrderWidget extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               fontSize: 14),
                         ),
+                        if (showIsSeenIcon && !order.isSeen)
+                          Icon(
+                            Icons.star,
+                            color: kIcons,
+                          ),
                         Text(
                           '${AppLocalizations.of(context).translate('Order id')}: ${order.orderId?.toString() ?? ''}',
                           style: TextStyle(color: kIcons),

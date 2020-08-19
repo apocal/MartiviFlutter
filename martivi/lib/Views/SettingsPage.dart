@@ -64,6 +64,10 @@ class _SettingsPageState extends State<SettingsPage> {
                         setState(() {
                           settings.stopOrdering = value;
                         });
+                        Firestore.instance
+                            .collection('/settings')
+                            .document('settings')
+                            .updateData({'stopOrdering': value});
                       },
                     ),
                   ],

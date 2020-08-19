@@ -22,4 +22,4 @@ enum PaymentStatus {
   RETURNED,
   UNKNOWN
 }
-enum DeliveryStatus { Pending, Accepted, Completed, Unknown }
+enum DeliveryStatus { Pending, Accepted, Completed, Canceled }

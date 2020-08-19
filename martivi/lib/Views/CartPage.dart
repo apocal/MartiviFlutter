@@ -244,6 +244,11 @@ class _CartPageState extends State<CartPage> {
                                           AppLocalizations.of(context)
                                               .translate(
                                                   'Address not selected'));
+                                    if (settigns.stopOrdering) {
+                                      throw new MessageException(
+                                          AppLocalizations.of(context).translate(
+                                              'The service is temporarily unavailable'));
+                                    }
                                     if (paymentMethod == null)
                                       throw new MessageException(
                                           AppLocalizations.of(context).translate(
@@ -287,7 +292,8 @@ class _CartPageState extends State<CartPage> {
                                         builder: (context) => OkDialog(
                                           content: AppLocalizations.of(context)
                                               .translate('Order made'),
-                                          title: '',
+                                          title: AppLocalizations.of(context)
+                                              .translate('Information'),
                                         ),
                                       );
                                     });
@@ -425,7 +431,8 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                               BorderRadius.circular(8)),
                                       elevation: 2,
                                       child: AnimatedContainer(
-                                        height: 40,
+                                        constraints:
+                                            BoxConstraints(maxWidth: 110),
                                         duration: Duration(milliseconds: 200),
                                         decoration: BoxDecoration(
                                             color: widget.p.product
