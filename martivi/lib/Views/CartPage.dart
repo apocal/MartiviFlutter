@@ -254,11 +254,11 @@ class _CartPageState extends State<CartPage> {
                                           AppLocalizations.of(context).translate(
                                               'Payment method not selected'));
                                     var o = Order(
+                                        status: DeliveryStatus.Pending,
                                         orderId: viewModel.lastOrderId ?? 0,
                                         isSeen: false,
                                         serverTime:
                                             FieldValue.serverTimestamp(),
-                                        status: DeliveryStatus.Pending,
                                         uid: user.uid,
                                         deliveryAddress: selectedAddress,
                                         paymentMethod: paymentMethod,

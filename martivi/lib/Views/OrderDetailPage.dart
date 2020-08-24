@@ -395,7 +395,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               ],
             ),
             DeliveryStatusSteps(
-              activeStep: widget.order.status,
+              order: widget.order,
             )
           ],
         ),
@@ -405,16 +405,33 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 }
 
 class DeliveryStatusSteps extends StatefulWidget {
-  final DeliveryStatus activeStep;
-  DeliveryStatusSteps({this.activeStep});
+  final Order order;
+  DeliveryStatusSteps({this.order});
   @override
   _DeliveryStatusStepsState createState() => _DeliveryStatusStepsState();
 }
 
 class _DeliveryStatusStepsState extends State<DeliveryStatusSteps> {
+  List<Step> steps;
+  @override
+  void initState() {
+    steps = DeliveryStatus.values.map((e) {
+      return Step(
+          isActive: widget.order.status == e ? true : false,
+          state: StepState.indexed,
+          content: Text(''),
+          subtitle: Text(''),
+          title: Text(EnumToString.parse(e)));
+    }).toList();
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Stepper(
+      steps: steps,
+    );
   }
 }
 
