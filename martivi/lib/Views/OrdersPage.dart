@@ -102,7 +102,7 @@ class OrderWidget extends StatelessWidget {
               }
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => OrderDetailPage(
-                  order: order,
+                  orderR: order,
                 ),
               ));
             },
@@ -185,7 +185,11 @@ class OrderWidget extends StatelessWidget {
                                 Text(AppLocalizations.of(context)
                                     .translate('Order status')),
                                 Text(AppLocalizations.of(context).translate(
-                                    EnumToString.parse(order.status))),
+                                    EnumToString.parse(order
+                                        .deliveryStatusSteps.entries
+                                        .firstWhere(
+                                            (element) => element.value.isActive)
+                                        .key))),
                               ],
                             ),
                           )),
