@@ -126,5 +126,7 @@
   "The service is temporarily unavailable": "მომსახურება დროებით მიუწვდომელია",
   "Ordered products": "შეკვეთილი პროდუქტები",
   "User": "მომხმარებელი",
-  "Cancel": "გაუქმება"
+  "Cancel": "გაუქმება",
+  "Canceled": "გაუქმებული",
+  "Export pdf": "Pdf ექსპორტი"
 }

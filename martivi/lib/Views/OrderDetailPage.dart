@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
@@ -65,7 +66,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                       child: Text('No data'),
                     )
               : SingleChildScrollView(
-                  child: Column(
+                  child: Consumer<MainViewModel>(builder: (context, viewModel, child) => ValueListenableBuilder<User>(valueListenable: viewModel.databaseUser,builder: (context, databaseUser, child) =>  Column(
                     children: [
                       ExpansionTile(
                         title: Row(
@@ -78,8 +79,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                         leading: Text('Ordered products'),
                         children: order.products
                             .map((e) => OrderedProductWidget(
-                                  productForm: e,
-                                ))
+                          productForm: e,
+                        ))
                             .toList(),
                       ),
                       StreamBuilder<DocumentSnapshot>(
@@ -97,9 +98,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                   user.email ??
                                   (user.isAnonymous
                                       ? AppLocalizations.of(context)
-                                          .translate('Guest')
+                                      .translate('Guest')
                                       : AppLocalizations.of(context)
-                                          .translate('Unknown'))),
+                                      .translate('Unknown'))),
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -117,90 +118,90 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                       },
                                       child: Column(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
+                                        CrossAxisAlignment.stretch,
                                         children: [
                                           (user?.photoUrl?.length ?? 0) > 0
                                               ? Container(
-                                                  width: 100,
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .height /
-                                                      4,
-                                                  decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                          fit: BoxFit.cover,
-                                                          image: NetworkImage(
-                                                              user.photoUrl))),
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                        gradient: LinearGradient(
-                                                            colors: [
-                                                              Colors.black54,
-                                                              Colors.black54,
-                                                              Colors.transparent
-                                                            ],
-                                                            begin: Alignment
-                                                                .bottomCenter,
-                                                            end: Alignment
-                                                                .topCenter,
-                                                            stops: [
-                                                              0,
-                                                              .15,
-                                                              .5
-                                                            ])),
-                                                    child: Container(
-                                                        padding:
-                                                            EdgeInsets.all(12),
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .end,
-                                                          children: [
-                                                            Text(
-                                                              user.displayName ??
-                                                                  (user.isAnonymous
-                                                                      ? AppLocalizations.of(
-                                                                              context)
-                                                                          .translate(
-                                                                              'Guest')
-                                                                      : ''),
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: kIcons,
-                                                                  fontSize: 24),
-                                                            ),
-                                                            Text(
-                                                              user.email ?? '',
-                                                              style: TextStyle(
-                                                                  color:
-                                                                      kIcons),
-                                                            ),
-                                                          ],
-                                                        )),
-                                                  ),
-                                                )
-                                              : Column(
-                                                  children: [
-                                                    Icon(
-                                                      FontAwesome.user,
-                                                      color:
-                                                          Colors.grey.shade600,
-                                                      size: 60,
-                                                    ),
-                                                    Text(user.displayName ??
-                                                        (user.isAnonymous
-                                                            ? AppLocalizations
-                                                                    .of(context)
+                                            width: 100,
+                                            height: MediaQuery.of(context)
+                                                .size
+                                                .height /
+                                                4,
+                                            decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                    fit: BoxFit.cover,
+                                                    image: NetworkImage(
+                                                        user.photoUrl))),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                      colors: [
+                                                        Colors.black54,
+                                                        Colors.black54,
+                                                        Colors.transparent
+                                                      ],
+                                                      begin: Alignment
+                                                          .bottomCenter,
+                                                      end: Alignment
+                                                          .topCenter,
+                                                      stops: [
+                                                        0,
+                                                        .15,
+                                                        .5
+                                                      ])),
+                                              child: Container(
+                                                  padding:
+                                                  EdgeInsets.all(12),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                    CrossAxisAlignment
+                                                        .start,
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .end,
+                                                    children: [
+                                                      Text(
+                                                        user.displayName ??
+                                                            (user.isAnonymous
+                                                                ? AppLocalizations.of(
+                                                                context)
                                                                 .translate(
-                                                                    'Guest')
-                                                            : '')),
-                                                  ],
-                                                ),
+                                                                'Guest')
+                                                                : ''),
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold,
+                                                            color: kIcons,
+                                                            fontSize: 24),
+                                                      ),
+                                                      Text(
+                                                        user.email ?? '',
+                                                        style: TextStyle(
+                                                            color:
+                                                            kIcons),
+                                                      ),
+                                                    ],
+                                                  )),
+                                            ),
+                                          )
+                                              : Column(
+                                            children: [
+                                              Icon(
+                                                FontAwesome.user,
+                                                color:
+                                                Colors.grey.shade600,
+                                                size: 60,
+                                              ),
+                                              Text(user.displayName ??
+                                                  (user.isAnonymous
+                                                      ? AppLocalizations
+                                                      .of(context)
+                                                      .translate(
+                                                      'Guest')
+                                                      : '')),
+                                            ],
+                                          ),
                                           Divider(
                                             height: 30,
                                           ),
@@ -208,16 +209,16 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                             padding: EdgeInsets.all(8),
                                             child: Column(
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                               children: [
                                                 Row(
                                                   crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.start,
                                                   children: [
                                                     Icon(
                                                       Icons.info_outline,
                                                       color:
-                                                          Colors.grey.shade600,
+                                                      Colors.grey.shade600,
                                                     ),
                                                     SizedBox(
                                                       width: 20,
@@ -225,14 +226,14 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                     Flexible(
                                                       child: Column(
                                                         crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
+                                                        CrossAxisAlignment
+                                                            .start,
                                                         children: [
                                                           Text(
                                                             AppLocalizations.of(
-                                                                    context)
+                                                                context)
                                                                 .translate(
-                                                                    'User info'),
+                                                                'User info'),
                                                             style: TextStyle(
                                                                 color: Colors
                                                                     .grey
@@ -241,63 +242,63 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                           Divider(),
                                                           Row(
                                                             mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
                                                             crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
+                                                            CrossAxisAlignment
+                                                                .center,
                                                             children: [
                                                               Text(AppLocalizations
-                                                                      .of(
-                                                                          context)
+                                                                  .of(
+                                                                  context)
                                                                   .translate(
-                                                                      'User type')),
+                                                                  'User type')),
                                                               Text(AppLocalizations
-                                                                      .of(
-                                                                          context)
+                                                                  .of(
+                                                                  context)
                                                                   .translate(EnumToString
-                                                                      .parse(user
-                                                                          .role)))
+                                                                  .parse(user
+                                                                  .role)))
                                                             ],
                                                           ),
                                                           Divider(),
                                                           Row(
                                                             mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
                                                             crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
+                                                            CrossAxisAlignment
+                                                                .center,
                                                             children: [
                                                               Text(AppLocalizations
-                                                                      .of(
-                                                                          context)
+                                                                  .of(
+                                                                  context)
                                                                   .translate(
-                                                                      'User name')),
+                                                                  'User name')),
                                                               Text(user
-                                                                      .displayName ??
+                                                                  .displayName ??
                                                                   (user.isAnonymous
                                                                       ? AppLocalizations.of(
-                                                                              context)
-                                                                          .translate(
-                                                                              'Guest')
+                                                                      context)
+                                                                      .translate(
+                                                                      'Guest')
                                                                       : '')),
                                                             ],
                                                           ),
                                                           Divider(),
                                                           Row(
                                                             mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
                                                             crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
+                                                            CrossAxisAlignment
+                                                                .center,
                                                             children: [
                                                               Text(AppLocalizations
-                                                                      .of(
-                                                                          context)
+                                                                  .of(
+                                                                  context)
                                                                   .translate(
-                                                                      'E-mail')),
+                                                                  'E-mail')),
                                                               SelectableText(
                                                                   user.email ??
                                                                       ''),
@@ -306,17 +307,17 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                           Divider(),
                                                           Row(
                                                             mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
                                                             crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
+                                                            CrossAxisAlignment
+                                                                .center,
                                                             children: [
                                                               Text(AppLocalizations
-                                                                      .of(
-                                                                          context)
+                                                                  .of(
+                                                                  context)
                                                                   .translate(
-                                                                      'Phone')),
+                                                                  'Phone')),
                                                               SelectableText(
                                                                 user.phoneNumber ??
                                                                     '',
@@ -379,7 +380,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                       children: [
                                         Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                           children: [
                                             Text(AppLocalizations.of(context)
                                                 .translate('Name')),
@@ -393,7 +394,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                         ),
                                         Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                           children: [
                                             Text(AppLocalizations.of(context)
                                                 .translate('Phone')),
@@ -407,7 +408,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                         ),
                                         Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                           children: [
                                             Text(AppLocalizations.of(context)
                                                 .translate('Address')),
@@ -448,7 +449,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                       bottom: 5),
                                                   child: MapWidget(
                                                     address:
-                                                        order.deliveryAddress,
+                                                    order.deliveryAddress,
                                                     onMapTap: (pos) {
                                                       Navigator.pop(context);
                                                     },
@@ -467,9 +468,11 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                       ),
                       DeliveryStatusSteps(
                         order: order,
-                      )
+                      ),
+if(databaseUser?.role==UserType.admin) FlatButton(child: Text(AppLocalizations.of(context).translate('Export pdf')),onPressed: (){},)
+
                     ],
-                  ),
+                  )),),
                 ),
         );
       },
@@ -502,12 +505,7 @@ class _DeliveryStatusStepsState extends State<DeliveryStatusSteps> {
                               .creationTimestamp as Timestamp)
                           ?.toDate() ??
                       DateTime(0000))),
-                  content: Text(DateFormat.yMd().add_Hms().format((widget
-                              .order
-                              .deliveryStatusSteps[DeliveryStatus.Pending]
-                              .creationTimestamp as Timestamp)
-                          ?.toDate() ??
-                      DateTime(0000))),
+                  content: Text(''),
                   state: widget.order
                       .deliveryStatusSteps[DeliveryStatus.Pending].stepState,
                   isActive: widget.order
@@ -517,18 +515,16 @@ class _DeliveryStatusStepsState extends State<DeliveryStatusSteps> {
             if (widget.order.deliveryStatusSteps
                 .containsKey(DeliveryStatus.Accepted))
               CustomStep(
-                  status: DeliveryStatus.Accepted,subtitle:Text(DateFormat.yMd().add_Hms().format((widget
-                              .order
-                              .deliveryStatusSteps[DeliveryStatus.Completed]
-                              .creationTimestamp as Timestamp)
-                          ?.toDate() ??
-                      DateTime(0000))),
-                  content: Text(DateFormat.yMd().add_Hms().format((widget
+                  status: DeliveryStatus.Accepted,subtitle:Text(widget
+              .order
+              .deliveryStatusSteps[DeliveryStatus.Accepted]
+              .creationTimestamp==null?'': DateFormat.yMd().add_Hms().format((widget
                               .order
                               .deliveryStatusSteps[DeliveryStatus.Accepted]
                               .creationTimestamp as Timestamp)
                           ?.toDate() ??
                       DateTime(0000))),
+                  content: Text(''),
                   state: widget.order
                       .deliveryStatusSteps[DeliveryStatus.Accepted].stepState,
                   isActive: widget.order
@@ -539,7 +535,10 @@ class _DeliveryStatusStepsState extends State<DeliveryStatusSteps> {
                 .containsKey(DeliveryStatus.Completed))
               CustomStep(
                   status: DeliveryStatus.Completed,
-                  content: Text(DateFormat.yMd().add_Hms().format((widget
+                  content: Text(''),subtitle: Text(widget
+              .order
+              .deliveryStatusSteps[DeliveryStatus.Completed]
+              .creationTimestamp==null?'': DateFormat.yMd().add_Hms().format((widget
                               .order
                               .deliveryStatusSteps[DeliveryStatus.Completed]
                               .creationTimestamp as Timestamp)
@@ -568,7 +567,7 @@ class _DeliveryStatusStepsState extends State<DeliveryStatusSteps> {
                   title: Text(
                       AppLocalizations.of(context).translate(EnumToString.parse(DeliveryStatus.Canceled)))),
           ];
-          return Stepper(currentStep:steps.indexOf(steps.firstWhere((element) => element.isActive)),
+          return Stepper(key: Key(Random.secure().nextDouble().toString()), currentStep:steps.indexOf(steps.firstWhere((element) => element.isActive)),
             onStepTapped: databaseUser?.role == UserType.admin
                 ? (index) {
                     widget.order.deliveryStatusSteps.entries.forEach((element) {
@@ -588,11 +587,6 @@ class _DeliveryStatusStepsState extends State<DeliveryStatusSteps> {
                                 .order
                                 .deliveryStatusSteps[DeliveryStatus.Completed]
                                 .stepState = StepState.indexed;
-                            if (widget.order.deliveryStatusSteps
-                                .containsKey(DeliveryStatus.Canceled)) {
-                              widget.order.deliveryStatusSteps
-                                  .remove(DeliveryStatus.Canceled);
-                            }
                             break;
                           }
                         case DeliveryStatus.Accepted:
@@ -609,11 +603,7 @@ class _DeliveryStatusStepsState extends State<DeliveryStatusSteps> {
                                 .order
                                 .deliveryStatusSteps[DeliveryStatus.Completed]
                                 .stepState = StepState.indexed;
-                            if (widget.order.deliveryStatusSteps
-                                .containsKey(DeliveryStatus.Canceled)) {
-                              widget.order.deliveryStatusSteps
-                                  .remove(DeliveryStatus.Canceled);
-                            }
+
                             break;
                           }
                         case DeliveryStatus.Completed:
@@ -630,11 +620,7 @@ class _DeliveryStatusStepsState extends State<DeliveryStatusSteps> {
                                 .order
                                 .deliveryStatusSteps[DeliveryStatus.Completed]
                                 .stepState = StepState.complete;
-                            if (widget.order.deliveryStatusSteps
-                                .containsKey(DeliveryStatus.Canceled)) {
-                              widget.order.deliveryStatusSteps
-                                  .remove(DeliveryStatus.Canceled);
-                            }
+
                             break;
                           }
                         case DeliveryStatus.Canceled:
@@ -659,7 +645,17 @@ class _DeliveryStatusStepsState extends State<DeliveryStatusSteps> {
                           }
                       }
                     });
-                    widget.order.deliveryStatusSteps[steps[index].status].creationTimestamp=FieldValue.serverTimestamp();
+
+                    if(steps[index].status!=DeliveryStatus.Canceled)
+                      {
+                        if (widget.order.deliveryStatusSteps
+                            .containsKey(DeliveryStatus.Canceled)) {
+                          widget.order.deliveryStatusSteps
+                              .remove(DeliveryStatus.Canceled);
+                        }
+                      }
+
+                    widget.order.deliveryStatusSteps[steps[index].status].creationTimestamp??=FieldValue.serverTimestamp();
                     widget.order.deliveryStatusSteps[steps[index].status]
                         .isActive = true;
                     widget.order.deliveryStatusSteps[steps[index].status]
@@ -677,7 +673,20 @@ class _DeliveryStatusStepsState extends State<DeliveryStatusSteps> {
             controlsBuilder: (context, {onStepCancel, onStepContinue}) {
               return Container(
                 child: Row(children: [
-                 if(databaseUser?.role==UserType.admin) FlatButton(child: Text(AppLocalizations.of(context).translate('Cancel')),onPressed: (){},)
+                 if(databaseUser?.role==UserType.admin&&widget.order.deliveryStatusSteps[DeliveryStatus.Canceled]?.isActive!=true) FlatButton(child: Text(AppLocalizations.of(context).translate('Cancel')),onPressed: (){
+                                   widget.order.deliveryStatusSteps.forEach((key, value) {
+                                     value.isActive=false;
+                                   });
+                                   widget.order.deliveryStatusSteps[DeliveryStatus.Canceled]=DeliveryStatusStep(creationTimestamp: FieldValue.serverTimestamp(),isActive: true,stepState: StepState.error);
+                    Firestore.instance
+                        .collection('/orders')
+                        .document(widget.order.documentId)
+                        .updateData({
+                      'deliveryStatusSteps': widget.order.deliveryStatusSteps
+                          .map((key, value) =>
+                              MapEntry(EnumToString.parse(key), value.toJson()))
+                    });
+                 },)
                 ],),
               );
             },

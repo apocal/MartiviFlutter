@@ -127,6 +127,7 @@
   "The service is temporarily unavailable": "The service is temporarily unavailable",
   "Ordered products": "Ordered products",
   "User": "User",
-  "Cancel": "Cancel"
-
+  "Cancel": "Cancel",
+  "Canceled": "Canceled",
+  "Export pdf": "Export pdf"
 }

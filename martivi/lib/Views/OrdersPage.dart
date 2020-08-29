@@ -84,6 +84,7 @@ class OrderWidget extends StatelessWidget {
   OrderWidget({this.order, this.showIsSeenIcon = false});
   @override
   Widget build(BuildContext context) {
+    print(order.isSeen);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Material(
@@ -94,7 +95,7 @@ class OrderWidget extends StatelessWidget {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             onPressed: () {
               if (showIsSeenIcon) {
-                if (order.isSeen)
+                if (!order.isSeen)
                   Firestore.instance
                       .collection('/orders')
                       .document(order.documentId)
