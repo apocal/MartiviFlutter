@@ -24,8 +24,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return Consumer<MainViewModel>(
       builder: (context, viewModel, child) => Scaffold(
         appBar: AppBar(
-          title: Text(widget.p
-              .localizedName[AppLocalizations.of(context).locale.languageCode]),
+          title: Text(widget.p.localizedName[
+                  AppLocalizations.of(context).locale.languageCode] ??
+              ''),
           actions: [
             ValueListenableBuilder<List<CartItem>>(
               valueListenable: viewModel.cart,
@@ -126,9 +127,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                               children: <Widget>[
                                 Text(
                                   widget.p.localizedName[
-                                      AppLocalizations.of(context)
-                                          .locale
-                                          .languageCode],
+                                          AppLocalizations.of(context)
+                                              .locale
+                                              .languageCode] ??
+                                      '',
                                   style: TextStyle(
                                       fontFamily: "Sans",
                                       color: Colors.black87,
@@ -136,9 +138,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                 ),
                                 Text(
                                   widget.p.localizedDescription[
-                                      AppLocalizations.of(context)
-                                          .locale
-                                          .languageCode],
+                                          AppLocalizations.of(context)
+                                              .locale
+                                              .languageCode] ??
+                                      '',
                                   style: TextStyle(
                                     color: Colors.black54,
                                     fontWeight: FontWeight.w500,
@@ -444,9 +447,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                               return Scaffold(
                                 appBar: AppBar(
                                   title: Text(widget.p.localizedName[
-                                      AppLocalizations.of(context)
-                                          .locale
-                                          .languageCode]),
+                                          AppLocalizations.of(context)
+                                              .locale
+                                              .languageCode] ??
+                                      ''),
                                 ),
                                 body: Padding(
                                   padding: const EdgeInsets.only(
@@ -605,8 +609,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       top: 30.0, left: 20.0, right: 20.0, bottom: 50.0),
                   child: Text(
                     widget.p.productsForms[widget.p.selectedIndex]
-                            .localizedFormDescription[
-                        AppLocalizations.of(context).locale.languageCode],
+                                .localizedFormDescription[
+                            AppLocalizations.of(context).locale.languageCode] ??
+                        '',
                     style: TextStyle(
                         fontFamily: "Sofia",
                         color: Colors.black54,

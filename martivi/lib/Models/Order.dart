@@ -6,6 +6,8 @@ import 'package:martivi/Models/enums.dart';
 
 class Order {
   Map<DeliveryStatus, DeliveryStatusStep> deliveryStatusSteps;
+  String TransactionID;
+  String Hash;
   int orderId;
   String documentId;
   String uid;
@@ -16,20 +18,23 @@ class Order {
   UserAddress deliveryAddress;
   bool isSeen;
   dynamic serverTime;
-  Order({
-    this.paymentMethod,
-    this.deliveryStatusSteps,
-    this.orderId,
-    this.paymentStatus = PaymentStatus.NotPaid,
-    this.documentId,
-    this.isSeen,
-    this.serverTime,
-    this.uid,
-    this.products,
-    this.deliveryAddress,
-    this.deliveryFee,
-  });
+  Order(
+      {this.paymentMethod,
+      this.deliveryStatusSteps,
+      this.orderId,
+      this.paymentStatus = PaymentStatus.NotPaid,
+      this.documentId,
+      this.isSeen,
+      this.serverTime,
+      this.uid,
+      this.products,
+      this.deliveryAddress,
+      this.deliveryFee,
+      this.Hash,
+      this.TransactionID});
   Order.fromJson(Map<String, dynamic> json) {
+    TransactionID = json['TransactionID'] as String;
+    Hash = json['Hash'] as String;
     deliveryStatusSteps = (json['deliveryStatusSteps'] as Map<String, dynamic>)
         ?.map((key, value) => MapEntry(
             EnumToString.fromString(DeliveryStatus.values, key),
@@ -50,6 +55,8 @@ class Order {
   }
   Map<String, dynamic> toJson() {
     return {
+      'TransactionID': TransactionID,
+      'Hash': Hash,
       'deliveryStatusSteps': deliveryStatusSteps.map(
           (key, value) => MapEntry(EnumToString.parse(key), value.toJson())),
       'orderId': orderId,
@@ -61,6 +68,19 @@ class Order {
       'paymentMethod': EnumToString.parse(paymentMethod),
       'deliveryFee': deliveryFee,
       'deliveryAddress': deliveryAddress?.toJson(),
+    };
+  }
+
+  Map<String, dynamic> toCheckoutJson(BuildContext context) {
+    return {
+      'documentId': documentId,
+      'TransactionID': TransactionID,
+      'Hash': Hash,
+      'uid': uid,
+      'OrderId': orderId,
+      'OrderedProducts':
+          products?.map((e) => e.toCheckoutJson(context))?.toList(),
+      'DeliveryFee': deliveryFee,
     };
   }
 }

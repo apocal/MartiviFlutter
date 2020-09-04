@@ -522,13 +522,11 @@ class _ProductItemState extends State<ProductItem> {
                             borderRadius: BorderRadius.circular(4),
                             image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: NetworkImage(widget
-                                      .p
-                                      ?.productsForms[widget.p.selectedIndex]
-                                      ?.images
-                                      ?.first
-                                      ?.downloadUrl ??
-                                  ''),
+                              image: NetworkImage(widget.p?.productsForms
+                                  ?.elementAt(widget.p.selectedIndex)
+                                  ?.images
+                                  ?.first
+                                  ?.downloadUrl),
                             )),
                       ),
                       Expanded(
@@ -541,9 +539,10 @@ class _ProductItemState extends State<ProductItem> {
                                 children: <Widget>[
                                   Text(
                                     widget.p.localizedName[
-                                        AppLocalizations.of(context)
-                                            .locale
-                                            .languageCode],
+                                            AppLocalizations.of(context)
+                                                .locale
+                                                .languageCode] ??
+                                        '',
                                     style: TextStyle(
                                         fontFamily: "Sans",
                                         color: Colors.black87,
@@ -551,9 +550,10 @@ class _ProductItemState extends State<ProductItem> {
                                   ),
                                   Text(
                                     widget.p.localizedDescription[
-                                        AppLocalizations.of(context)
-                                            .locale
-                                            .languageCode],
+                                            AppLocalizations.of(context)
+                                                .locale
+                                                .languageCode] ??
+                                        '',
                                     style: TextStyle(
                                       color: Colors.black54,
                                       fontWeight: FontWeight.w500,
@@ -1168,7 +1168,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                       ),
                     ],
                   ),
-                  if (widget.pc.selectedIndex != null) ...[
+                  if (widget?.pc?.selectedIndex != null) ...[
                     TextField(
                       maxLines: null,
                       controller: productFormNameController,
@@ -1387,8 +1387,26 @@ class _AddProductWidgetState extends State<AddProductWidget> {
               FlatButton(
                 color: kPrimary,
                 onPressed: () {
-                  widget.onAddClicked(widget.pc);
-                  Navigator.pop(context);
+                  try {
+                    if (!((widget.pc?.productsForms?.length ?? 0) > 0))
+                      throw AppLocalizations.of(context).translate(
+                          'Product does not contain any product form');
+                    widget.pc.productsForms.forEach((element) {
+                      if (!((element.images?.length ?? 0) > 0))
+                        throw AppLocalizations.of(context).translate(
+                            'Product form does not contain any image');
+                    });
+                    widget.onAddClicked(widget.pc);
+                    Navigator.pop(context);
+                  } catch (e) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => OkDialog(
+                        title: AppLocalizations.of(context).translate('Error'),
+                        content: e.toString(),
+                      ),
+                    );
+                  }
                 },
                 child: Text(
                   AppLocalizations.of(context).translate('Add'),

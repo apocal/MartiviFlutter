@@ -128,5 +128,19 @@
   "User": "მომხმარებელი",
   "Cancel": "გაუქმება",
   "Canceled": "გაუქმებული",
-  "Export pdf": "Pdf ექსპორტი"
+  "Export pdf": "Pdf ექსპორტი",
+  "Description": "აღწერა",
+  "Quantity": "რაოდენობა",
+  "Total": "სრულად",
+  "INVOICE": "ინვოისი",
+  "Invoice": "ინვოისი",
+  "Date": "თარიღი",
+  "Invoice to": "ინვოისი მასზედ",
+  "Thank you for your business": "მადლობა თქვენი საქმიანობისთვის",
+  "Payment Info": "გადახდის დეტალები",
+  "Sub Total": "ქვე სრული",
+  "Thank you for your business": "გმადლობთ საქმიანობისთვის",
+  "Checkout": "გადახდა",
+  "Product does not contain any product form": "პროდუქტი არ შეიცავს არცერთ პროდუქტის ფორმას",
+  "Product form does not contain any image": "პროდუქტის ფორმა არ შეიცავს არცერთ სურათს"
 }

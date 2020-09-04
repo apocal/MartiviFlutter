@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/Models/Address.dart';
@@ -13,6 +16,7 @@ import 'package:martivi/Models/Settings.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
+import 'package:martivi/Views/UnipayCheckoutPage.dart';
 import 'package:martivi/Widgets/AddressesList.dart';
 import 'package:martivi/Widgets/Widgets.dart';
 import 'package:provider/provider.dart';
@@ -25,270 +29,301 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  ValueNotifier<bool> ordering = ValueNotifier<bool>(false);
   PaymentMethods paymentMethod;
   UserAddress selectedAddress;
   @override
   Widget build(BuildContext context) {
-    return Consumer2<MainViewModel, FirebaseUser>(
-      builder: (context, viewModel, user, child) {
-        return user != null
-            ? ValueListenableBuilder<List<CartItem>>(
-                valueListenable: viewModel.cart,
-                builder: (context, cart, child) {
-                  var pForms = cart.expand<ProductForm>((element) => element
-                      .product.productsForms
-                      .where((element) => element.quantity > 0));
-                  double totalPrice = pForms.fold<double>(
-                      0,
-                      (previousValue, element) =>
-                          previousValue + element.quantity * element.price);
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SingleChildScrollView(
-                      child: ValueListenableBuilder<Settings>(
-                        valueListenable: viewModel.settings,
-                        builder: (context, settigns, child) => Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Theme(
-                              data: ThemeData(
-                                accentColor: kPrimary,
-                                textTheme: Theme.of(context).textTheme.copyWith(
-                                    subtitle1: TextStyle(
-                                        color: Colors.black.withOpacity(.7))),
-                              ),
-                              child: ExpansionTile(
-                                leading: Text(
-                                  AppLocalizations.of(context)
-                                      .translate('Cart'),
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+    return ValueListenableBuilder(
+      valueListenable: ordering,
+      builder: (context, value, child) {
+        return Stack(
+          children: [
+            child,
+            if (value)
+              Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(kPrimary),
+                ),
+              )
+          ],
+        );
+      },
+      child: Consumer2<MainViewModel, FirebaseUser>(
+        builder: (context, viewModel, user, child) {
+          return user != null
+              ? ValueListenableBuilder<List<CartItem>>(
+                  valueListenable: viewModel.cart,
+                  builder: (context, cart, child) {
+                    var pForms = cart.expand<ProductForm>((element) => element
+                        .product.productsForms
+                        .where((element) => element.quantity > 0));
+                    double totalPrice = pForms.fold<double>(
+                        0,
+                        (previousValue, element) =>
+                            previousValue + element.quantity * element.price);
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SingleChildScrollView(
+                        child: ValueListenableBuilder<Settings>(
+                          valueListenable: viewModel.settings,
+                          builder: (context, settigns, child) => Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Theme(
+                                data: ThemeData(
+                                  accentColor: kPrimary,
+                                  textTheme: Theme.of(context)
+                                      .textTheme
+                                      .copyWith(
+                                          subtitle1: TextStyle(
+                                              color: Colors.black
+                                                  .withOpacity(.7))),
                                 ),
-                                title: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                                child: ExpansionTile(
+                                  leading: Text(
+                                    AppLocalizations.of(context)
+                                        .translate('Cart'),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  title: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                          '${pForms.length.toString()} ${AppLocalizations.of(context).translate('Product')} | '),
+                                      Text(
+                                        '₾${totalPrice.toString()}',
+                                      )
+                                    ],
+                                  ),
                                   children: [
-                                    Text(
-                                        '${pForms.length.toString()} ${AppLocalizations.of(context).translate('Product')} | '),
-                                    Text(
-                                      '₾${totalPrice.toString()}',
+                                    ...viewModel.cart.value
+                                        .map((e) => CartItemWidget(
+                                              p: e,
+                                            ))
+                                        .toList(),
+                                  ],
+                                ),
+                              ),
+                              Theme(
+                                data: ThemeData(
+                                  accentColor: kPrimary,
+                                  textTheme: Theme.of(context)
+                                      .textTheme
+                                      .copyWith(
+                                        subtitle1: TextStyle(
+                                          color: Colors.black.withOpacity(.7),
+                                        ),
+                                      ),
+                                ),
+                                child: ExpansionTile(
+                                  title: Text(AppLocalizations.of(context)
+                                      .translate('Addresses')),
+                                  children: [
+                                    StreamBuilder<QuerySnapshot>(
+                                      stream: Firestore.instance
+                                          .collection('userAddresses')
+                                          .where('uid', isEqualTo: user.uid)
+                                          .snapshots(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.data != null) {
+                                          return AddressesList(
+                                            addressSelected: (address) {
+                                              selectedAddress = address;
+                                            },
+                                            userAddresses: snapshot
+                                                .data.documents
+                                                .map((e) =>
+                                                    UserAddress.fromDocument(e))
+                                                .toList(),
+                                          );
+                                        }
+                                        return Container();
+                                      },
+                                    ),
+                                    FlatButton(
+                                      splashColor: kPrimary.withOpacity(0.2),
+                                      highlightColor: kPrimary.withOpacity(.2),
+                                      onPressed: () async {
+                                        var userAddress =
+                                            await Navigator.push<UserAddress>(
+                                                context,
+                                                MaterialPageRoute<UserAddress>(
+                                                  builder: (context) =>
+                                                      AddAddressPage(),
+                                                ));
+                                        if (userAddress != null) {
+                                          Firestore.instance
+                                              .collection('/userAddresses')
+                                              .document()
+                                              .setData(userAddress.toJson());
+                                        }
+                                      },
+                                      child: Text(
+                                        AppLocalizations.of(context)
+                                            .translate('Add address'),
+                                        style: TextStyle(color: kPrimary),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Theme(
+                                data: ThemeData(
+                                  accentColor: kPrimary,
+                                  textTheme: Theme.of(context)
+                                      .textTheme
+                                      .copyWith(
+                                        subtitle1: TextStyle(
+                                          color: Colors.black.withOpacity(.7),
+                                        ),
+                                      ),
+                                ),
+                                child: ExpansionTile(
+                                  title: Text(AppLocalizations.of(context)
+                                      .translate('Payment methods')),
+                                  children: [
+                                    RadioListTile(
+                                      title: Text(AppLocalizations.of(context)
+                                          .translate('Debit / Credit Card')),
+                                      value: paymentMethod,
+                                      groupValue: PaymentMethods.CreditCard,
+                                      onChanged: (val) {
+                                        setState(() {
+                                          paymentMethod =
+                                              PaymentMethods.CreditCard;
+                                        });
+                                      },
+                                    ),
+                                    RadioListTile(
+                                      title: Text(AppLocalizations.of(context)
+                                          .translate('By Cash')),
+                                      value: paymentMethod,
+                                      groupValue: PaymentMethods.ByCash,
+                                      onChanged: (val) {
+                                        setState(() {
+                                          paymentMethod = PaymentMethods.ByCash;
+                                        });
+                                      },
                                     )
                                   ],
                                 ),
-                                children: [
-                                  ...viewModel.cart.value
-                                      .map((e) => CartItemWidget(
-                                            p: e,
-                                          ))
-                                      .toList(),
-                                ],
                               ),
-                            ),
-                            Theme(
-                              data: ThemeData(
-                                accentColor: kPrimary,
-                                textTheme: Theme.of(context).textTheme.copyWith(
-                                      subtitle1: TextStyle(
-                                        color: Colors.black.withOpacity(.7),
-                                      ),
+                              Divider(
+                                height: 20,
+                                color: Colors.grey,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 16),
+                                child: Text(
+                                  AppLocalizations.of(context)
+                                      .translate('Price'),
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: 16, right: 16, top: 16),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(AppLocalizations.of(context)
+                                        .translate('Delivery fee')),
+                                    Text(
+                                      '₾${(totalPrice == 0 ? 0 : totalPrice > settigns.minimumOrderPrice ? 0 : settigns.deliveryFeeUnderMaximumOrderPrice).toString()}',
+                                      style: TextStyle(
+                                          color: totalPrice >
+                                                  settigns.minimumOrderPrice
+                                              ? Colors.green
+                                              : Colors.red),
                                     ),
+                                  ],
+                                ),
                               ),
-                              child: ExpansionTile(
-                                title: Text(AppLocalizations.of(context)
-                                    .translate('Addresses')),
-                                children: [
-                                  StreamBuilder<QuerySnapshot>(
-                                    stream: Firestore.instance
-                                        .collection('userAddresses')
-                                        .where('uid', isEqualTo: user.uid)
-                                        .snapshots(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.data != null) {
-                                        return AddressesList(
-                                          addressSelected: (address) {
-                                            selectedAddress = address;
+                              Divider(),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  right: 16,
+                                  left: 16,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(AppLocalizations.of(context)
+                                        .translate('Total price')),
+                                    Text(
+                                        '₾${(totalPrice == 0 ? 0 : totalPrice > settigns.minimumOrderPrice ? totalPrice : totalPrice + settigns.deliveryFeeUnderMaximumOrderPrice).toString()}')
+                                  ],
+                                ),
+                              ),
+                              if (totalPrice > 0 && user != null)
+                                FlatButton(
+                                  onPressed: () async {
+                                    try {
+                                      ordering.value = true;
+                                      var totalPriceWithDelivery = totalPrice >
+                                              settigns.minimumOrderPrice
+                                          ? totalPrice
+                                          : totalPrice +
+                                              settigns
+                                                  .deliveryFeeUnderMaximumOrderPrice;
+                                      if (selectedAddress == null)
+                                        throw new MessageException(
+                                            AppLocalizations.of(context)
+                                                .translate(
+                                                    'Address not selected'));
+                                      if (settigns.stopOrdering) {
+                                        throw new MessageException(
+                                            AppLocalizations.of(context).translate(
+                                                'The service is temporarily unavailable'));
+                                      }
+                                      if (paymentMethod == null)
+                                        throw new MessageException(
+                                            AppLocalizations.of(context).translate(
+                                                'Payment method not selected'));
+                                      var o = Order(
+                                          deliveryStatusSteps: {
+                                            DeliveryStatus.Pending:
+                                                DeliveryStatusStep(
+                                                    isActive: true,
+                                                    creationTimestamp:
+                                                        FieldValue
+                                                            .serverTimestamp(),
+                                                    stepState:
+                                                        StepState.indexed),
+                                            DeliveryStatus.Accepted:
+                                                DeliveryStatusStep(
+                                                    isActive: false,
+                                                    stepState:
+                                                        StepState.indexed),
+                                            DeliveryStatus.Completed:
+                                                DeliveryStatusStep(
+                                                    isActive: false,
+                                                    stepState:
+                                                        StepState.indexed)
                                           },
-                                          userAddresses: snapshot.data.documents
-                                              .map((e) =>
-                                                  UserAddress.fromDocument(e))
-                                              .toList(),
-                                        );
-                                      }
-                                      return Container();
-                                    },
-                                  ),
-                                  FlatButton(
-                                    splashColor: kPrimary.withOpacity(0.2),
-                                    highlightColor: kPrimary.withOpacity(.2),
-                                    onPressed: () async {
-                                      var userAddress =
-                                          await Navigator.push<UserAddress>(
-                                              context,
-                                              MaterialPageRoute<UserAddress>(
-                                                builder: (context) =>
-                                                    AddAddressPage(),
-                                              ));
-                                      if (userAddress != null) {
-                                        Firestore.instance
-                                            .collection('/userAddresses')
-                                            .document()
-                                            .setData(userAddress.toJson());
-                                      }
-                                    },
-                                    child: Text(
-                                      AppLocalizations.of(context)
-                                          .translate('Add address'),
-                                      style: TextStyle(color: kPrimary),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Theme(
-                              data: ThemeData(
-                                accentColor: kPrimary,
-                                textTheme: Theme.of(context).textTheme.copyWith(
-                                      subtitle1: TextStyle(
-                                        color: Colors.black.withOpacity(.7),
-                                      ),
-                                    ),
-                              ),
-                              child: ExpansionTile(
-                                title: Text(AppLocalizations.of(context)
-                                    .translate('Payment methods')),
-                                children: [
-                                  RadioListTile(
-                                    title: Text(AppLocalizations.of(context)
-                                        .translate('Debit / Credit Card')),
-                                    value: paymentMethod,
-                                    groupValue: PaymentMethods.CreditCard,
-                                    onChanged: (val) {
-                                      setState(() {
-                                        paymentMethod =
-                                            PaymentMethods.CreditCard;
-                                      });
-                                    },
-                                  ),
-                                  RadioListTile(
-                                    title: Text(AppLocalizations.of(context)
-                                        .translate('By Cash')),
-                                    value: paymentMethod,
-                                    groupValue: PaymentMethods.ByCash,
-                                    onChanged: (val) {
-                                      setState(() {
-                                        paymentMethod = PaymentMethods.ByCash;
-                                      });
-                                    },
-                                  )
-                                ],
-                              ),
-                            ),
-                            Divider(
-                              height: 20,
-                              color: Colors.grey,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 16),
-                              child: Text(
-                                AppLocalizations.of(context).translate('Price'),
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  EdgeInsets.only(left: 16, right: 16, top: 16),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(AppLocalizations.of(context)
-                                      .translate('Delivery fee')),
-                                  Text(
-                                    '₾${(totalPrice == 0 ? 0 : totalPrice > settigns.minimumOrderPrice ? 0 : settigns.deliveryFeeUnderMaximumOrderPrice).toString()}',
-                                    style: TextStyle(
-                                        color: totalPrice >
-                                                settigns.minimumOrderPrice
-                                            ? Colors.green
-                                            : Colors.red),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Divider(),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                right: 16,
-                                left: 16,
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(AppLocalizations.of(context)
-                                      .translate('Total price')),
-                                  Text(
-                                      '₾${(totalPrice == 0 ? 0 : totalPrice > settigns.minimumOrderPrice ? totalPrice : totalPrice + settigns.deliveryFeeUnderMaximumOrderPrice).toString()}')
-                                ],
-                              ),
-                            ),
-                            if (totalPrice > 0 && user != null)
-                              FlatButton(
-                                onPressed: () {
-                                  try {
-                                    var totalPriceWithDelivery = totalPrice >
-                                            settigns.minimumOrderPrice
-                                        ? totalPrice
-                                        : totalPrice +
-                                            settigns
-                                                .deliveryFeeUnderMaximumOrderPrice;
-                                    if (selectedAddress == null)
-                                      throw new MessageException(
-                                          AppLocalizations.of(context)
-                                              .translate(
-                                                  'Address not selected'));
-                                    if (settigns.stopOrdering) {
-                                      throw new MessageException(
-                                          AppLocalizations.of(context).translate(
-                                              'The service is temporarily unavailable'));
-                                    }
-                                    if (paymentMethod == null)
-                                      throw new MessageException(
-                                          AppLocalizations.of(context).translate(
-                                              'Payment method not selected'));
-                                    var o = Order(
-                                        deliveryStatusSteps: {
-                                          DeliveryStatus.Pending:
-                                              DeliveryStatusStep(
-                                                  isActive: true,
-                                                  creationTimestamp: FieldValue
-                                                      .serverTimestamp(),
-                                                  stepState: StepState.indexed),
-                                          DeliveryStatus.Accepted:
-                                              DeliveryStatusStep(
-                                                  isActive: false,
-                                                  stepState: StepState.indexed),
-                                          DeliveryStatus.Completed:
-                                              DeliveryStatusStep(
-                                                  isActive: false,
-                                                  stepState: StepState.indexed)
-                                        },
-                                        orderId: viewModel.lastOrderId ?? 0,
-                                        isSeen: false,
-                                        serverTime:
-                                            FieldValue.serverTimestamp(),
-                                        uid: user.uid,
-                                        deliveryAddress: selectedAddress,
-                                        paymentMethod: paymentMethod,
-                                        products: pForms.toList(),
-                                        deliveryFee: totalPrice == 0
-                                            ? 0
-                                            : totalPrice >
-                                                    settigns.minimumOrderPrice
-                                                ? 0
-                                                : settigns
-                                                    .deliveryFeeUnderMaximumOrderPrice);
-                                    Firestore.instance
-                                        .collection('/orders')
-                                        .add(o.toJson())
-                                        .then((value) {
+                                          orderId: viewModel.lastOrderId ?? 0,
+                                          isSeen: false,
+                                          serverTime:
+                                              FieldValue.serverTimestamp(),
+                                          uid: user.uid,
+                                          deliveryAddress: selectedAddress,
+                                          paymentMethod: paymentMethod,
+                                          products: pForms.toList(),
+                                          deliveryFee: totalPrice == 0
+                                              ? 0
+                                              : totalPrice >
+                                                      settigns.minimumOrderPrice
+                                                  ? 0
+                                                  : settigns
+                                                      .deliveryFeeUnderMaximumOrderPrice);
+                                      var value = await Firestore.instance
+                                          .collection('/orders')
+                                          .add(o.toJson());
+
                                       Firestore.instance
                                           .collection('/settings')
                                           .document('ordersCounterDocument')
@@ -302,6 +337,29 @@ class _CartPageState extends State<CartPage> {
                                             .document(element.documentId)
                                             .delete();
                                       });
+                                      o.documentId = value.documentID;
+                                      if (paymentMethod ==
+                                          PaymentMethods.CreditCard) {
+                                        var res = await http.post(
+                                            '${viewModel.prefs.getString('ServerBaseAddress')}Api/Orders/CheckoutFlutter',
+                                            body: jsonEncode(o.toCheckoutJson(context)),
+                                            headers: {
+                                              'Content-Type': 'application/json'
+                                            });
+                                        if (res.statusCode == 200) {
+                                          var decoded = jsonDecode(res.body)
+                                              as Map<String, dynamic>;
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      UnipayCheckoutPage(
+                                                        order: o,
+                                                        createOrderResult:
+                                                            decoded,
+                                                      )));
+                                        }
+                                      }
                                       showDialog(
                                         context: context,
                                         builder: (context) => OkDialog(
@@ -311,35 +369,35 @@ class _CartPageState extends State<CartPage> {
                                               .translate('Information'),
                                         ),
                                       );
-                                    });
-                                  } on MessageException catch (me) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => OkDialog(
-                                        title: AppLocalizations.of(context)
-                                            .translate('Error'),
-                                        content: me.message,
-                                      ),
-                                    );
-                                  } catch (e) {
-                                    print(e);
-                                  }
-                                },
-                                child: Text(AppLocalizations.of(context)
-                                    .translate('Place order')),
-                              )
-                          ],
+                                    } on MessageException catch (me) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => OkDialog(
+                                          title: AppLocalizations.of(context)
+                                              .translate('Error'),
+                                          content: me.message,
+                                        ),
+                                      );
+                                    } catch (e) {} finally {
+                                      ordering.value = false;
+                                    }
+                                  },
+                                  child: Text(AppLocalizations.of(context)
+                                      .translate('Place order')),
+                                )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
-              )
-            : Align(
-                child: Text(
-                    AppLocalizations.of(context).translate('Unauthorized')),
-              );
-      },
+                    );
+                  },
+                )
+              : Align(
+                  child: Text(
+                      AppLocalizations.of(context).translate('Unauthorized')),
+                );
+        },
+      ),
     );
   }
 }

@@ -290,7 +290,9 @@ class MainViewModel extends ChangeNotifier {
             var p = Product.fromJson(element.data);
             p.productDocumentId = element.documentID;
             tempProducts.add(p);
-          } catch (e) {}
+          } catch (e) {
+            print(e.toString());
+          }
         });
         products.value = tempProducts;
       } catch (e) {}

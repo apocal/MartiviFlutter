@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,6 +8,7 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
@@ -15,10 +18,16 @@ import 'package:martivi/Models/Order.dart';
 import 'package:martivi/Models/Product.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
+import 'package:martivi/Uitls/ExportInvoice.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
 import 'package:martivi/Views/UserPage.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'UnipayCheckoutPage.dart';
 
 class OrderDetailPage extends StatefulWidget {
   final Order orderR;
@@ -29,6 +38,7 @@ class OrderDetailPage extends StatefulWidget {
 }
 
 class _OrderDetailPageState extends State<OrderDetailPage> {
+  ValueNotifier<bool> paymentStatusChecking=ValueNotifier(false);
   @override
   void initState() {
     // TODO: implement initState
@@ -466,10 +476,122 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                           )
                         ],
                       ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Material(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(2)),
+                                elevation: 4,
+                                color: Colors.grey.shade300,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Column(
+                                    children: [
+                                      Text(AppLocalizations.of(context)
+                                          .translate('Order status')),
+                                      Text(AppLocalizations.of(context).translate(
+                                          EnumToString.parse(order
+                                              .deliveryStatusSteps.entries
+                                              .firstWhere(
+                                                  (element) => element.value.isActive)
+                                              .key))),
+                                    ],
+                                  ),
+                                )),
+                            ValueListenableBuilder(valueListenable: paymentStatusChecking,child: Material(color: Colors.grey.shade300,
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(2)),
+                              child: RawMaterialButton(shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(2)),onPressed:databaseUser.role==UserType.admin? ()async{
+
+                                if(paymentStatusChecking.value)return;
+                                try{
+                                  paymentStatusChecking.value=true;
+                                  await http.post(
+                                      '${viewModel.prefs.getString('ServerBaseAddress')}CheckoutResult',
+                                      body: jsonEncode(order.toCheckoutJson(context)),
+                                      headers: {
+                                        'Content-Type': 'application/json'
+                                      });
+                                }
+                                catch(e){
+
+                                }
+                                finally
+                                {
+                                  paymentStatusChecking.value=false;
+                                }
+
+                              }:()async{
+                                if(paymentStatusChecking.value)return;
+                                try{
+                                  paymentStatusChecking.value=true;
+                                  var res = await http.post(
+                                      '${viewModel.prefs.getString('ServerBaseAddress')}Api/Orders/CheckoutFlutter',
+                                      body: jsonEncode(order.toCheckoutJson(context)),
+                                      headers: {
+                                        'Content-Type': 'application/json'
+                                      });
+                                  if (res.statusCode == 200) {
+                                    var decoded = jsonDecode(res.body)
+                                    as Map<String, dynamic>;
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                UnipayCheckoutPage(order: order,
+                                                  createOrderResult:
+                                                  decoded,
+                                                )));
+                                  }
+                                }
+                                catch(e){
+print(e);
+                                }
+                                finally
+                                {
+                                  paymentStatusChecking.value=false;
+                                }
+                              },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Column(
+                                    children: [
+                                      Text(AppLocalizations.of(context)
+                                          .translate('Payment status')),
+                                      Text(AppLocalizations.of(context).translate(
+                                          EnumToString.parse(order.paymentStatus))),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),builder: (context, value, child) {
+                              return  Stack(
+                                children: [
+                                  child,
+                                  if(paymentStatusChecking.value)Positioned.fill(child: Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(kPrimary),)))
+                                ],
+                              );
+                            },),
+
+                          ],
+                        ),
+                      ),
                       DeliveryStatusSteps(
                         order: order,
                       ),
-if(databaseUser?.role==UserType.admin) FlatButton(child: Text(AppLocalizations.of(context).translate('Export pdf')),onPressed: (){},)
+if(databaseUser?.role==UserType.admin) FlatButton(child: Text(AppLocalizations.of(context).translate('Export pdf')),onPressed: ()async {
+ var res = await exportInvoice(pageFormat: PdfPageFormat.a4,order: order,bContext: context);
+ final Directory appDocDir = await getApplicationDocumentsDirectory();
+ final String appDocPath = appDocDir.path;
+ final File f = File(appDocPath+'/'+'doc.pdf');
+ await f.writeAsBytes(res);
+ OpenFile.open(f.path);
+},),
 
                     ],
                   )),),
@@ -789,6 +911,14 @@ class OrderedProductWidget extends StatelessWidget {
               Text(
                 productForm.localizedFormDescription[
                     AppLocalizations.of(context).locale.languageCode],
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12.0,
+                ),
+              ),
+              Text(
+               '${AppLocalizations.of(context).translate('Quantity')}: ${productForm.quantity}',
                 style: TextStyle(
                   color: Colors.black54,
                   fontWeight: FontWeight.w500,

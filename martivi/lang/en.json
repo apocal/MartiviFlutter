@@ -129,5 +129,19 @@
   "User": "User",
   "Cancel": "Cancel",
   "Canceled": "Canceled",
-  "Export pdf": "Export pdf"
+  "Export pdf": "Export pdf",
+  "Description": "Description",
+  "Quantity": "Quantity",
+  "Total": "Total",
+  "INVOICE": "INVOICE",
+  "Invoice": "Invoice",
+  "Invoice to": "Invoice to",
+  "Date": "Date",
+  "Thank you for your business": "Thank you for your business",
+  "Payment Info": "Payment Info",
+  "Sub Total": "Sub Total",
+  "Thank you for your business": "Thank you for your business",
+  "Checkout": "Checkout",
+  "Product does not contain any product form": "Product does not contain any product form",
+  "Product form does not contain any image": "Product form does not contain any image"
 }

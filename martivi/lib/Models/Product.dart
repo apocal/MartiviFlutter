@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/Models/FirestoreImage.dart';
 
 class Product {
@@ -46,12 +48,20 @@ class ProductForm {
         'price': price,
         'localizedWeight': localizedWeight,
       };
+  Map<String, dynamic> toCheckoutJson(BuildContext context) => {
+        'Quantity': quantity,
+        'Price': price,
+        'Name':
+            localizedFormName[AppLocalizations.of(context).locale.languageCode],
+        'Description': localizedFormDescription[
+            AppLocalizations.of(context).locale.languageCode],
+      };
   ProductForm({this.localizedFormName, this.localizedFormDescription});
   ProductForm.fromJson(Map<String, dynamic> json) {
     localizedFormName = Map<String, String>.from(json['localizedFormName']);
     localizedFormDescription =
         Map<String, String>.from(json['localizedFormDescription'] ?? {});
-    price = (json['price'] as num).toDouble();
+    price = (json['price'] as num)?.toDouble();
     localizedWeight = json['localizedWeight'];
     quantity = (json['quantity'] as num)?.toInt();
     images = (json['images'] as List<dynamic>)
