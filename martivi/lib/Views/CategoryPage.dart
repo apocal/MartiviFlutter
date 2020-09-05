@@ -12,6 +12,7 @@ import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/Models/Category.dart';
 import 'package:martivi/Models/FirestoreImage.dart';
+import 'package:martivi/Models/Product.dart';
 import 'package:martivi/Models/Settings.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
@@ -365,45 +366,108 @@ class _CategoryPageState extends State<CategoryPage> {
                           },
                         ),
                       ),
-                      FlatButton(
-                        onPressed: () async {
-                          var response = await http.get(
-                              'http://martivi.net/api/Categories/GetFilteredCategories');
-                          var encoded =
-                              List.castFrom<dynamic, Map<String, dynamic>>(
-                                  jsonDecode(response.body) as List<dynamic>);
-                          await Future.delayed(Duration(seconds: 3));
-                          await Future.forEach(encoded, (element) async {
-                            var res =
-                                await http.get(element['image'] as String);
-                            var byteRes = res.bodyBytes;
-                            print(byteRes);
-                            Category c = Category(
-                                image: FirestoreImage(),
-                                localizedName: Map<String, String>.fromIterable(
-                                    AppLocalizations.supportedLocales,
-                                    key: (e) => e,
-                                    value: (e) => element['name'] as String));
-                            String filename =
-                                '${Uuid().v4()}${ppp.basename(element['name'] as String)}';
+                      if (databaseUser?.role == UserType.admin)
+                        FlatButton(
+                          onPressed: () async {
+                            var response = await http.get(
+                                'http://martivi.net/api/Categories/GetFilteredCategories');
+                            var encoded =
+                                List.castFrom<dynamic, Map<String, dynamic>>(
+                                    jsonDecode(response.body) as List<dynamic>);
+                            await Future.delayed(Duration(seconds: 3));
+                            await Future.forEach(encoded, (element) async {
+                              var res =
+                                  await http.get(element['image'] as String);
+                              var byteRes = res.bodyBytes;
+                              Category c = Category(
+                                  image: FirestoreImage(),
+                                  localizedName:
+                                      Map<String, String>.fromIterable(
+                                          AppLocalizations.supportedLocales,
+                                          key: (e) => e,
+                                          value: (e) =>
+                                              element['name'] as String));
+                              String filename =
+                                  '${Uuid().v4()}${ppp.basename(element['name'] as String)}';
 
-                            var imageRef = FirebaseStorage.instance
-                                .ref()
-                                .child('images')
-                                .child(filename);
-                            var uploadTask = imageRef.putData(byteRes);
-                            c.image.refPath = imageRef.path;
-                            var uploadRes = await uploadTask.onComplete;
-                            c.image.downloadUrl =
-                                await uploadRes.ref.getDownloadURL();
-                            var products = element['products'] as List<dynamic>;
-                            await viewModel.storeCategory(c);
-                          });
+                              var imageRef = FirebaseStorage.instance
+                                  .ref()
+                                  .child('images')
+                                  .child(filename);
+                              var uploadTask = imageRef.putData(byteRes);
+                              c.image.refPath = imageRef.path;
+                              var uploadRes = await uploadTask.onComplete;
+                              c.image.downloadUrl =
+                                  await uploadRes.ref.getDownloadURL();
+                              var products =
+                                  element['products'] as List<dynamic>;
+                              var catRef = await viewModel.storeCategory(c);
+                              await Future.forEach(products, (element) async {
+                                Product p = Product();
+                                p.documentId = catRef.documentID;
+                                p.localizedName =
+                                    Map<String, String>.fromIterable(
+                                        AppLocalizations.supportedLocales,
+                                        key: (e) => e,
+                                        value: (e) =>
+                                            element['name'] as String);
+                                p.localizedDescription =
+                                    Map<String, String>.fromIterable(
+                                        AppLocalizations.supportedLocales,
+                                        key: (e) => e,
+                                        value: (e) =>
+                                            element['description'] as String);
+                                var pf = ProductForm();
+                                FirestoreImage pfImage = FirestoreImage();
+                                pf.images = [pfImage];
+                                pf.quantityInSupply =
+                                    element['quantityInSupply'];
 
-                          print(response.body);
-                        },
-                        child: Text('Import'),
-                      ),
+                                pf.localizedFormName =
+                                    Map<String, String>.fromIterable(
+                                        AppLocalizations.supportedLocales,
+                                        key: (e) => e,
+                                        value: (e) =>
+                                            element['name'] as String);
+                                pf.localizedFormDescription =
+                                    Map<String, String>.fromIterable(
+                                        AppLocalizations.supportedLocales,
+                                        key: (e) => e,
+                                        value: (e) =>
+                                            element['description'] as String);
+                                pf.price = element['price'];
+                                pf.localizedWeight =
+                                    Map<String, String>.fromIterable(
+                                        AppLocalizations.supportedLocales,
+                                        key: (e) => e,
+                                        value: (e) =>
+                                            element['weight'] as String);
+
+                                var res =
+                                    await http.get(element['image'] as String);
+                                var byteRes = res.bodyBytes;
+
+                                String filename =
+                                    '${Uuid().v4()}${ppp.basename(element['name'] as String)}';
+
+                                var imageRef = FirebaseStorage.instance
+                                    .ref()
+                                    .child('images')
+                                    .child(filename);
+                                var uploadTask = imageRef.putData(byteRes);
+                                pfImage.refPath = imageRef.path;
+                                var uploadRes = await uploadTask.onComplete;
+                                pfImage.downloadUrl =
+                                    await uploadRes.ref.getDownloadURL();
+                                p.productsForms = [pf];
+                                viewModel.storeProduct(p);
+                              });
+                            });
+
+                            print(response.body);
+                          },
+                          child: Text('Import'),
+                        ),
                       if (databaseUser?.role == UserType.admin) child
                     ],
                   );

@@ -93,7 +93,7 @@ class _CartPageState extends State<CartPage> {
                                       Text(
                                           '${pForms.length.toString()} ${AppLocalizations.of(context).translate('Product')} | '),
                                       Text(
-                                        '₾${totalPrice.toString()}',
+                                        '₾${totalPrice.toStringAsFixed(2)}',
                                       )
                                     ],
                                   ),

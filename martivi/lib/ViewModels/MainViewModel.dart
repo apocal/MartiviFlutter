@@ -289,7 +289,9 @@ class MainViewModel extends ChangeNotifier {
           try {
             var p = Product.fromJson(element.data);
             p.productDocumentId = element.documentID;
-            tempProducts.add(p);
+            if ((p?.productsForms?.length ?? 0) > 0) {
+              tempProducts.add(p);
+            }
           } catch (e) {
             print(e.toString());
           }
@@ -304,13 +306,11 @@ class MainViewModel extends ChangeNotifier {
     products.value = [];
   }
 
-  Future storeCategory(Category c) async {
+  Future<DocumentReference> storeCategory(Category c) async {
     c.order = categories.value.length > 0 ? categories.value.last.order + 1 : 1;
 
-    await Firestore.instance
-        .collection('/categories')
-        .document()
-        .setData(c.toJson(), merge: true);
+    return Firestore.instance.collection('/categories').document()
+      ..setData(c.toJson(), merge: true);
   }
 
   Future storeProduct(
@@ -363,6 +363,22 @@ class MainViewModel extends ChangeNotifier {
         .collection('/categories')
         .document(c.documentId)
         .delete();
+    Firestore.instance
+        .collection('/products')
+        .where('documentId', isEqualTo: c.documentId)
+        .getDocuments()
+        .then((value) => value.documents.forEach((element) {
+              var p = Product.fromJson(element.data);
+              p.productsForms.forEach((element) {
+                element.images.forEach((element) {
+                  FirebaseStorage.instance
+                      .ref()
+                      .child(element.refPath)
+                      .delete();
+                });
+              });
+              element.reference.delete();
+            }));
     FirebaseStorage.instance.ref().child(c.image.refPath).delete();
   }
 

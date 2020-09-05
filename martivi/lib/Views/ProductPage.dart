@@ -161,6 +161,25 @@ class _ProductPageState extends State<ProductPage> {
                           child: ValueListenableBuilder<List<Product>>(
                             valueListenable: viewModel.products,
                             builder: (context, value, child) {
+                              // if (value.length == 0)
+                              //   return Container(
+                              //     child: Stack(
+                              //       children: [
+                              //         Positioned.fill(
+                              //             child: SvgPicture.asset(
+                              //                 'assets/svg/NoItem.svg')),
+                              //         Center(
+                              //             child: Text(
+                              //           'კატეგორია ცარიელია!',
+                              //           style: TextStyle(
+                              //               fontSize: 16,
+                              //               color: kPrimary,
+                              //               fontWeight: FontWeight.bold),
+                              //         ))
+                              //       ],
+                              //     ),
+                              //   );
+
                               return user?.role == UserType.admin
                                   ? ListView.builder(
                                       itemBuilder: (context, index) {
@@ -564,77 +583,73 @@ class _ProductItemState extends State<ProductItem> {
                                     '₾${widget.p.productsForms[widget.p.selectedIndex].price.toString()}',
                                     style: TextStyle(),
                                   ),
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: <Widget>[
-                                        ...widget.p.productsForms.map(
-                                          (e) => Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 5,
-                                                right: 5,
-                                                left: 8,
-                                                bottom: 8),
-                                            child: Material(
-                                              shape: RoundedRectangleBorder(
+                                  Wrap(
+                                    children: <Widget>[
+                                      ...widget.p.productsForms.map(
+                                        (e) => Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 5,
+                                              right: 5,
+                                              left: 8,
+                                              bottom: 8),
+                                          child: Material(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8)),
+                                            elevation: 2,
+                                            child: AnimatedContainer(
+                                              constraints:
+                                                  BoxConstraints(maxWidth: 110),
+                                              duration:
+                                                  Duration(milliseconds: 200),
+                                              decoration: BoxDecoration(
+                                                  color: widget.p.productsForms[
+                                                              widget.p
+                                                                  .selectedIndex] ==
+                                                          e
+                                                      ? kPrimary
+                                                      : kIcons,
                                                   borderRadius:
                                                       BorderRadius.circular(8)),
-                                              elevation: 2,
-                                              child: AnimatedContainer(
+                                              child: RawMaterialButton(
                                                 constraints: BoxConstraints(
-                                                    maxWidth: 110),
-                                                duration:
-                                                    Duration(milliseconds: 200),
-                                                decoration: BoxDecoration(
-                                                    color: widget.p.productsForms[
-                                                                widget.p
-                                                                    .selectedIndex] ==
-                                                            e
-                                                        ? kPrimary
-                                                        : kIcons,
+                                                    minHeight: 0),
+                                                splashColor: Colors.red,
+                                                shape: RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             8)),
-                                                child: RawMaterialButton(
-                                                  constraints: BoxConstraints(
-                                                      minHeight: 0),
-                                                  splashColor: Colors.red,
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8)),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      widget.p.selectedIndex =
-                                                          widget.p.productsForms
-                                                              .indexOf(e);
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    padding: EdgeInsets.all(4),
-                                                    child: Text(
-                                                      e.localizedFormName[
-                                                          AppLocalizations.of(
-                                                                  context)
-                                                              .locale
-                                                              .languageCode],
-                                                      style: TextStyle(
-                                                          color: e ==
-                                                                  widget.p.productsForms[
-                                                                      widget.p
-                                                                          .selectedIndex]
-                                                              ? Colors.white
-                                                              : Colors.black87),
-                                                      maxLines: null,
-                                                    ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    widget.p.selectedIndex =
+                                                        widget.p.productsForms
+                                                            .indexOf(e);
+                                                  });
+                                                },
+                                                child: Container(
+                                                  padding: EdgeInsets.all(4),
+                                                  child: Text(
+                                                    e.localizedFormName[
+                                                        AppLocalizations.of(
+                                                                context)
+                                                            .locale
+                                                            .languageCode],
+                                                    style: TextStyle(
+                                                        color: e ==
+                                                                widget.p.productsForms[
+                                                                    widget.p
+                                                                        .selectedIndex]
+                                                            ? Colors.white
+                                                            : Colors.black87),
+                                                    maxLines: null,
                                                   ),
                                                 ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                   if (user?.role == UserType.user) child,
                                 ],
@@ -674,8 +689,31 @@ class _ProductItemState extends State<ProductItem> {
                                                           .p.selectedIndex]
                                                       .quantity = 1;
                                                   viewModel.storeCart(widget.p);
-                                                },
-                                              )
+                                                }
+                                                // onPressed: !((widget
+                                                //                 .p
+                                                //                 .productsForms[
+                                                //                     widget.p
+                                                //                         .selectedIndex]
+                                                //                 .quantityInSupply ??
+                                                //             1) <
+                                                //         0)
+                                                //     ? () {
+                                                //         widget.p.productsForms
+                                                //             .forEach((element) {
+                                                //           element.quantity = 0;
+                                                //         });
+                                                //         widget
+                                                //             .p
+                                                //             .productsForms[widget
+                                                //                 .p
+                                                //                 .selectedIndex]
+                                                //             .quantity = 1;
+                                                //         viewModel.storeCart(
+                                                //             widget.p);
+                                                //       }
+                                                //     : null,
+                                                )
                                             : Container(
                                                 child: Container(
                                                   decoration: BoxDecoration(
@@ -783,6 +821,21 @@ class _ProductItemState extends State<ProductItem> {
                                                         child: InkWell(
                                                           onTap: () {
                                                             try {
+                                                              if (widget
+                                                                      .p
+                                                                      .productsForms[
+                                                                          widget
+                                                                              .p
+                                                                              .selectedIndex]
+                                                                      .quantityInSupply ==
+                                                                  inCartProduct
+                                                                      .product
+                                                                      .productsForms[
+                                                                          widget
+                                                                              .p
+                                                                              .selectedIndex]
+                                                                      .quantity)
+                                                                return;
                                                               inCartProduct
                                                                   .product
                                                                   .productsForms[
@@ -872,6 +925,8 @@ class _AddProductWidgetState extends State<AddProductWidget> {
   TextEditingController productFormDescriptionController =
       TextEditingController();
   TextEditingController productFormPriceController = TextEditingController();
+  TextEditingController productFormQuantityInSupplyController =
+      TextEditingController();
   TextEditingController productFormWeightController = TextEditingController();
   String selectedLocal = AppLocalizations.supportedLocales.first;
   ValueNotifier<bool> isUploading = ValueNotifier<bool>(false);
@@ -918,6 +973,10 @@ class _AddProductWidgetState extends State<AddProductWidget> {
       productFormPriceController.text =
           widget.pc.productsForms[widget.pc.selectedIndex].price?.toString() ??
               '';
+      productFormQuantityInSupplyController.text = widget
+              .pc.productsForms[widget.pc.selectedIndex].quantityInSupply
+              ?.toString() ??
+          '';
     }
   }
 
@@ -1220,6 +1279,23 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                           hintText: AppLocalizations.of(context)
                               .translate("Product form Price")),
                     ),
+                    // TextField(
+                    //   keyboardType: TextInputType.number,
+                    //   maxLines: null,
+                    //   controller: productFormQuantityInSupplyController,
+                    //   onChanged: (value) {
+                    //     setState(() {
+                    //       widget.pc.productsForms[widget.pc.selectedIndex]
+                    //           .quantity = int.tryParse(value);
+                    //     });
+                    //   },
+                    //   style: TextStyle(),
+                    //   cursorColor: kPrimary,
+                    //   decoration: kinputFiledDecoration.copyWith(
+                    //       suffixText: curencyMark,
+                    //       hintText: AppLocalizations.of(context)
+                    //           .translate("Quantity in supply")),
+                    // ),
                     SingleChildScrollView(
                       physics: BouncingScrollPhysics(),
                       scrollDirection: Axis.horizontal,

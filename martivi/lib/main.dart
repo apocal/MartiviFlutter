@@ -32,7 +32,7 @@ class MartiviApp extends StatelessWidget {
           ProductPage.id: (context) => ProductPage(),
           SingUpLoginPage.id: (context) => SingUpLoginPage()
         },
-        supportedLocales: [Locale('en', 'US'), Locale('ka', 'GE')],
+        supportedLocales: [Locale('ka', 'GE'), Locale('en', 'US')],
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,

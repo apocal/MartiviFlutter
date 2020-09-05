@@ -28,6 +28,7 @@ class Product {
     var ff = (json['productsForms'] as List<dynamic>);
     productsForms = (json['productsForms'] as List<dynamic>)
         ?.map((e) => ProductForm.fromJson(e))
+        ?.where((element) => element.quantityInSupply != 0)
         ?.toList();
   }
   Product();
@@ -37,10 +38,12 @@ class ProductForm {
   Map<String, String> localizedFormName;
   Map<String, String> localizedFormDescription;
   List<FirestoreImage> images;
+  int quantityInSupply;
   double price;
   Map<String, String> localizedWeight;
   int quantity;
   Map<String, dynamic> toJson() => {
+        'quantityInSupply': quantityInSupply,
         'localizedFormName': localizedFormName,
         'localizedFormDescription': localizedFormDescription,
         'quantity': quantity,
@@ -58,11 +61,12 @@ class ProductForm {
       };
   ProductForm({this.localizedFormName, this.localizedFormDescription});
   ProductForm.fromJson(Map<String, dynamic> json) {
+    quantityInSupply = (json['quantityInSupply'] as num)?.toInt();
     localizedFormName = Map<String, String>.from(json['localizedFormName']);
     localizedFormDescription =
         Map<String, String>.from(json['localizedFormDescription'] ?? {});
     price = (json['price'] as num)?.toDouble();
-    localizedWeight = json['localizedWeight'];
+    localizedWeight = Map<String, String>.from(json['localizedWeight'] ?? {});
     quantity = (json['quantity'] as num)?.toInt();
     images = (json['images'] as List<dynamic>)
         ?.map((e) => FirestoreImage.fromJson(e))

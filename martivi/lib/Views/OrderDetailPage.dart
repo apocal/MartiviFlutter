@@ -86,11 +86,14 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                 '${order.products.length} ${AppLocalizations.of(context).translate('Product')} | ₾${order.products.fold(0, (previousValue, element) => previousValue + element.price * element.quantity)}'),
                           ],
                         ),
-                        leading: Text('Ordered products'),
+                        leading: Text(AppLocalizations.of(context).translate('Ordered products')),
                         children: order.products
-                            .map((e) => OrderedProductWidget(
+                            .map((e) => Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: OrderedProductWidget(
                           productForm: e,
-                        ))
+                        ),
+                            ))
                             .toList(),
                       ),
                       StreamBuilder<DocumentSnapshot>(
@@ -895,7 +898,7 @@ class OrderedProductWidget extends StatelessWidget {
                 image:
                     NetworkImage(productForm?.images?.first?.downloadUrl ?? ''),
               )),
-        ),
+        ),SizedBox(width: 4,),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

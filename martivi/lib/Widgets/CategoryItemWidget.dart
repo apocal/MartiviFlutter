@@ -17,7 +17,7 @@ class itemCard extends StatelessWidget {
       padding:
           const EdgeInsets.only(left: 10.0, right: 10.0, top: 8.0, bottom: 5.0),
       child: Container(
-        height: 140.0,
+        height: 180.0,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15.0))),
         child: Material(
@@ -57,6 +57,7 @@ class itemCard extends StatelessWidget {
                             category.localizedName[
                                 AppLocalizations.supportedLocales.first] ??
                             '',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           shadows: [
                             BoxShadow(
