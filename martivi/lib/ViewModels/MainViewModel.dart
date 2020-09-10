@@ -17,29 +17,30 @@ class MainViewModel extends ChangeNotifier {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   int lastOrderId;
-  FirebaseUser user;
+  User user;
   final auth = FirebaseAuth.instance;
-  AuthResult authResult;
+  // AuthResult authResult;
   SharedPreferences prefs;
   bool isConnected = false;
   ValueNotifier<bool> isSigningSignUping = ValueNotifier<bool>(false);
-  ValueNotifier<User> databaseUser = ValueNotifier<User>(null);
+  ValueNotifier<DatabaseUser> databaseUser = ValueNotifier<DatabaseUser>(null);
   ValueNotifier<List<Category>> categories = ValueNotifier<List<Category>>([]);
-  ValueNotifier<List<Product>> products = ValueNotifier<List<Product>>([]);
   ValueNotifier<List<CartItem>> cart = ValueNotifier<List<CartItem>>([]);
   ValueNotifier<bool> newMessages = ValueNotifier<bool>(false);
   ValueNotifier<bool> adminNewMessages = ValueNotifier<bool>(false);
   ValueNotifier<List<ChatMessage>> userMessages =
       ValueNotifier<List<ChatMessage>>([]);
-  ValueNotifier<Settings> settings = ValueNotifier<Settings>(Settings());
-  ValueNotifier<List<User>> users = ValueNotifier<List<User>>([]);
+  ValueNotifier<AppSettings> settings =
+      ValueNotifier<AppSettings>(AppSettings());
+  ValueNotifier<List<DatabaseUser>> users =
+      ValueNotifier<List<DatabaseUser>>([]);
   MainViewModel() {
     init();
   }
   void signAnonymouslyifNotSigned() async {
     try {
       isSigningSignUping.value = true;
-      if (await auth.currentUser() == null) {
+      if (auth.currentUser == null) {
         var res = await auth.signInAnonymously();
         if (res != null) {
           await storeNewUser(res.user, UserType.user);
@@ -98,53 +99,51 @@ class MainViewModel extends ChangeNotifier {
   StreamSubscription<DocumentSnapshot> ordersCounterListener;
 
   Future init() async {
-    auth.onAuthStateChanged.listen((event) {
+    auth.authStateChanges().listen((event) {
       if (event != null) {
         user = event;
 
         cartListener?.cancel();
-        cartListener = Firestore.instance
+        cartListener = FirebaseFirestore.instance
             .collection('/cart')
             .where('userId', isEqualTo: user.uid)
             .snapshots()
             .listen((event) {
           try {
             List<CartItem> c = [];
-            event.documents.forEach((element) {
-              CartItem ci = CartItem.fromJson(element.data);
-              ci.documentId = element.documentID;
+            event.docs.forEach((element) {
+              CartItem ci = CartItem.fromJson(element.data());
+              ci.documentId = element.id;
               c.add(ci);
             });
             cart.value = c;
-          } catch (e) {
-            var exc = e;
-          }
+          } catch (e) {}
         });
 
         categoryListener?.cancel();
-        categoryListener = Firestore.instance
+        categoryListener = FirebaseFirestore.instance
             .collection('/categories')
             .orderBy('order')
             .snapshots()
             .listen((event) {
           List<Category> cs = [];
-          event.documents.forEach((element) {
-            var c = Category.fromJson(element.data);
-            c.documentId = element.documentID;
+          event.docs.forEach((element) {
+            var c = Category.fromJson(element.data());
+            c.documentId = element.id;
             cs.add(c);
           });
           categories.value = cs;
         });
         databaseUserListener?.cancel();
-        databaseUserListener = Firestore.instance
+        databaseUserListener = FirebaseFirestore.instance
             .collection('/users')
             .where('uid', isEqualTo: user?.uid ?? '')
             .snapshots()
             .listen((event) {
           try {
-            databaseUser.value = User.fromMap(event.documents
-                .firstWhere((element) => element.documentID == user.uid)
-                .data);
+            databaseUser.value = DatabaseUser.fromMap(event.docs
+                .firstWhere((element) => element.id == user.uid)
+                .data());
 
             usersListener?.cancel();
             chatListener?.cancel();
@@ -159,19 +158,19 @@ class MainViewModel extends ChangeNotifier {
             switch (databaseUser.value.role) {
               case UserType.user:
                 {
-                  newMessagesListener = Firestore.instance
+                  newMessagesListener = FirebaseFirestore.instance
                       .collection('/newmessages')
-                      .document('to${databaseUser.value.uid}FromAdmin')
+                      .doc('to${databaseUser.value.uid}FromAdmin')
                       .snapshots()
                       .listen((event) {
                     if (event.data != null) {
                       try {
                         newMessages.value =
-                            event.data['hasNewMessages'] as bool;
+                            event.data()['hasNewMessages'] as bool;
                       } catch (e) {}
                     }
                   });
-                  chatListener = Firestore.instance
+                  chatListener = FirebaseFirestore.instance
                       .collection('/messages')
                       .where(
                         'pair',
@@ -180,32 +179,32 @@ class MainViewModel extends ChangeNotifier {
                       .orderBy('serverTime', descending: false)
                       .snapshots()
                       .listen((event) {
-                    userMessages.value = event.documents
-                        .map((e) => ChatMessage.fromJson(e.data))
+                    userMessages.value = event.docs
+                        .map((e) => ChatMessage.fromJson(e.data()))
                         .toList();
                   });
                   break;
                 }
               case UserType.admin:
                 {
-                  usersListener = Firestore.instance
+                  usersListener = FirebaseFirestore.instance
                       .collection('/users')
                       .snapshots()
                       .listen((event) {
-                    users.value = event.documents
-                        .map((e) => User.fromMap(e.data))
+                    users.value = event.docs
+                        .map((e) => DatabaseUser.fromMap(e.data()))
                         .toList();
 
                     usersNewMessagesListener = users.value.map((e) {
-                      return Firestore.instance
+                      return FirebaseFirestore.instance
                           .collection('/newmessages')
-                          .document('toAdminFrom${e.uid}')
+                          .doc('toAdminFrom${e.uid}')
                           .snapshots()
                           .listen((event) {
                         if (event.data != null) {
                           try {
                             e.hasNewMessages.value =
-                                event.data['hasNewMessages'] as bool;
+                                event.data()['hasNewMessages'] as bool;
                             adminNewMessages.value = users.value
                                 .any((element) => element.hasNewMessages.value);
                             print(adminNewMessages.value);
@@ -215,7 +214,7 @@ class MainViewModel extends ChangeNotifier {
                     }).toList();
 
                     usersMessagesListener = users.value.map((e) {
-                      return Firestore.instance
+                      return FirebaseFirestore.instance
                           .collection('/messages')
                           .where(
                             'pair',
@@ -224,8 +223,8 @@ class MainViewModel extends ChangeNotifier {
                           .orderBy('serverTime', descending: false)
                           .snapshots()
                           .listen((event) {
-                        e.messages.value = event.documents
-                            .map((e) => ChatMessage.fromJson(e.data))
+                        e.messages.value = event.docs
+                            .map((e) => ChatMessage.fromJson(e.data()))
                             .toList();
                       });
                     }).toList();
@@ -241,14 +240,14 @@ class MainViewModel extends ChangeNotifier {
     });
 
     ordersCounterListener?.cancel();
-    ordersCounterListener = Firestore.instance
+    ordersCounterListener = FirebaseFirestore.instance
         .collection('/settings')
-        .document('ordersCounterDocument')
+        .doc('ordersCounterDocument')
         .snapshots()
         .listen((event) {
       try {
         if (event?.data != null) {
-          lastOrderId = event.data['ordersCounterField'] as int;
+          lastOrderId = event.data()['ordersCounterField'] as int;
           print(lastOrderId);
         } else {
           lastOrderId = null;
@@ -256,14 +255,14 @@ class MainViewModel extends ChangeNotifier {
       } catch (e) {}
     });
     settingsListener?.cancel();
-    settingsListener = Firestore.instance
+    settingsListener = FirebaseFirestore.instance
         .collection('/settings')
-        .document('settings')
+        .doc('settings')
         .snapshots()
         .listen((event) {
       try {
         if (event.data != null) {
-          settings.value = Settings.fromJson(event.data);
+          settings.value = AppSettings.fromJson(event.data());
         }
       } catch (e) {
         print(e);
@@ -277,120 +276,92 @@ class MainViewModel extends ChangeNotifier {
         '${prefs.getString('ServerBaseAddress')}CheckoutResult');
   }
 
-  Future listenProductsOfCategory(Category c) async {
-    productListener = Firestore.instance
-        .collection('/products')
-        .where('documentId', isEqualTo: c.documentId)
-        .snapshots()
-        .listen((event) {
-      try {
-        List<Product> tempProducts = [];
-        event.documents?.forEach((element) {
-          try {
-            var p = Product.fromJson(element.data);
-            p.productDocumentId = element.documentID;
-            if ((p?.productsForms?.length ?? 0) > 0) {
-              tempProducts.add(p);
-            }
-          } catch (e) {
-            print(e.toString());
-          }
-        });
-        products.value = tempProducts;
-      } catch (e) {}
-    });
-  }
-
-  void cancellistenProductsOfCategory() {
-    productListener?.cancel();
-    products.value = [];
-  }
-
   Future<DocumentReference> storeCategory(Category c) async {
     c.order = categories.value.length > 0 ? categories.value.last.order + 1 : 1;
 
-    return Firestore.instance.collection('/categories').document()
-      ..setData(c.toJson(), merge: true);
+    return FirebaseFirestore.instance.collection('/categories').doc()
+      ..set(
+          c.toJson(),
+          SetOptions(
+            merge: true,
+          ));
   }
 
   Future storeProduct(
     Product p,
   ) async {
-    var json = p.toJson();
-    await Firestore.instance
+    await FirebaseFirestore.instance
         .collection('/products')
-        .document(p.productDocumentId)
-        .setData(p.toJson(), merge: true);
+        .doc(p.productDocumentId)
+        .set(
+            p.toJson(),
+            SetOptions(
+              merge: true,
+            ));
   }
 
   Future storeCart(Product p) async {
     if (user == null) throw Exception('Unauthorized');
     CartItem c = CartItem(userId: user.uid, product: p);
-    await Firestore.instance.collection('cart').document().setData(
+    await FirebaseFirestore.instance.collection('cart').doc().set(
           c.toJson(),
         );
   }
 
   Future switchCategoriesOrders(Category first, Category second) async {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('/categories')
-        .document(first.documentId)
-        .updateData({'order': second.order});
-    Firestore.instance
+        .doc(first.documentId)
+        .update({'order': second.order});
+    FirebaseFirestore.instance
         .collection('/categories')
-        .document(second.documentId)
-        .updateData({'order': first.order});
+        .doc(second.documentId)
+        .update({'order': first.order});
   }
 
   Future updateCategory(Category oldCat, Category newCat) async {
     var js = newCat.toJson();
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('/categories')
-        .document(oldCat.documentId)
-        .updateData(newCat.toJson());
+        .doc(oldCat.documentId)
+        .update(newCat.toJson());
   }
 
-  Future storeNewUser(FirebaseUser user, UserType role) async {
-    var u = User.fromFirebaseUser(user, role);
-    await Firestore.instance
+  Future storeNewUser(User user, UserType role) async {
+    var u = DatabaseUser.fromFirebaseUser(user, role);
+    await FirebaseFirestore.instance
         .collection('/users')
-        .document(user.uid)
-        .setData(u.toMap(), merge: true);
+        .doc(user.uid)
+        .set(u.toMap(), SetOptions(merge: true));
   }
 
   Future deleteCategory(Category c) {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('/categories')
-        .document(c.documentId)
+        .doc(c.documentId)
         .delete();
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('/products')
         .where('documentId', isEqualTo: c.documentId)
-        .getDocuments()
-        .then((value) => value.documents.forEach((element) {
-              var p = Product.fromJson(element.data);
-              p.productsForms.forEach((element) {
-                element.images.forEach((element) {
-                  FirebaseStorage.instance
-                      .ref()
-                      .child(element.refPath)
-                      .delete();
-                });
+        .get()
+        .then((value) => value.docs.forEach((element) {
+              var p = Product.fromJson(element.data());
+              p.images.forEach((element) {
+                FirebaseStorage.instance.ref().child(element.refPath).delete();
               });
+
               element.reference.delete();
             }));
     FirebaseStorage.instance.ref().child(c.image.refPath).delete();
   }
 
   Future deleteProduct(Product product) {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('/products')
-        .document(product.productDocumentId)
+        .doc(product.productDocumentId)
         .delete();
-    product.productsForms.forEach((element) {
-      element.images.forEach((element) {
-        FirebaseStorage.instance.ref().child(element.refPath).delete();
-      });
+    product.images.forEach((element) {
+      FirebaseStorage.instance.ref().child(element.refPath).delete();
     });
   }
 }

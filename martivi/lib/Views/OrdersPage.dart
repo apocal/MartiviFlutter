@@ -3,13 +3,17 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/Models/Order.dart';
+import 'package:martivi/Models/Product.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
+import 'package:martivi/Views/CategoryPage.dart';
 import 'package:martivi/Views/OrderDetailPage.dart';
 import 'package:martivi/Widgets/FadeInWidget.dart';
 import 'package:provider/provider.dart';
@@ -23,43 +27,136 @@ class _OrdersPageState extends State<OrdersPage> {
   @override
   Widget build(BuildContext context) {
     return FadeInWidget(
-        child: Consumer2<MainViewModel, FirebaseUser>(
+        child: Consumer2<MainViewModel, User>(
       builder: (context, viewModel, user, child) => user == null
           ? Align(
               alignment: Alignment.center,
               child:
                   Text(AppLocalizations.of(context).translate('Unauthorized')),
             )
-          : ValueListenableBuilder<User>(
+          : ValueListenableBuilder<DatabaseUser>(
               valueListenable: viewModel.databaseUser,
               builder: (context, databaseUser, child) => databaseUser != null
                   ? StreamBuilder<QuerySnapshot>(
                       stream: databaseUser.role == UserType.admin
-                          ? Firestore.instance
+                          ? FirebaseFirestore.instance
                               .collection('orders')
                               .orderBy('serverTime', descending: true)
                               .snapshots()
-                          : Firestore.instance
+                          : FirebaseFirestore.instance
                               .collection('orders')
                               .where('uid', isEqualTo: user.uid)
                               .orderBy('serverTime', descending: true)
                               .snapshots(),
                       builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting)
+                          return Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation(kPrimary),
+                            ),
+                          );
                         if (snapshot.data != null) {
+                          if (snapshot.data.docs.length == 0)
+                            return Stack(
+                              children: [
+                                Container(
+                                    constraints: BoxConstraints.expand(),
+                                    child: SvgPicture.asset(
+                                        'assets/svg/NoItem.svg')),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      bottom:
+                                          MediaQuery.of(context).size.height /
+                                              4),
+                                  child: Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Text(
+                                        AppLocalizations.of(context)
+                                            .translate('You have nothing here'),
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: kPrimary,
+                                            shadows: [
+                                              BoxShadow(
+                                                  color: Colors.white
+                                                      .withOpacity(1),
+                                                  blurRadius: 10.0,
+                                                  spreadRadius: 2.0)
+                                            ]),
+                                      )),
+                                )
+                              ],
+                            );
                           return ListView.builder(
                             physics: BouncingScrollPhysics(),
-                            itemCount: snapshot.data.documents.length,
+                            itemCount: snapshot.data.docs.length,
                             itemBuilder: (context, index) {
                               var order = Order.fromJson(
-                                  snapshot.data.documents[index].data);
-                              order.documentId =
-                                  snapshot.data.documents[index].documentID;
-                              return OrderWidget(
-                                showIsSeenIcon:
-                                    databaseUser.role == UserType.admin
-                                        ? true
-                                        : false,
-                                order: order,
+                                  snapshot.data.docs[index].data());
+                              order.documentId = snapshot.data.docs[index].id;
+                              return Slidable(
+                                actionPane: SlidableDrawerActionPane(),
+                                actions: [
+                                  if (databaseUser?.role == UserType.user)
+                                    SlideAction(
+                                        onTap: () async {
+                                          await Future.forEach(order.products,
+                                              (element) async {
+                                            try {
+                                              var res = await FirebaseFirestore
+                                                  .instance
+                                                  .collection('products')
+                                                  .doc(
+                                                      element.productDocumentId)
+                                                  .get();
+                                              if (res.exists) {
+                                                var p = Product.fromJson(
+                                                    res.data());
+                                                p.productDocumentId = res.id;
+                                                await viewModel
+                                                    .storeCart(element);
+                                              }
+                                            } catch (e) {
+                                              print(e.toString());
+                                            }
+                                          });
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.all(8),
+                                          child: SlideActionElement(
+                                            iconData: Icons.repeat,
+                                            text: AppLocalizations.of(context)
+                                                .translate('Repeat in cart'),
+                                            color: kPrimary,
+                                          ),
+                                        ))
+                                ],
+                                secondaryActions: [
+                                  if (databaseUser?.role == UserType.admin)
+                                    SlideAction(
+                                        onTap: () {
+                                          FirebaseFirestore.instance
+                                              .collection('orders')
+                                              .doc(order.documentId)
+                                              .delete();
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: SlideActionElement(
+                                            iconData: Icons.delete,
+                                            color: Colors.red,
+                                            text: AppLocalizations.of(context)
+                                                .translate('Delete'),
+                                          ),
+                                        ))
+                                ],
+                                child: OrderWidget(
+                                  showIsSeenIcon:
+                                      databaseUser.role == UserType.admin
+                                          ? true
+                                          : false,
+                                  order: order,
+                                ),
                               );
                             },
                           );
@@ -96,10 +193,10 @@ class OrderWidget extends StatelessWidget {
             onPressed: () {
               if (showIsSeenIcon) {
                 if (!order.isSeen)
-                  Firestore.instance
+                  FirebaseFirestore.instance
                       .collection('/orders')
-                      .document(order.documentId)
-                      .updateData({'isSeen': true});
+                      .doc(order.documentId)
+                      .update({'isSeen': true});
               }
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => OrderDetailPage(
@@ -153,7 +250,7 @@ class OrderWidget extends StatelessWidget {
                     children: [
                       Flexible(
                         child: Text(
-                          '${AppLocalizations.of(context).translate('Order price')}: ₾${(order.products.fold<double>(0, (previousValue, element) => previousValue + element.price * element.quantity))?.toString() ?? '0'}',
+                          '${AppLocalizations.of(context).translate('Order price')}: ₾${(order.products.fold<double>(0, (previousValue, element) => previousValue + element.totalProductPrice))?.toString() ?? '0'}',
                           style: TextStyle(color: kPrimary),
                         ),
                       ),

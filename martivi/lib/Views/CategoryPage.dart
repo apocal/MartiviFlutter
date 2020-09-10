@@ -42,10 +42,10 @@ class _CategoryPageState extends State<CategoryPage> {
   Widget build(BuildContext context) {
     return Consumer<MainViewModel>(
       builder: (context, viewModel, child) {
-        return ValueListenableBuilder<User>(
+        return ValueListenableBuilder<DatabaseUser>(
           valueListenable: viewModel.databaseUser,
           builder: (context, databaseUser, child) {
-            return ValueListenableBuilder<Settings>(
+            return ValueListenableBuilder<AppSettings>(
               valueListenable: viewModel.settings,
               builder: (context, value, child) => Stack(
                 children: [
@@ -92,7 +92,7 @@ class _CategoryPageState extends State<CategoryPage> {
                     ),
                 ],
               ),
-              child: ValueListenableBuilder<User>(
+              child: ValueListenableBuilder<DatabaseUser>(
                 valueListenable: viewModel.databaseUser,
                 builder: (_, databaseUser, child) {
                   return Column(
@@ -146,78 +146,12 @@ class _CategoryPageState extends State<CategoryPage> {
                                             child: Padding(
                                               padding:
                                                   const EdgeInsets.all(8.0),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                15.0))),
-                                                child: Material(
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  15))),
-                                                  child: DecoratedBox(
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.blue,
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  15.0)),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: Color(
-                                                                  0xFFABABAB)
-                                                              .withOpacity(0.7),
-                                                          blurRadius: 4.0,
-                                                          spreadRadius: 3.0,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    15.0)),
-                                                        color: Colors.black12
-                                                            .withOpacity(0.1),
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: Container(
-                                                          child: Center(
-                                                            child: Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              children: <
-                                                                  Widget>[
-                                                                Icon(
-                                                                  Icons.edit,
-                                                                  color: kIcons,
-                                                                ),
-                                                                Text(
-                                                                  AppLocalizations.of(
-                                                                          context)
-                                                                      .translate(
-                                                                          'Edit'),
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                          kIcons),
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      height: double.infinity,
-                                                    ),
-                                                  ),
-                                                ),
+                                              child: SlideActionElement(
+                                                iconData: Icons.edit,
+                                                color: Colors.blue,
+                                                text:
+                                                    AppLocalizations.of(context)
+                                                        .translate('Edit'),
                                               ),
                                             ),
                                           ),
@@ -231,78 +165,12 @@ class _CategoryPageState extends State<CategoryPage> {
                                             child: Padding(
                                               padding:
                                                   const EdgeInsets.all(8.0),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                15.0))),
-                                                child: Material(
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  15))),
-                                                  child: DecoratedBox(
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.red,
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  15.0)),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: Color(
-                                                                  0xFFABABAB)
-                                                              .withOpacity(0.7),
-                                                          blurRadius: 4.0,
-                                                          spreadRadius: 3.0,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    15.0)),
-                                                        color: Colors.black12
-                                                            .withOpacity(0.1),
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: Container(
-                                                          child: Center(
-                                                            child: Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              children: <
-                                                                  Widget>[
-                                                                Icon(
-                                                                  Icons.delete,
-                                                                  color: kIcons,
-                                                                ),
-                                                                Text(
-                                                                  AppLocalizations.of(
-                                                                          context)
-                                                                      .translate(
-                                                                          'Delete'),
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                          kIcons),
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      height: double.infinity,
-                                                    ),
-                                                  ),
-                                                ),
+                                              child: SlideActionElement(
+                                                iconData: Icons.delete,
+                                                text:
+                                                    AppLocalizations.of(context)
+                                                        .translate('Delete'),
+                                                color: Colors.red,
                                               ),
                                             ),
                                           ),
@@ -403,45 +271,55 @@ class _CategoryPageState extends State<CategoryPage> {
                                   element['products'] as List<dynamic>;
                               var catRef = await viewModel.storeCategory(c);
                               await Future.forEach(products, (element) async {
-                                Product p = Product();
-                                p.documentId = catRef.documentID;
-                                p.localizedName =
+                                Product pf = Product();
+                                pf.documentId = catRef.id;
+                                pf.localizedName =
                                     Map<String, String>.fromIterable(
                                         AppLocalizations.supportedLocales,
                                         key: (e) => e,
                                         value: (e) =>
                                             element['name'] as String);
-                                p.localizedDescription =
+                                pf.localizedDescription =
                                     Map<String, String>.fromIterable(
                                         AppLocalizations.supportedLocales,
                                         key: (e) => e,
                                         value: (e) =>
                                             element['description'] as String);
-                                var pf = ProductForm();
+
                                 FirestoreImage pfImage = FirestoreImage();
                                 pf.images = [pfImage];
                                 pf.quantityInSupply =
                                     element['quantityInSupply'];
 
-                                pf.localizedFormName =
+                                pf.localizedName =
                                     Map<String, String>.fromIterable(
                                         AppLocalizations.supportedLocales,
                                         key: (e) => e,
                                         value: (e) =>
                                             element['name'] as String);
-                                pf.localizedFormDescription =
+                                pf.localizedDescription =
                                     Map<String, String>.fromIterable(
                                         AppLocalizations.supportedLocales,
                                         key: (e) => e,
                                         value: (e) =>
                                             element['description'] as String);
-                                pf.price = element['price'];
-                                pf.localizedWeight =
-                                    Map<String, String>.fromIterable(
-                                        AppLocalizations.supportedLocales,
-                                        key: (e) => e,
-                                        value: (e) =>
-                                            element['weight'] as String);
+                                pf.basePrice = element['price'];
+                                pf.addonDescriptions = [
+                                  AddonDescription(
+                                      localizedAddonDescription:
+                                          Map<String, String>.fromIterable(
+                                              AppLocalizations.supportedLocales,
+                                              key: (e) => e,
+                                              value: (e) =>
+                                                  element['weight'] as String),
+                                      localizedAddonDescriptionName:
+                                          Map<String, String>.fromIterable(
+                                              AppLocalizations.supportedLocales,
+                                              key: (e) => e,
+                                              value: (e) =>
+                                                  AppLocalizations.of(context)
+                                                      .translate('Weight'))),
+                                ];
 
                                 var res =
                                     await http.get(element['image'] as String);
@@ -459,8 +337,7 @@ class _CategoryPageState extends State<CategoryPage> {
                                 var uploadRes = await uploadTask.onComplete;
                                 pfImage.downloadUrl =
                                     await uploadRes.ref.getDownloadURL();
-                                p.productsForms = [pf];
-                                viewModel.storeProduct(p);
+                                viewModel.storeProduct(pf);
                               });
                             });
 
@@ -501,6 +378,65 @@ class _CategoryPageState extends State<CategoryPage> {
           },
         );
       },
+    );
+  }
+}
+
+class SlideActionElement extends StatelessWidget {
+  final iconData;
+  final Color color;
+  final String text;
+  SlideActionElement({this.text, this.color, this.iconData});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration:
+          BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15.0))),
+      child: Material(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15))),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+            boxShadow: [
+              BoxShadow(
+                color: Color(0xFFABABAB).withOpacity(0.7),
+                blurRadius: 4.0,
+                spreadRadius: 3.0,
+              ),
+            ],
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(15.0)),
+              color: Colors.black12.withOpacity(0.1),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        iconData,
+                        color: kIcons,
+                      ),
+                      Text(
+                        text,
+                        style: TextStyle(color: kIcons),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            height: double.infinity,
+          ),
+        ),
+      ),
     );
   }
 }

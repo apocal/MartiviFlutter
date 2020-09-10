@@ -15,7 +15,7 @@ class MainDrawer extends StatelessWidget {
         return Drawer(
           child: ListView(
             children: <Widget>[
-              Consumer<FirebaseUser>(
+              Consumer<User>(
                 builder: (context, user, child) {
                   return ValueListenableBuilder<bool>(
                     valueListenable: mainViewmodel.isSigningSignUping,
@@ -54,7 +54,7 @@ class MainDrawer extends StatelessWidget {
                   );
                 },
               ),
-              Consumer<FirebaseUser>(
+              Consumer<User>(
                 builder: (context, user, child) {
                   if (user == null) {
                     return ListTile(

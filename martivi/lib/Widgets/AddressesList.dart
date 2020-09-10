@@ -70,10 +70,10 @@ class _AddressesListState extends State<AddressesList> {
             ? (val) {
                 try {
                   widget.userAddresses[val].referance
-                      .updateData({'isPrimary': false});
+                      .update({'isPrimary': false});
                 } catch (e) {}
 
-                e.referance.updateData({'isPrimary': true});
+                e.referance.update({'isPrimary': true});
                 widget.addressSelected?.call(e);
                 setState(() {
                   selectedValue = widget.userAddresses.indexOf(e);

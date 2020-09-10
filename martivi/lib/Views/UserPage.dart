@@ -19,7 +19,7 @@ import 'ContactPage.dart';
 import 'OrdersPage.dart';
 
 class UserPage extends StatefulWidget {
-  final User user;
+  final DatabaseUser user;
   UserPage({this.user});
 
   @override
@@ -103,10 +103,10 @@ class _UserPageState extends State<UserPage> {
                                   if (!((sendMessageController?.text?.length ??
                                           0) >
                                       0)) return;
-                                  Firestore.instance
+                                  FirebaseFirestore.instance
                                       .collection('/messages')
-                                      .document()
-                                      .setData(ChatMessage(
+                                      .doc()
+                                      .set(ChatMessage(
                                               userType: viewModel
                                                   .databaseUser.value.role,
                                               userDisplayName: viewModel
@@ -128,12 +128,11 @@ class _UserPageState extends State<UserPage> {
                                               senderUserId: viewModel.user.uid,
                                               targetUserId: widget.user.uid)
                                           .toJson());
-                                  Firestore.instance
+                                  FirebaseFirestore.instance
                                       .collection('/newmessages')
-                                      .document('to${widget.user.uid}FromAdmin')
-                                      .setData({
-                                    'hasNewMessages': true
-                                  }).catchError((err) {
+                                      .doc('to${widget.user.uid}FromAdmin')
+                                      .set({'hasNewMessages': true}).catchError(
+                                          (err) {
                                     showDialog(
                                       context: context,
                                       builder: (context) => OkDialog(
@@ -161,22 +160,21 @@ class _UserPageState extends State<UserPage> {
                   user: widget.user,
                 ),
                 StreamBuilder<QuerySnapshot>(
-                  stream: Firestore.instance
+                  stream: FirebaseFirestore.instance
                       .collection('orders')
                       .where('uid', isEqualTo: widget.user.uid)
                       .orderBy('serverTime', descending: true)
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.data != null) {
-                      return snapshot.data.documents.length > 0
+                      return snapshot.data.docs.length > 0
                           ? ListView.builder(
                               physics: BouncingScrollPhysics(),
-                              itemCount: snapshot.data.documents.length,
+                              itemCount: snapshot.data.docs.length,
                               itemBuilder: (context, index) {
                                 var order = Order.fromJson(
-                                    snapshot.data.documents[index].data);
-                                order.documentId =
-                                    snapshot.data.documents[index].documentID;
+                                    snapshot.data.docs[index].data());
+                                order.documentId = snapshot.data.docs[index].id;
                                 return OrderWidget(
                                   order: order,
                                 );
@@ -200,15 +198,15 @@ class _UserPageState extends State<UserPage> {
 }
 
 class UserProfilePage extends StatelessWidget {
-  final User user;
+  final DatabaseUser user;
   UserProfilePage({this.user});
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: StreamBuilder<DocumentSnapshot>(
-        stream: Firestore.instance
+        stream: FirebaseFirestore.instance
             .collection('/users')
-            .document(user.uid)
+            .doc(user.uid)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting)
@@ -221,7 +219,7 @@ class UserProfilePage extends StatelessWidget {
             return Center(
               child: Text('No data'),
             );
-          var streamUser = User.fromMap(snapshot.data.data);
+          var streamUser = DatabaseUser.fromMap(snapshot.data.data());
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -323,10 +321,10 @@ class UserProfilePage extends StatelessWidget {
                                       Switch(
                                         activeColor: kPrimary,
                                         onChanged: (val) {
-                                          Firestore.instance
+                                          FirebaseFirestore.instance
                                               .collection('/users')
-                                              .document(streamUser.uid)
-                                              .updateData({
+                                              .doc(streamUser.uid)
+                                              .update({
                                             'role': EnumToString.parse(val
                                                 ? UserType.admin
                                                 : UserType.user)
@@ -415,7 +413,7 @@ class UserProfilePage extends StatelessWidget {
                                 style: TextStyle(color: Colors.grey.shade700),
                               ),
                               StreamBuilder<QuerySnapshot>(
-                                stream: Firestore.instance
+                                stream: FirebaseFirestore.instance
                                     .collection('/userAddresses')
                                     .where('uid', isEqualTo: streamUser.uid)
                                     .snapshots(),
@@ -429,9 +427,8 @@ class UserProfilePage extends StatelessWidget {
                                       ),
                                     );
                                   if (snapshot.data == null) return Container();
-                                  var addresses =
-                                      snapshot.data.documents?.map((e) {
-                                    var a = UserAddress.fromJson(e.data);
+                                  var addresses = snapshot.data.docs?.map((e) {
+                                    var a = UserAddress.fromJson(e.data());
                                     a.referance = e.reference;
                                     return a;
                                   })?.toList();

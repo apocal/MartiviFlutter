@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,7 +12,11 @@ import 'package:provider/provider.dart';
 import 'Localizations/app_localizations.dart';
 import 'Views/HomePage.dart';
 
-void main() => runApp(MartiviApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MartiviApp());
+}
 
 class MartiviApp extends StatelessWidget {
   @override
@@ -21,8 +26,8 @@ class MartiviApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (c) => MainViewModel(),
         ),
-        StreamProvider<FirebaseUser>.value(
-          value: FirebaseAuth.instance.onAuthStateChanged,
+        StreamProvider<User>.value(
+          value: FirebaseAuth.instance.authStateChanges(),
         )
       ],
       child: MaterialApp(

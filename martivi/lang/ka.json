@@ -27,6 +27,7 @@
   "Add address": "მისამართის დამატება",
   "Category Name": "კატეგორიის სახელი",
   "Category image": "კატეგორიის სურათი",
+  "Product images": "პროდუქტის სურათები",
   "File upload failed": "ფაილის ატვირთვა არ შესრულდა",
   "Please pick an image": "გთხოვთ მიამაგროთ სურათი",
   "Please enter a name": "გთხოვთ შეიყვანოთ სახელი",
@@ -141,6 +142,18 @@
   "Sub Total": "ქვე სრული",
   "Thank you for your business": "გმადლობთ საქმიანობისთვის",
   "Checkout": "გადახდა",
+  "Base price": "საბაზო ფასი",
   "Product does not contain any product form": "პროდუქტი არ შეიცავს არცერთ პროდუქტის ფორმას",
-  "Product form does not contain any image": "პროდუქტის ფორმა არ შეიცავს არცერთ სურათს"
+  "Product form does not contain any image": "პროდუქტის ფორმა არ შეიცავს არცერთ სურათს",
+  "Additional descriptions": "დამატებითი აღწერები",
+  "Description": "აღწერა",
+  "Description name": "აღწერის სახელი",
+  "Paid addons": "ფასიანი დანამატები",
+  "Selectable paid addons": "არჩევადი ფასიანი დანამატები",
+  "Addon name": "დანამატის სახელი",
+  "Is selected": "არჩეული",
+  "Remove": "ამოღება",
+  "Repeat in cart": "კალათაში გამეორება",
+  "You have nothing here": "თქვენ აქ არაფერი გაქვთ",
+  "Weight": "წონა"
 }

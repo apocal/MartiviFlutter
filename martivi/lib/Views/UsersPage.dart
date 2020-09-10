@@ -42,7 +42,7 @@ class _UsersPageState extends State<UsersPage> {
 }
 
 class UserWidget extends StatelessWidget {
-  final User user;
+  final DatabaseUser user;
   UserWidget({this.user});
   @override
   Widget build(BuildContext context) {
@@ -50,10 +50,10 @@ class UserWidget extends StatelessWidget {
       onTap: () {
         if (user.hasNewMessages.value) {
           user.hasNewMessages.value = false;
-          Firestore.instance
+          FirebaseFirestore.instance
               .collection('/newmessages')
-              .document('toAdminFrom${user.uid}')
-              .setData({'hasNewMessages': false});
+              .doc('toAdminFrom${user.uid}')
+              .set({'hasNewMessages': false});
         }
         Navigator.push(
             context,

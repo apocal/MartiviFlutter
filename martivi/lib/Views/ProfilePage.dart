@@ -53,9 +53,9 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).translate('Profile')),
       ),
-      body: Consumer2<MainViewModel, FirebaseUser>(
+      body: Consumer2<MainViewModel, User>(
         builder: (context, viewModel, firebaseUser, child) {
-          return ValueListenableBuilder<User>(
+          return ValueListenableBuilder<DatabaseUser>(
             valueListenable: viewModel.databaseUser,
             builder: (context, databaseUser, child) {
               return ValueListenableBuilder<bool>(
@@ -300,7 +300,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       StreamBuilder<QuerySnapshot>(
-                                        stream: Firestore.instance
+                                        stream: FirebaseFirestore.instance
                                             .collection('userAddresses')
                                             .where('uid',
                                                 isEqualTo: databaseUser.uid)
@@ -308,8 +308,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         builder: (context, snapshot) {
                                           if (snapshot.data != null) {
                                             return AddressesList(
-                                              userAddresses: snapshot
-                                                  .data.documents
+                                              userAddresses: snapshot.data.docs
                                                   .map((e) =>
                                                       UserAddress.fromDocument(
                                                           e))
@@ -333,10 +332,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                                         AddAddressPage(),
                                                   ));
                                           if (userAddress != null) {
-                                            Firestore.instance
+                                            FirebaseFirestore.instance
                                                 .collection('/userAddresses')
-                                                .document()
-                                                .setData(userAddress.toJson());
+                                                .doc()
+                                                .set(userAddress.toJson());
                                           }
                                         },
                                         child: Text(
@@ -367,6 +366,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         0) {
                                       uInfo ??= UserUpdateInfo();
                                       uInfo.photoUrl = profileImage.downloadUrl;
+
                                       updateData['photoUrl'] =
                                           profileImage.downloadUrl;
                                       profileImage = null;
@@ -401,10 +401,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                           phoneController.text;
                                     }
                                     if (updateData.length > 0) {
-                                      await Firestore.instance
+                                      await FirebaseFirestore.instance
                                           .collection('/users')
-                                          .document(databaseUser.uid)
-                                          .updateData(updateData);
+                                          .doc(databaseUser.uid)
+                                          .update(updateData);
                                     }
                                     if ((passwordController.text.length ?? 0) >
                                         0) {
@@ -412,7 +412,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                           passwordController.text);
                                     }
                                     if (uInfo != null) {
-                                      await firebaseUser.updateProfile(uInfo);
+                                      await firebaseUser.updateProfile(
+                                          displayName: uInfo.displayName,
+                                          photoURL: uInfo.photoUrl);
                                       firebaseUser.reload();
                                     }
                                   } on PlatformException catch (ee) {
@@ -445,4 +447,10 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
+}
+
+class UserUpdateInfo {
+  String photoUrl;
+
+  String displayName;
 }

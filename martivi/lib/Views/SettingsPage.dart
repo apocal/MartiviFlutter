@@ -28,7 +28,7 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       body: Consumer<MainViewModel>(
         builder: (context, viewModel, child) {
-          Settings settings = viewModel.settings.value;
+          AppSettings settings = viewModel.settings.value;
           deliveryFeeUnderMaximumOrderPriceController.text =
               settings.deliveryFeeUnderMaximumOrderPrice?.toString();
           maximumOrderPriceController.text =
@@ -64,10 +64,10 @@ class _SettingsPageState extends State<SettingsPage> {
                         setState(() {
                           settings.stopOrdering = value;
                         });
-                        Firestore.instance
+                        FirebaseFirestore.instance
                             .collection('/settings')
-                            .document('settings')
-                            .updateData({'stopOrdering': value});
+                            .doc('settings')
+                            .update({'stopOrdering': value});
                       },
                     ),
                   ],
@@ -171,10 +171,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     settings.deliveryFeeUnderMaximumOrderPrice =
                         double.tryParse(
                             deliveryFeeUnderMaximumOrderPriceController.text);
-                    Firestore.instance
+                    FirebaseFirestore.instance
                         .collection('/settings')
-                        .document('settings')
-                        .setData(settings.toJson())
+                        .doc('settings')
+                        .set(settings.toJson())
                         .then((value) =>
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text(AppLocalizations.of(context)

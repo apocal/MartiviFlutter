@@ -36,14 +36,14 @@ class UnipayCheckoutPage extends StatelessWidget {
             navigationDelegate: (req) async {
               if (req.url.contains('CheckoutResult?MerchantOrderID')) {
                 try {
-                  Firestore.instance
+                  FirebaseFirestore.instance
                       .collection('/orders')
-                      .document(order.documentId)
+                      .doc(order.documentId)
                       .get()
                       .then((value) async {
                     if (value.data != null) {
-                      Order o = Order.fromJson(value.data);
-                      o.documentId = value.documentID;
+                      Order o = Order.fromJson(value.data());
+                      o.documentId = value.id;
                       var res = await http.post(
                           '${viewModel.prefs.getString('ServerBaseAddress')}CheckoutResult',
                           body: jsonEncode(o.toCheckoutJson(context)),

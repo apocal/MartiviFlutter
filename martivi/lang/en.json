@@ -27,6 +27,7 @@
   "Add address": "Add address",
   "Category Name": "Category Name",
   "Category image": "Category image",
+  "Product images": "Product images",
   "File upload failed": "File upload failed",
   "Please pick an image": "Please pick an image",
   "Please enter a name": "Please enter a name",
@@ -142,6 +143,18 @@
   "Sub Total": "Sub Total",
   "Thank you for your business": "Thank you for your business",
   "Checkout": "Checkout",
+  "Base price": "Base price",
   "Product does not contain any product form": "Product does not contain any product form",
-  "Product form does not contain any image": "Product form does not contain any image"
+  "Product form does not contain any image": "Product form does not contain any image",
+  "Additional descriptions": "Additional descriptions",
+  "Description": "Description",
+  "Description name": "Description name",
+  "Paid addons": "Paid addons",
+  "Addon name": "Addon name",
+  "Is selected": "Is selected",
+  "Selectable paid addons": "Selectable paid addons",
+  "Remove": "Remove",
+  "Repeat in cart": "Repeat in cart",
+  "You have nothing here": "You have nothing here",
+  "Weight": "Weight"
 }

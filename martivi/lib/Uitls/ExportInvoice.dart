@@ -42,7 +42,7 @@ class Invoice {
     this.accentColor,
   });
 
-  final List<ProductForm> products;
+  final List<Product> products;
   final String customerName;
   final String customerAddress;
   final String invoiceNumber;
@@ -60,10 +60,8 @@ class Invoice {
   PdfColor get _accentTextColor =>
       baseColor.luminance < 0.5 ? _lightColor : _darkColor;
 
-  double get _total => products.fold(
-      0,
-      (previousValue, element) =>
-          previousValue + (element.quantity * element.price));
+  double get _total => products.fold(0,
+      (previousValue, element) => previousValue + (element.totalProductPrice));
 
   double get _grandTotal => _total + deliveryFee;
 
@@ -475,7 +473,6 @@ class Invoice {
       AppLocalizations.of(bContext).translate('Name'),
       AppLocalizations.of(bContext).translate('Description'),
       AppLocalizations.of(bContext).translate('Price'),
-      AppLocalizations.of(bContext).translate('Quantity'),
       AppLocalizations.of(bContext).translate('Total'),
     ];
 
@@ -487,7 +484,7 @@ class Invoice {
         color: baseColor,
       ),
       headerHeight: 25,
-      cellHeight: 40,
+      cellHeight: 20,
       cellAlignments: {
         0: pw.Alignment.centerLeft,
         1: pw.Alignment.centerLeft,
@@ -506,8 +503,9 @@ class Invoice {
       ),
       rowDecoration: pw.BoxDecoration(
         border: pw.BoxBorder(
-          bottom: true,
-          color: accentColor,
+          top: true,
+          color: PdfColor.fromRYB(
+              kPrimary.red / 255, kPrimary.green / 255, kPrimary.blue / 255),
           width: .5,
         ),
       ),
@@ -516,27 +514,28 @@ class Invoice {
         (col) => tableHeaders[col],
       ),
       data: List<List<String>>.generate(
-        products.length,
-        (row) => List<String>.generate(
-          tableHeaders.length,
-          (col) => () {
-            switch (col) {
-              case 0:
-                return products[row].localizedFormName[
-                    AppLocalizations.of(bContext).locale.languageCode];
-              case 1:
-                return products[row].localizedFormDescription[
-                    AppLocalizations.of(bContext).locale.languageCode];
-              case 2:
-                return products[row].price.toString();
-              case 3:
-                return products[row].quantity.toString();
-              case 4:
-                return (products[row].price * products[row].quantity)
-                    .toString();
-            }
-          }(),
-        ),
+        products.length + 1,
+        (row) {
+          if (row == products.length)
+            return List<String>.generate(tableHeaders.length, (c) => '');
+          return List<String>.generate(
+            tableHeaders.length,
+            (col) => () {
+              switch (col) {
+                case 0:
+                  return products[row].localizedName[
+                      AppLocalizations.of(bContext).locale.languageCode];
+                case 1:
+                  return '${products[row].localizedDescription[AppLocalizations.of(bContext).locale.languageCode]}, ${products[row].addonDescriptions.fold('', (previousValue, element) => previousValue + '${element.localizedAddonDescriptionName[AppLocalizations.of(bContext).locale.languageCode]}: ${element.localizedAddonDescription[AppLocalizations.of(bContext).locale.languageCode]}')}, ${products[row].checkableAddons?.where((element) => element.isSelected)?.fold('', (previousValue, element) => previousValue + element.localizedName[AppLocalizations.of(bContext).locale.languageCode] + ': ' + '+${element.price}₾, ') ?? ''}${products[row].selectableAddons?.where((element) => element.isSelected)?.fold('', (previousValue, element) => previousValue + element.localizedName[AppLocalizations.of(bContext).locale.languageCode] + ': ' + '+${element.price}₾') ?? ''}';
+                case 2:
+                  return products[row].basePrice.toString();
+
+                case 3:
+                  return (products[row].totalProductPrice).toString();
+              }
+            }(),
+          );
+        },
       ),
     );
   }

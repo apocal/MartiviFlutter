@@ -240,7 +240,7 @@ class AddAddressPage extends StatelessWidget {
             Divider(
               height: 5,
             ),
-            Consumer<FirebaseUser>(
+            Consumer<User>(
               builder: (context, user, child) {
                 if (user == null) {
                   return Center(

@@ -12,7 +12,7 @@ import 'package:martivi/Widgets/Widgets.dart';
 import 'package:provider/provider.dart';
 
 class MessageWidget extends StatelessWidget {
-  User currentUser;
+  DatabaseUser currentUser;
   final ChatMessage message;
   MessageWidget({this.message, this.currentUser});
   @override
@@ -83,14 +83,14 @@ class _ContactPageState extends State<ContactPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<MainViewModel, FirebaseUser>(
+    return Consumer2<MainViewModel, User>(
       builder: (context, viewModel, firebaseUser, child) {
         return Scaffold(
           appBar: AppBar(
             title: Text(AppLocalizations.of(context).translate('Contact us')),
           ),
           body: firebaseUser != null
-              ? ValueListenableBuilder<User>(
+              ? ValueListenableBuilder<DatabaseUser>(
                   valueListenable: viewModel.databaseUser,
                   builder: (context, value, child) {
                     if (value?.role == null) {
@@ -143,10 +143,10 @@ class _ContactPageState extends State<ContactPage> {
                                                         ?.text?.length ??
                                                     0) >
                                                 0)) return;
-                                            Firestore.instance
+                                            FirebaseFirestore.instance
                                                 .collection('/messages')
-                                                .document()
-                                                .setData(ChatMessage(
+                                                .doc()
+                                                .set(ChatMessage(
                                                         userType: UserType.user,
 //                                            widget.user.displayName ?? widget.user.isAnonymous
 //                                                ? AppLocalizations.of(context).translate('Guest')
@@ -176,11 +176,11 @@ class _ContactPageState extends State<ContactPage> {
                                                             firebaseUser.uid,
                                                         targetUserId: 'admin')
                                                     .toJson());
-                                            Firestore.instance
+                                            FirebaseFirestore.instance
                                                 .collection('/newmessages')
-                                                .document(
+                                                .doc(
                                                     'toAdminFrom${firebaseUser.uid}')
-                                                .setData({
+                                                .set({
                                               'hasNewMessages': true
                                             }).catchError((err) {
                                               showDialog(
@@ -208,12 +208,10 @@ class _ContactPageState extends State<ContactPage> {
                               ],
                             ),
                           );
-                          break;
                         }
                       case UserType.admin:
                         {
                           return (Container());
-                          break;
                         }
                       default:
                         {

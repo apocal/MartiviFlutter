@@ -162,12 +162,12 @@ class _HomePageState extends State<HomePage> {
             }
           }(),
           drawer: Drawer(
-            child: ValueListenableBuilder<User>(
+            child: ValueListenableBuilder<DatabaseUser>(
               valueListenable: mainvViewModel.databaseUser,
               builder: (context, databaseUseruser, child) {
                 return ListView(
                   children: <Widget>[
-                    Consumer<FirebaseUser>(
+                    Consumer<User>(
                       builder: (context, user, child) {
                         return ValueListenableBuilder<bool>(
                           valueListenable: mainvViewModel.isSigningSignUping,
@@ -227,11 +227,11 @@ class _HomePageState extends State<HomePage> {
                         onTap: () {
                           setState(() {
                             mainvViewModel.newMessages.value = false;
-                            Firestore.instance
+                            FirebaseFirestore.instance
                                 .collection('/newmessages')
-                                .document(
+                                .doc(
                                     'to${mainvViewModel.databaseUser.value.uid}FromAdmin')
-                                .setData({'hasNewMessages': false});
+                                .set({'hasNewMessages': false});
 
                             Navigator.pop(context);
                             Navigator.of(context).push(MaterialPageRoute(
@@ -325,7 +325,7 @@ class _HomePageState extends State<HomePage> {
                         title: Text(
                             AppLocalizations.of(context).translate('Profile')),
                       ),
-                    Consumer<FirebaseUser>(
+                    Consumer<User>(
                       builder: (context, user, child) {
                         if (user == null) {
                           return ListTile(

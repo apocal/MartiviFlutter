@@ -11,7 +11,6 @@ import 'package:martivi/Models/Address.dart';
 import 'package:martivi/Models/CartItem.dart';
 import 'package:martivi/Models/Exceptions.dart';
 import 'package:martivi/Models/Order.dart';
-import 'package:martivi/Models/Product.dart';
 import 'package:martivi/Models/Settings.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
@@ -49,23 +48,20 @@ class _CartPageState extends State<CartPage> {
           ],
         );
       },
-      child: Consumer2<MainViewModel, FirebaseUser>(
+      child: Consumer2<MainViewModel, User>(
         builder: (context, viewModel, user, child) {
           return user != null
               ? ValueListenableBuilder<List<CartItem>>(
                   valueListenable: viewModel.cart,
                   builder: (context, cart, child) {
-                    var pForms = cart.expand<ProductForm>((element) => element
-                        .product.productsForms
-                        .where((element) => element.quantity > 0));
-                    double totalPrice = pForms.fold<double>(
+                    double totalPrice = cart.fold<double>(
                         0,
                         (previousValue, element) =>
-                            previousValue + element.quantity * element.price);
+                            previousValue + element.product.totalProductPrice);
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: SingleChildScrollView(
-                        child: ValueListenableBuilder<Settings>(
+                        child: ValueListenableBuilder<AppSettings>(
                           valueListenable: viewModel.settings,
                           builder: (context, settigns, child) => Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -91,7 +87,7 @@ class _CartPageState extends State<CartPage> {
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Text(
-                                          '${pForms.length.toString()} ${AppLocalizations.of(context).translate('Product')} | '),
+                                          '${cart.length.toString()} ${AppLocalizations.of(context).translate('Product')} | '),
                                       Text(
                                         '₾${totalPrice.toStringAsFixed(2)}',
                                       )
@@ -122,7 +118,7 @@ class _CartPageState extends State<CartPage> {
                                       .translate('Addresses')),
                                   children: [
                                     StreamBuilder<QuerySnapshot>(
-                                      stream: Firestore.instance
+                                      stream: FirebaseFirestore.instance
                                           .collection('userAddresses')
                                           .where('uid', isEqualTo: user.uid)
                                           .snapshots(),
@@ -132,8 +128,7 @@ class _CartPageState extends State<CartPage> {
                                             addressSelected: (address) {
                                               selectedAddress = address;
                                             },
-                                            userAddresses: snapshot
-                                                .data.documents
+                                            userAddresses: snapshot.data.docs
                                                 .map((e) =>
                                                     UserAddress.fromDocument(e))
                                                 .toList(),
@@ -154,10 +149,10 @@ class _CartPageState extends State<CartPage> {
                                                       AddAddressPage(),
                                                 ));
                                         if (userAddress != null) {
-                                          Firestore.instance
+                                          FirebaseFirestore.instance
                                               .collection('/userAddresses')
-                                              .document()
-                                              .setData(userAddress.toJson());
+                                              .doc()
+                                              .set(userAddress.toJson());
                                         }
                                       },
                                       child: Text(
@@ -312,7 +307,9 @@ class _CartPageState extends State<CartPage> {
                                           uid: user.uid,
                                           deliveryAddress: selectedAddress,
                                           paymentMethod: paymentMethod,
-                                          products: pForms.toList(),
+                                          products: cart
+                                              .map((e) => e.product)
+                                              .toList(),
                                           deliveryFee: totalPrice == 0
                                               ? 0
                                               : totalPrice >
@@ -320,24 +317,25 @@ class _CartPageState extends State<CartPage> {
                                                   ? 0
                                                   : settigns
                                                       .deliveryFeeUnderMaximumOrderPrice);
-                                      var value = await Firestore.instance
+                                      var value = await FirebaseFirestore
+                                          .instance
                                           .collection('/orders')
                                           .add(o.toJson());
 
-                                      Firestore.instance
+                                      FirebaseFirestore.instance
                                           .collection('/settings')
-                                          .document('ordersCounterDocument')
-                                          .setData({
+                                          .doc('ordersCounterDocument')
+                                          .set({
                                         'ordersCounterField':
                                             FieldValue.increment(1)
-                                      }, merge: true);
+                                      }, SetOptions(merge: true));
                                       cart.forEach((element) {
-                                        Firestore.instance
+                                        FirebaseFirestore.instance
                                             .collection('cart')
-                                            .document(element.documentId)
+                                            .doc(element.documentId)
                                             .delete();
                                       });
-                                      o.documentId = value.documentID;
+                                      o.documentId = value.id;
                                       if (paymentMethod ==
                                           PaymentMethods.CreditCard) {
                                         var res = await http.post(
@@ -447,20 +445,14 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: NetworkImage(widget
-                              .p
-                              ?.product
-                              .productsForms[widget.p.product.selectedIndex]
-                              ?.images
-                              ?.first
-                              ?.downloadUrl ??
-                          ''),
+                      image: NetworkImage(
+                          widget.p?.product?.images?.first?.downloadUrl ?? ''),
                     )),
               ),
               Expanded(
                 child: Container(
                   padding: EdgeInsets.only(left: 12, top: 12),
-                  child: ValueListenableBuilder<User>(
+                  child: ValueListenableBuilder<DatabaseUser>(
                     builder: (context, user, child) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -475,6 +467,26 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                 color: Colors.black87,
                                 fontWeight: FontWeight.w700),
                           ),
+                          ...?widget.p.product.addonDescriptions.map((e) => Row(
+                                children: [
+                                  Text(
+                                    '${e.localizedAddonDescriptionName[AppLocalizations.of(context).locale.languageCode]}: ',
+                                    style: TextStyle(
+                                      color: Colors.black54,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12.0,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${e.localizedAddonDescription[AppLocalizations.of(context).locale.languageCode]}',
+                                    style: TextStyle(
+                                      color: Colors.black54,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12.0,
+                                    ),
+                                  ),
+                                ],
+                              )),
                           Text(
                             widget.p.product.localizedDescription[
                                 AppLocalizations.of(context)
@@ -487,75 +499,8 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                             ),
                           ),
                           Text(
-                            '₾${widget.p.product.productsForms[widget.p.product.selectedIndex].price.toString()}',
+                            '₾${widget.p.product.totalProductPrice.toString()}',
                             style: TextStyle(),
-                          ),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: <Widget>[
-                                ...widget.p.product.productsForms.map(
-                                  (e) => Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 5, right: 5, left: 8, bottom: 8),
-                                    child: Material(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8)),
-                                      elevation: 2,
-                                      child: AnimatedContainer(
-                                        constraints:
-                                            BoxConstraints(maxWidth: 110),
-                                        duration: Duration(milliseconds: 200),
-                                        decoration: BoxDecoration(
-                                            color: widget.p.product
-                                                            .productsForms[
-                                                        widget.p.product
-                                                            .selectedIndex] ==
-                                                    e
-                                                ? kPrimary
-                                                : kIcons,
-                                            borderRadius:
-                                                BorderRadius.circular(8)),
-                                        child: RawMaterialButton(
-                                          constraints:
-                                              BoxConstraints(minHeight: 0),
-                                          splashColor: Colors.red,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8)),
-                                          onPressed: () {
-                                            setState(() {
-                                              widget.p.product.selectedIndex =
-                                                  widget.p.product.productsForms
-                                                      .indexOf(e);
-                                            });
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.all(4),
-                                            child: Text(
-                                              e.localizedFormName[
-                                                  AppLocalizations.of(context)
-                                                      .locale
-                                                      .languageCode],
-                                              style: TextStyle(
-                                                  color: e ==
-                                                          widget.p.product
-                                                                  .productsForms[
-                                                              widget.p.product
-                                                                  .selectedIndex]
-                                                      ? Colors.white
-                                                      : Colors.black87),
-                                              maxLines: null,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
                           ),
                           if (user?.role == UserType.user) child,
                         ],
@@ -565,116 +510,16 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                     child: Align(
                       alignment: Alignment.topRight,
                       child: Container(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white70,
-                              border: Border.all(
-                                  color: Colors.black12.withOpacity(0.1))),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Material(
-                                child: InkWell(
-                                  onTap: () {
-                                    try {
-                                      widget
-                                          .p
-                                          .product
-                                          .productsForms[
-                                              widget.p.product.selectedIndex]
-                                          .quantity ??= 0;
-                                      if (widget
-                                              .p
-                                              .product
-                                              .productsForms[widget
-                                                  .p.product.selectedIndex]
-                                              .quantity ==
-                                          0) {
-                                        return;
-                                      }
-                                      widget
-                                          .p
-                                          .product
-                                          .productsForms[
-                                              widget.p.product.selectedIndex]
-                                          .quantity--;
-                                      if (!widget.p.product.productsForms.any(
-                                          (element) => element.quantity > 0)) {
-                                        Firestore.instance
-                                            .collection('/cart')
-                                            .document(widget.p.documentId)
-                                            .delete();
-                                        return;
-                                      }
-                                      Firestore.instance
-                                          .collection('/cart')
-                                          .document(widget.p.documentId)
-                                          .setData(widget.p.toJson(),
-                                              merge: true);
-                                    } catch (e) {}
-                                  },
-                                  child: Container(
-                                    height: 30.0,
-                                    width: 30.0,
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            right: BorderSide(
-                                                color: Colors.black12
-                                                    .withOpacity(0.1)))),
-                                    child: Center(child: Text("-")),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 18.0),
-                                child: Text(widget
-                                        .p
-                                        .product
-                                        .productsForms[
-                                            widget.p.product.selectedIndex]
-                                        .quantity
-                                        ?.toString() ??
-                                    '0'),
-                              ),
-                              Material(
-                                child: InkWell(
-                                  onTap: () {
-                                    try {
-                                      widget
-                                          .p
-                                          .product
-                                          .productsForms[
-                                              widget.p.product.selectedIndex]
-                                          .quantity ??= 0;
-                                      widget
-                                          .p
-                                          .product
-                                          .productsForms[
-                                              widget.p.product.selectedIndex]
-                                          .quantity++;
-                                      Firestore.instance
-                                          .collection('/cart')
-                                          .document(widget.p.documentId)
-                                          .setData(widget.p.toJson(),
-                                              merge: true);
-                                    } catch (e) {}
-                                  },
-                                  child: Container(
-                                    height: 30.0,
-                                    width: 28.0,
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            left: BorderSide(
-                                                color: Colors.black12
-                                                    .withOpacity(0.1)))),
-                                    child: Center(child: Text("+")),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                        child: RawMaterialButton(
+                          onPressed: () {
+                            FirebaseFirestore.instance
+                                .collection('/cart')
+                                .doc(widget.p.documentId)
+                                .delete();
+                          },
+                          child: Text(AppLocalizations.of(context)
+                                  .translate('Remove') ??
+                              'Remove'),
                         ),
                       ),
                     ),

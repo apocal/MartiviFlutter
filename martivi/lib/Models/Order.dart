@@ -11,7 +11,7 @@ class Order {
   int orderId;
   String documentId;
   String uid;
-  List<ProductForm> products;
+  List<Product> products;
   PaymentMethods paymentMethod;
   PaymentStatus paymentStatus;
   double deliveryFee;
@@ -46,7 +46,7 @@ class Order {
     serverTime = json['serverTime'];
     uid = json['uid'] as String;
     products = (json['products'] as List<dynamic>)
-        ?.map((e) => ProductForm.fromJson(e))
+        ?.map((e) => Product.fromJson(e))
         ?.toList();
     paymentMethod = EnumToString.fromString(
         PaymentMethods.values, json['paymentMethod'] as String);

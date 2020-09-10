@@ -1,9 +1,9 @@
-class Settings {
+class AppSettings {
   bool stopOrdering;
   double maximumOrderPrice;
   double minimumOrderPrice;
   double deliveryFeeUnderMaximumOrderPrice;
-  Settings();
+  AppSettings();
   Map<String, dynamic> toJson() {
     return {
       'stopOrdering': stopOrdering,
@@ -13,7 +13,7 @@ class Settings {
     };
   }
 
-  Settings.fromJson(Map<String, dynamic> json) {
+  AppSettings.fromJson(Map<String, dynamic> json) {
     stopOrdering = json['stopOrdering'] as bool;
     maximumOrderPrice = (json['maximumOrderPrice'] as num)?.toDouble();
     minimumOrderPrice = (json['minimumOrderPrice'] as num)?.toDouble();

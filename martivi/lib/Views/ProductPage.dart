@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:image/image.dart' as Img;
 import 'package:image_picker/image_picker.dart';
 import 'package:martivi/Constants/Constants.dart';
@@ -17,7 +18,6 @@ import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
 import 'package:martivi/Views/ProductDetailPage.dart';
-import 'package:martivi/Widgets/FadeInWidget.dart';
 import 'package:martivi/Widgets/Widgets.dart';
 import 'package:path/path.dart' as ppp;
 import 'package:provider/provider.dart';
@@ -35,35 +35,21 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  MainViewModel vm;
   @override
   void didUpdateWidget(ProductPage oldWidget) {
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
-    context.read<MainViewModel>().listenProductsOfCategory(widget.category);
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    vm = context.read<MainViewModel>();
-    vm.listenProductsOfCategory(widget.category);
-  }
-
-  @override
-  void dispose() async {
-    try {
-      super.dispose();
-    } catch (e) {
-      print(e);
-    } finally {
-      vm.products.value?.clear();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    List<Product> products = [];
     return Consumer<MainViewModel>(
       builder: (BuildContext context, MainViewModel viewModel, Widget child) {
         return Scaffold(
@@ -79,8 +65,7 @@ class _ProductPageState extends State<ProductPage> {
                 onPressed: () {
                   showSearch(
                       context: context,
-                      delegate:
-                          ProductsSearch(products: viewModel.products.value));
+                      delegate: ProductsSearch(products: products));
                 },
               ),
               ValueListenableBuilder<List<CartItem>>(
@@ -152,284 +137,309 @@ class _ProductPageState extends State<ProductPage> {
           body: Builder(
             builder: (context) {
               return SafeArea(
-                child: ValueListenableBuilder<User>(
+                child: ValueListenableBuilder<DatabaseUser>(
                   builder: (BuildContext context, user, Widget child) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         Expanded(
-                          child: ValueListenableBuilder<List<Product>>(
-                            valueListenable: viewModel.products,
-                            builder: (context, value, child) {
-                              // if (value.length == 0)
-                              //   return Container(
-                              //     child: Stack(
-                              //       children: [
-                              //         Positioned.fill(
-                              //             child: SvgPicture.asset(
-                              //                 'assets/svg/NoItem.svg')),
-                              //         Center(
-                              //             child: Text(
-                              //           'კატეგორია ცარიელია!',
-                              //           style: TextStyle(
-                              //               fontSize: 16,
-                              //               color: kPrimary,
-                              //               fontWeight: FontWeight.bold),
-                              //         ))
-                              //       ],
-                              //     ),
-                              //   );
+                            child: StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('/products')
+                              .where('documentId',
+                                  isEqualTo: widget.category.documentId)
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting)
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation(kPrimary),
+                                ),
+                              );
+                            if (snapshot.data == null) return Text('No Data');
 
-                              return user?.role == UserType.admin
-                                  ? ListView.builder(
-                                      itemBuilder: (context, index) {
-                                        return Slidable(
-                                          key: Key(viewModel.products
-                                              .value[index].productDocumentId),
-                                          actionPane:
-                                              SlidableDrawerActionPane(),
-                                          actions: <Widget>[
-                                            SlideAction(
-                                              onTap: () {
-                                                showModalBottomSheet(
-                                                    context: context,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                        topLeft:
-                                                            Radius.circular(20),
-                                                        topRight:
-                                                            Radius.circular(20),
-                                                      ),
+                            if (snapshot.data.docs.length == 0)
+                              return Stack(
+                                children: [
+                                  Container(
+                                      constraints: BoxConstraints.expand(),
+                                      child: SvgPicture.asset(
+                                          'assets/svg/NoItem.svg')),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        bottom:
+                                            MediaQuery.of(context).size.height /
+                                                4),
+                                    child: Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: Text(
+                                          AppLocalizations.of(context)
+                                              .translate(
+                                                  'You have nothing here'),
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: kPrimary,
+                                              shadows: [
+                                                BoxShadow(
+                                                    color: Colors.white
+                                                        .withOpacity(1),
+                                                    blurRadius: 10.0,
+                                                    spreadRadius: 2.0)
+                                              ]),
+                                        )),
+                                  )
+                                ],
+                              );
+
+                            List<Product> value = [];
+                            try {
+                              snapshot.data.docs?.forEach((element) {
+                                try {
+                                  var p = Product.fromJson(element.data());
+                                  p.productDocumentId = element.id;
+                                  value.add(p);
+                                } catch (e) {
+                                  print(e.toString());
+                                }
+                              });
+                              products = value;
+                            } catch (e) {}
+
+                            return user?.role == UserType.admin
+                                ? ListView.builder(
+                                    itemBuilder: (context, index) {
+                                      return Slidable(
+                                        key:
+                                            Key(value[index].productDocumentId),
+                                        actionPane: SlidableDrawerActionPane(),
+                                        actions: <Widget>[
+                                          SlideAction(
+                                            onTap: () {
+                                              showModalBottomSheet(
+                                                  context: context,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(20),
+                                                      topRight:
+                                                          Radius.circular(20),
                                                     ),
-                                                    builder: (c) {
-                                                      return AddProductWidget(
-                                                        onAddClicked: (p) {
-                                                          viewModel
-                                                              .storeProduct(p)
-                                                              .catchError(
-                                                                  (error) {
-                                                            showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (context) =>
-                                                                      OkDialog(
-                                                                title: AppLocalizations.of(
-                                                                        context)
-                                                                    .translate(
-                                                                        'Error'),
-                                                                content: error
-                                                                    .toString(),
-                                                              ),
-                                                            );
-                                                          });
-                                                        },
-                                                        pc: viewModel.products
-                                                            .value[index],
+                                                  ),
+                                                  builder: (c) {
+                                                    return AddProductWidget(
+                                                      onAddClicked: (p) {
+                                                        viewModel
+                                                            .storeProduct(p)
+                                                            .catchError(
+                                                                (error) {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (context) =>
+                                                                    OkDialog(
+                                                              title: AppLocalizations
+                                                                      .of(
+                                                                          context)
+                                                                  .translate(
+                                                                      'Error'),
+                                                              content: error
+                                                                  .toString(),
+                                                            ),
+                                                          );
+                                                        });
+                                                      },
+                                                      pc: value[index],
 
 //
-                                                      );
-                                                    });
-                                              },
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Container(
-                                                  decoration: BoxDecoration(
+                                                    );
+                                                  });
+                                            },
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                15.0))),
+                                                child: Material(
+                                                  shape: RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.all(
                                                               Radius.circular(
-                                                                  15.0))),
-                                                  child: Material(
-                                                    shape: RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    15))),
-                                                    child: DecoratedBox(
+                                                                  15))),
+                                                  child: DecoratedBox(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.blue,
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  15.0)),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Color(
+                                                                  0xFFABABAB)
+                                                              .withOpacity(0.7),
+                                                          blurRadius: 4.0,
+                                                          spreadRadius: 3.0,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: Container(
                                                       decoration: BoxDecoration(
-                                                        color: Colors.blue,
                                                         borderRadius:
                                                             BorderRadius.all(
                                                                 Radius.circular(
                                                                     15.0)),
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: Color(
-                                                                    0xFFABABAB)
-                                                                .withOpacity(
-                                                                    0.7),
-                                                            blurRadius: 4.0,
-                                                            spreadRadius: 3.0,
-                                                          ),
-                                                        ],
+                                                        color: Colors.black12
+                                                            .withOpacity(0.1),
                                                       ),
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          15.0)),
-                                                          color: Colors.black12
-                                                              .withOpacity(0.1),
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Container(
-                                                            child: Center(
-                                                              child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                children: <
-                                                                    Widget>[
-                                                                  Icon(
-                                                                    Icons.edit,
-                                                                    color:
-                                                                        kIcons,
-                                                                  ),
-                                                                  Text(
-                                                                    AppLocalizations.of(
-                                                                            context)
-                                                                        .translate(
-                                                                            'Edit'),
-                                                                    style: TextStyle(
-                                                                        color:
-                                                                            kIcons),
-                                                                  )
-                                                                ],
-                                                              ),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Container(
+                                                          child: Center(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: <
+                                                                  Widget>[
+                                                                Icon(
+                                                                  Icons.edit,
+                                                                  color: kIcons,
+                                                                ),
+                                                                Text(
+                                                                  AppLocalizations.of(
+                                                                          context)
+                                                                      .translate(
+                                                                          'Edit'),
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          kIcons),
+                                                                )
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
-                                                        height: double.infinity,
                                                       ),
+                                                      height: double.infinity,
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ],
-                                          secondaryActions: <Widget>[
-                                            SlideAction(
-                                              onTap: () {
-                                                viewModel.deleteProduct(
-                                                    viewModel
-                                                        .products.value[index]);
-                                              },
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Container(
-                                                  decoration: BoxDecoration(
+                                          ),
+                                        ],
+                                        secondaryActions: <Widget>[
+                                          SlideAction(
+                                            onTap: () {
+                                              viewModel
+                                                  .deleteProduct(value[index]);
+                                            },
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                15.0))),
+                                                child: Material(
+                                                  shape: RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.all(
                                                               Radius.circular(
-                                                                  15.0))),
-                                                  child: Material(
-                                                    shape: RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    15))),
-                                                    child: DecoratedBox(
+                                                                  15))),
+                                                  child: DecoratedBox(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.red,
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  15.0)),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Color(
+                                                                  0xFFABABAB)
+                                                              .withOpacity(0.7),
+                                                          blurRadius: 4.0,
+                                                          spreadRadius: 3.0,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: Container(
                                                       decoration: BoxDecoration(
-                                                        color: Colors.red,
                                                         borderRadius:
                                                             BorderRadius.all(
                                                                 Radius.circular(
                                                                     15.0)),
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: Color(
-                                                                    0xFFABABAB)
-                                                                .withOpacity(
-                                                                    0.7),
-                                                            blurRadius: 4.0,
-                                                            spreadRadius: 3.0,
-                                                          ),
-                                                        ],
+                                                        color: Colors.black12
+                                                            .withOpacity(0.1),
                                                       ),
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          15.0)),
-                                                          color: Colors.black12
-                                                              .withOpacity(0.1),
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Container(
-                                                            child: Center(
-                                                              child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                children: <
-                                                                    Widget>[
-                                                                  Icon(
-                                                                    Icons
-                                                                        .delete,
-                                                                    color:
-                                                                        kIcons,
-                                                                  ),
-                                                                  Text(
-                                                                    AppLocalizations.of(
-                                                                            context)
-                                                                        .translate(
-                                                                            'Delete'),
-                                                                    style: TextStyle(
-                                                                        color:
-                                                                            kIcons),
-                                                                  )
-                                                                ],
-                                                              ),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Container(
+                                                          child: Center(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: <
+                                                                  Widget>[
+                                                                Icon(
+                                                                  Icons.delete,
+                                                                  color: kIcons,
+                                                                ),
+                                                                Text(
+                                                                  AppLocalizations.of(
+                                                                          context)
+                                                                      .translate(
+                                                                          'Delete'),
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          kIcons),
+                                                                )
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
-                                                        height: double.infinity,
                                                       ),
+                                                      height: double.infinity,
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ],
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: ProductItem(
-                                                p: viewModel
-                                                    .products.value[index]),
                                           ),
-                                        );
-                                      },
-                                      itemCount:
-                                          viewModel.products.value.length,
-                                    )
-                                  : ListView(
-                                      children: <Widget>[
-                                        ...value.map(
-                                          (e) => Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: ProductItem(p: e),
-                                          ),
+                                        ],
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: ProductItem(p: value[index]),
                                         ),
-                                      ],
-                                    );
-                            },
-                          ),
-                        ),
+                                      );
+                                    },
+                                    itemCount: value.length,
+                                  )
+                                : ListView(
+                                    children: <Widget>[
+                                      ...value.map(
+                                        (e) => Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: ProductItem(p: e),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                          },
+                        )),
                         if (user?.role == UserType.admin) child,
                       ],
                     );
@@ -448,6 +458,13 @@ class _ProductPageState extends State<ProductPage> {
                           ),
                           builder: (context) {
                             return AddProductWidget(
+                              pc: Product(
+                                  localizedDescription: {},
+                                  localizedName: {},
+                                  addonDescriptions: [],
+                                  checkableAddons: [],
+                                  selectableAddons: [],
+                                  images: []),
                               onAddClicked: (p) {
                                 p.documentId = widget.category.documentId;
                                 viewModel.storeProduct(p).catchError((error) {
@@ -513,7 +530,9 @@ class _ProductItemState extends State<ProductItem> {
                     builder: (context) => ProductDetailPage(
                       p: widget.p,
                     ),
-                  ));
+                  )).whenComplete(() {
+                setState(() {});
+              });
             },
             child: Container(
               margin: EdgeInsets.all(1),
@@ -541,17 +560,14 @@ class _ProductItemState extends State<ProductItem> {
                             borderRadius: BorderRadius.circular(4),
                             image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: NetworkImage(widget.p?.productsForms
-                                  ?.elementAt(widget.p.selectedIndex)
-                                  ?.images
-                                  ?.first
-                                  ?.downloadUrl),
+                              image: NetworkImage(
+                                  widget.p?.images?.first?.downloadUrl),
                             )),
                       ),
                       Expanded(
                         child: Container(
                           padding: EdgeInsets.only(left: 12, top: 12),
-                          child: ValueListenableBuilder<User>(
+                          child: ValueListenableBuilder<DatabaseUser>(
                             builder: (context, user, child) {
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -567,6 +583,30 @@ class _ProductItemState extends State<ProductItem> {
                                         color: Colors.black87,
                                         fontWeight: FontWeight.w700),
                                   ),
+                                  SizedBox(
+                                    height: 4,
+                                  ),
+                                  ...?widget.p.addonDescriptions
+                                      ?.map((e) => Row(
+                                            children: [
+                                              Text(
+                                                '${e.localizedAddonDescriptionName[AppLocalizations.of(context).locale.languageCode]}: ',
+                                                style: TextStyle(
+                                                  color: Colors.black54,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 12.0,
+                                                ),
+                                              ),
+                                              Text(
+                                                '${e.localizedAddonDescription[AppLocalizations.of(context).locale.languageCode]}',
+                                                style: TextStyle(
+                                                  color: Colors.black54,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 12.0,
+                                                ),
+                                              ),
+                                            ],
+                                          )),
                                   Text(
                                     widget.p.localizedDescription[
                                             AppLocalizations.of(context)
@@ -579,77 +619,60 @@ class _ProductItemState extends State<ProductItem> {
                                       fontSize: 12.0,
                                     ),
                                   ),
-                                  Text(
-                                    '₾${widget.p.productsForms[widget.p.selectedIndex].price.toString()}',
-                                    style: TextStyle(),
-                                  ),
-                                  Wrap(
-                                    children: <Widget>[
-                                      ...widget.p.productsForms.map(
-                                        (e) => Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 5,
-                                              right: 5,
-                                              left: 8,
-                                              bottom: 8),
-                                          child: Material(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8)),
-                                            elevation: 2,
-                                            child: AnimatedContainer(
-                                              constraints:
-                                                  BoxConstraints(maxWidth: 110),
-                                              duration:
-                                                  Duration(milliseconds: 200),
-                                              decoration: BoxDecoration(
-                                                  color: widget.p.productsForms[
-                                                              widget.p
-                                                                  .selectedIndex] ==
-                                                          e
-                                                      ? kPrimary
-                                                      : kIcons,
-                                                  borderRadius:
-                                                      BorderRadius.circular(8)),
-                                              child: RawMaterialButton(
-                                                constraints: BoxConstraints(
-                                                    minHeight: 0),
-                                                splashColor: Colors.red,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8)),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    widget.p.selectedIndex =
-                                                        widget.p.productsForms
-                                                            .indexOf(e);
-                                                  });
-                                                },
-                                                child: Container(
-                                                  padding: EdgeInsets.all(4),
-                                                  child: Text(
-                                                    e.localizedFormName[
-                                                        AppLocalizations.of(
-                                                                context)
-                                                            .locale
-                                                            .languageCode],
-                                                    style: TextStyle(
-                                                        color: e ==
-                                                                widget.p.productsForms[
-                                                                    widget.p
-                                                                        .selectedIndex]
-                                                            ? Colors.white
-                                                            : Colors.black87),
-                                                    maxLines: null,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
+                                  if (widget.p?.selectableAddons?.firstWhere(
+                                          (element) => element.isSelected,
+                                          orElse: () => null) !=
+                                      null)
+                                    Row(
+                                      children: [
+                                        Text(
+                                          '${widget.p.selectableAddons.firstWhere((element) => element.isSelected, orElse: () => null).localizedName[AppLocalizations.of(context).locale.languageCode]}: ',
+                                          style: TextStyle(
+                                            color: Colors.black54,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 12.0,
                                           ),
                                         ),
+                                        Text(
+                                          '${widget.p.selectableAddons.firstWhere((element) => element.isSelected, orElse: () => null).price}₾',
+                                          style: TextStyle(
+                                            color: Colors.black54,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 12.0,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ...?widget?.p?.checkableAddons
+                                      ?.where((element) => element.isSelected)
+                                      ?.map(
+                                        (e) => Row(
+                                          children: [
+                                            Text(
+                                              '${e.localizedName[AppLocalizations.of(context).locale.languageCode]}: ',
+                                              style: TextStyle(
+                                                color: Colors.black54,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 12.0,
+                                              ),
+                                            ),
+                                            if ((e.price ?? 0) > 0)
+                                              Text(
+                                                '${e.price}₾',
+                                                style: TextStyle(
+                                                  fontFamily: 'Sans',
+                                                  color: Colors.black54,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 12.0,
+                                                ),
+                                              ),
+                                          ],
+                                        ),
                                       ),
-                                    ],
+                                  Text(
+                                    '₾${widget.p?.totalProductPrice?.toString()}',
+                                    style: TextStyle(
+                                        color: kPrimary, fontFamily: 'Sans'),
                                   ),
                                   if (user?.role == UserType.user) child,
                                 ],
@@ -662,14 +685,17 @@ class _ProductItemState extends State<ProductItem> {
                                   builder: (context, value, child) {
                                     return Container(
                                       child: () {
-                                        CartItem inCartProduct =
-                                            value.firstWhere(
-                                                (element) =>
-                                                    element.product
-                                                        .productDocumentId ==
-                                                    widget.p.productDocumentId,
-                                                orElse: () => null);
-                                        return inCartProduct == null
+                                        int productsInCartCount = value
+                                                ?.where(
+                                                  (element) =>
+                                                      element.product
+                                                          .productDocumentId ==
+                                                      widget
+                                                          .p.productDocumentId,
+                                                )
+                                                ?.length ??
+                                            0;
+                                        return productsInCartCount == 0
                                             ? FlatButton(
                                                 child: Text(
                                                   AppLocalizations.of(context)
@@ -679,41 +705,8 @@ class _ProductItemState extends State<ProductItem> {
                                                           .withOpacity(.8)),
                                                 ),
                                                 onPressed: () {
-                                                  widget.p.productsForms
-                                                      .forEach((element) {
-                                                    element.quantity = 0;
-                                                  });
-                                                  widget
-                                                      .p
-                                                      .productsForms[widget
-                                                          .p.selectedIndex]
-                                                      .quantity = 1;
                                                   viewModel.storeCart(widget.p);
-                                                }
-                                                // onPressed: !((widget
-                                                //                 .p
-                                                //                 .productsForms[
-                                                //                     widget.p
-                                                //                         .selectedIndex]
-                                                //                 .quantityInSupply ??
-                                                //             1) <
-                                                //         0)
-                                                //     ? () {
-                                                //         widget.p.productsForms
-                                                //             .forEach((element) {
-                                                //           element.quantity = 0;
-                                                //         });
-                                                //         widget
-                                                //             .p
-                                                //             .productsForms[widget
-                                                //                 .p
-                                                //                 .selectedIndex]
-                                                //             .quantity = 1;
-                                                //         viewModel.storeCart(
-                                                //             widget.p);
-                                                //       }
-                                                //     : null,
-                                                )
+                                                })
                                             : Container(
                                                 child: Container(
                                                   decoration: BoxDecoration(
@@ -733,56 +726,22 @@ class _ProductItemState extends State<ProductItem> {
                                                         child: InkWell(
                                                           onTap: () {
                                                             try {
-                                                              inCartProduct
-                                                                  .product
-                                                                  .productsForms[
-                                                                      widget.p
-                                                                          .selectedIndex]
-                                                                  .quantity ??= 0;
-                                                              if (inCartProduct
-                                                                      .product
-                                                                      .productsForms[
-                                                                          widget
-                                                                              .p
-                                                                              .selectedIndex]
-                                                                      .quantity ==
+                                                              if (productsInCartCount ==
                                                                   0) {
                                                                 return;
                                                               }
-                                                              inCartProduct
-                                                                  .product
-                                                                  .productsForms[
-                                                                      widget.p
-                                                                          .selectedIndex]
-                                                                  .quantity--;
-                                                              if (!inCartProduct
-                                                                  .product
-                                                                  .productsForms
-                                                                  .any((element) =>
-                                                                      element
-                                                                          .quantity >
-                                                                      0)) {
-                                                                Firestore
+                                                              if (productsInCartCount >
+                                                                  0) {
+                                                                FirebaseFirestore
                                                                     .instance
                                                                     .collection(
                                                                         '/cart')
-                                                                    .document(
-                                                                        inCartProduct
-                                                                            .documentId)
+                                                                    .doc(value
+                                                                        .last
+                                                                        .documentId)
                                                                     .delete();
                                                                 return;
                                                               }
-                                                              Firestore.instance
-                                                                  .collection(
-                                                                      '/cart')
-                                                                  .document(
-                                                                      inCartProduct
-                                                                          .documentId)
-                                                                  .setData(
-                                                                      inCartProduct
-                                                                          .toJson(),
-                                                                      merge:
-                                                                          true);
                                                             } catch (e) {}
                                                           },
                                                           child: Container(
@@ -806,14 +765,10 @@ class _ProductItemState extends State<ProductItem> {
                                                                     .symmetric(
                                                                 horizontal:
                                                                     18.0),
-                                                        child: Text(inCartProduct
-                                                                .product
-                                                                .productsForms[
-                                                                    widget.p
-                                                                        .selectedIndex]
-                                                                .quantity
-                                                                ?.toString() ??
-                                                            '0'),
+                                                        child: Text(
+                                                            productsInCartCount
+                                                                    ?.toString() ??
+                                                                '0'),
                                                       ),
 
                                                       /// Increasing value of item
@@ -821,45 +776,9 @@ class _ProductItemState extends State<ProductItem> {
                                                         child: InkWell(
                                                           onTap: () {
                                                             try {
-                                                              if (widget
-                                                                      .p
-                                                                      .productsForms[
-                                                                          widget
-                                                                              .p
-                                                                              .selectedIndex]
-                                                                      .quantityInSupply ==
-                                                                  inCartProduct
-                                                                      .product
-                                                                      .productsForms[
-                                                                          widget
-                                                                              .p
-                                                                              .selectedIndex]
-                                                                      .quantity)
-                                                                return;
-                                                              inCartProduct
-                                                                  .product
-                                                                  .productsForms[
-                                                                      widget.p
-                                                                          .selectedIndex]
-                                                                  .quantity ??= 0;
-
-                                                              inCartProduct
-                                                                  .product
-                                                                  .productsForms[
-                                                                      widget.p
-                                                                          .selectedIndex]
-                                                                  .quantity++;
-                                                              Firestore.instance
-                                                                  .collection(
-                                                                      '/cart')
-                                                                  .document(
-                                                                      inCartProduct
-                                                                          .documentId)
-                                                                  .setData(
-                                                                      inCartProduct
-                                                                          .toJson(),
-                                                                      merge:
-                                                                          true);
+                                                              viewModel
+                                                                  .storeCart(
+                                                                      widget.p);
                                                             } catch (e) {}
                                                           },
                                                           child: Container(
@@ -880,15 +799,8 @@ class _ProductItemState extends State<ProductItem> {
                                                     ],
                                                   ),
                                                 ),
-//                                              child: Text(inCartProduct
-//                                                      .product
-//                                                      .productsForms[widget
-//                                                          .p.selectedIndex]
-//                                                      .quantity
-//                                                      ?.toString() ??
-//                                                  '0'),
+//
                                               );
-                                        return Container();
                                       }(),
                                     );
                                   },
@@ -913,21 +825,12 @@ class _ProductItemState extends State<ProductItem> {
 class AddProductWidget extends StatefulWidget {
   final Function(Product) onAddClicked;
   AddProductWidget({this.onAddClicked, this.pc});
-  Product pc;
+  final Product pc;
   @override
   _AddProductWidgetState createState() => _AddProductWidgetState();
 }
 
 class _AddProductWidgetState extends State<AddProductWidget> {
-  TextEditingController productTextController = TextEditingController();
-  TextEditingController productDescriptionController = TextEditingController();
-  TextEditingController productFormNameController = TextEditingController();
-  TextEditingController productFormDescriptionController =
-      TextEditingController();
-  TextEditingController productFormPriceController = TextEditingController();
-  TextEditingController productFormQuantityInSupplyController =
-      TextEditingController();
-  TextEditingController productFormWeightController = TextEditingController();
   String selectedLocal = AppLocalizations.supportedLocales.first;
   ValueNotifier<bool> isUploading = ValueNotifier<bool>(false);
   bool addClicked = false;
@@ -935,8 +838,13 @@ class _AddProductWidgetState extends State<AddProductWidget> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    selectedLocal ?? AppLocalizations.supportedLocales.first;
-    widget.pc ??= Product();
+    localeSelected();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
     localeSelected();
   }
 
@@ -949,36 +857,9 @@ class _AddProductWidgetState extends State<AddProductWidget> {
 
   void localeSelected() {
     setTextControllers();
-    widget.pc.localizedDescription ??= {};
-    productDescriptionController.text =
-        widget.pc.localizedDescription[selectedLocal] ?? '';
-
-    widget.pc.localizedName ??= {};
-
-    productTextController.text = widget.pc.localizedName[selectedLocal] ?? '';
   }
 
-  void setTextControllers() {
-    if (widget.pc.selectedIndex != null) {
-      productFormNameController.text = widget
-              .pc
-              .productsForms[widget.pc.selectedIndex]
-              .localizedFormName[selectedLocal] ??
-          '';
-      productFormDescriptionController.text = widget
-              .pc
-              .productsForms[widget.pc.selectedIndex]
-              .localizedFormDescription[selectedLocal] ??
-          '';
-      productFormPriceController.text =
-          widget.pc.productsForms[widget.pc.selectedIndex].price?.toString() ??
-              '';
-      productFormQuantityInSupplyController.text = widget
-              .pc.productsForms[widget.pc.selectedIndex].quantityInSupply
-              ?.toString() ??
-          '';
-    }
-  }
+  void setTextControllers() {}
 
   @override
   Widget build(BuildContext context) {
@@ -1034,7 +915,8 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                 ),
               ),
               TextField(
-                controller: productTextController,
+                controller: TextEditingController()
+                  ..text = widget.pc.localizedName[selectedLocal] ?? '',
                 onChanged: (value) {
                   widget.pc.localizedName ??= {};
                   widget.pc.localizedName[selectedLocal] = value;
@@ -1042,6 +924,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                 style: TextStyle(),
                 cursorColor: kPrimary,
                 decoration: InputDecoration(
+                    suffixText: selectedLocal,
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: kPrimary),
                     ),
@@ -1056,8 +939,9 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                         AppLocalizations.of(context).translate("Product Name")),
               ),
               TextField(
+                controller: TextEditingController(
+                    text: widget.pc.localizedDescription[selectedLocal] ?? ''),
                 maxLines: null,
-                controller: productDescriptionController,
                 onChanged: (value) {
                   widget.pc.localizedDescription ??= {};
                   widget.pc.localizedDescription[selectedLocal] = value;
@@ -1065,6 +949,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                 style: TextStyle(),
                 cursorColor: kPrimary,
                 decoration: InputDecoration(
+                    suffixText: selectedLocal,
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: kPrimary),
                     ),
@@ -1078,111 +963,180 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                     hintText: AppLocalizations.of(context)
                         .translate("Product Description")),
               ),
-              SizedBox(
-                height: 10,
+              TextField(
+                controller: TextEditingController(
+                    text: widget.pc.basePrice?.toString() ?? ''),
+                decoration: kinputFiledDecoration.copyWith(
+                    hintText:
+                        AppLocalizations.of(context).translate('Base price')),
+                onChanged: (val) {
+                  widget.pc.basePrice = double.parse(val);
+                },
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    AppLocalizations.of(context).translate('Product forms'),
-                  ),
-                  Wrap(
-                    children: <Widget>[
-                      ...?widget.pc?.productsForms?.map(
-                        (e) => FadeInWidget(
-                          child: Stack(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 10, right: 15, left: 8, bottom: 8),
-                                child: Material(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8)),
-                                  elevation: 2,
-                                  child: AnimatedContainer(
-                                    height: 40,
-                                    duration: Duration(milliseconds: 200),
-                                    decoration: BoxDecoration(
-                                        color: widget.pc.selectedIndex == null
-                                            ? null
-                                            : widget.pc.productsForms
-                                                        ?.elementAt(widget.pc
-                                                            .selectedIndex) ==
-                                                    e
-                                                ? kPrimary
-                                                : kIcons,
-                                        borderRadius: BorderRadius.circular(8)),
-                                    child: RawMaterialButton(
-                                      constraints: BoxConstraints(minHeight: 0),
-                                      splashColor: Colors.red,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8)),
-                                      onPressed: () {
-                                        setState(() {
-                                          widget.pc.selectedIndex = widget
-                                              .pc.productsForms
-                                              .indexOf(e);
-                                          setTextControllers();
-                                        });
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.all(4),
-                                        child: Text(
-                                          e.localizedFormName[
-                                              AppLocalizations.of(context)
-                                                  .locale
-                                                  .languageCode],
-                                          style: TextStyle(
-                                              color: widget.pc.selectedIndex ==
-                                                      null
-                                                  ? null
-                                                  : e ==
-                                                          widget
-                                                              .pc?.productsForms
-                                                              ?.elementAt(widget
-                                                                  .pc
-                                                                  .selectedIndex)
-                                                      ? Colors.white
-                                                      : Colors.black87),
-                                          maxLines: null,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+              TextField(
+                controller: TextEditingController(
+                    text: widget.pc.quantityInSupply?.toString() ?? ''),
+                decoration: kinputFiledDecoration.copyWith(
+                    hintText: AppLocalizations.of(context)
+                        .translate('Quantity in supply')),
+                onChanged: (val) {
+                  widget.pc.quantityInSupply = int.parse(val);
+                },
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              Text(
+                AppLocalizations.of(context)
+                    .translate('Additional descriptions'),
+                textAlign: TextAlign.center,
+              ),
+              ...?widget.pc.addonDescriptions
+                  ?.map((e) => Stack(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: TextEditingController(
+                                      text: e.localizedAddonDescriptionName[
+                                          selectedLocal]),
+                                  onChanged: (val) {
+                                    e.localizedAddonDescriptionName[
+                                        selectedLocal] = val;
+                                  },
+                                  decoration: kinputFiledDecoration.copyWith(
+                                      suffixText: selectedLocal,
+                                      hintText: AppLocalizations.of(context)
+                                          .translate('Description name')),
                                 ),
                               ),
-                              Positioned(
-                                top: 0,
-                                right: 0,
-                                child: ButtonTheme(
-                                  padding: EdgeInsets.all(0),
+                              SizedBox(
+                                width: 12,
+                              ),
+                              Expanded(
+                                child: TextField(
+                                  controller: TextEditingController(
+                                      text: e.localizedAddonDescription[
+                                          selectedLocal]),
+                                  onChanged: (val) {
+                                    e.localizedAddonDescription[selectedLocal] =
+                                        val;
+                                  },
+                                  decoration: kinputFiledDecoration.copyWith(
+                                      suffixText: selectedLocal,
+                                      hintText: AppLocalizations.of(context)
+                                          .translate('Description')),
+                                ),
+                              )
+                            ],
+                          ),
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                splashColor: kPrimary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10),
+                                onTap: () async {
+                                  setState(() {
+                                    widget.pc.addonDescriptions.remove(e);
+                                  });
+                                },
+                                child: Icon(
+                                  Icons.close,
+                                  size: 22,
+                                  color: Colors.red.withOpacity(.5),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ))
+                  ?.toList(),
+              Center(
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      widget.pc.addonDescriptions.add(AddonDescription(
+                          localizedAddonDescription: {},
+                          localizedAddonDescriptionName: {}));
+                    });
+                  },
+                  child: Icon(Icons.add),
+                ),
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              Text(
+                AppLocalizations.of(context)
+                    .translate('Selectable paid addons'),
+                textAlign: TextAlign.center,
+              ),
+              ...?widget.pc.checkableAddons
+                  ?.map((e) => Row(
+                        children: [
+                          Radio(
+                            activeColor: kPrimary,
+                            value: e,
+                            groupValue: widget?.pc?.checkableAddons?.firstWhere(
+                                (element) => element.isSelected,
+                                orElse: () => null),
+                            onChanged: (val) {
+                              setState(() {
+                                widget.pc.checkableAddons.forEach((element) {
+                                  element.isSelected = false;
+                                });
+                                (val as PaidAddon).isSelected = true;
+                              });
+                            },
+                          ),
+                          Expanded(
+                            child: Stack(
+                              children: [
+                                Column(
+                                  children: [
+                                    TextField(
+                                      controller: TextEditingController(
+                                          text: e.localizedName[selectedLocal]),
+                                      onChanged: (val) {
+                                        e.localizedName[selectedLocal] = val;
+                                      },
+                                      decoration:
+                                          kinputFiledDecoration.copyWith(
+                                              suffixText: selectedLocal,
+                                              hintText:
+                                                  AppLocalizations.of(context)
+                                                      .translate('Addon name')),
+                                    ),
+                                    TextField(
+                                      controller: TextEditingController(
+                                          text: e.price?.toString() ?? ''),
+                                      decoration:
+                                          kinputFiledDecoration.copyWith(
+                                              hintText:
+                                                  AppLocalizations.of(context)
+                                                      .translate('Price')),
+                                      onChanged: (val) {
+                                        e.price = double.parse(val);
+                                      },
+                                    ),
+                                    Divider(
+                                      height: 30,
+                                    )
+                                  ],
+                                ),
+                                Align(
+                                  alignment: Alignment.topRight,
                                   child: Material(
                                     color: Colors.transparent,
                                     child: InkWell(
                                       splashColor: kPrimary.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(10),
-                                      onTap: () {
+                                      onTap: () async {
                                         setState(() {
-                                          if (widget.pc.selectedIndex ==
-                                              widget.pc.productsForms
-                                                  .indexOf(e))
-                                            try {
-                                              widget
-                                                  .pc
-                                                  ?.productsForms[
-                                                      widget.pc.selectedIndex]
-                                                  ?.images
-                                                  ?.forEach((element) {
-                                                FirebaseStorage.instance
-                                                    .ref()
-                                                    .child(element.refPath)
-                                                    .delete();
-                                              });
-                                            } catch (e) {}
-                                          widget.pc.selectedIndex = null;
-                                          widget.pc.productsForms.remove(e);
+                                          widget.pc.checkableAddons.remove(e);
                                         });
                                       },
                                       child: Icon(
@@ -1193,285 +1147,269 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                                     ),
                                   ),
                                 ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ))
+                  ?.toList(),
+              Center(
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      widget.pc.checkableAddons
+                          .add(PaidAddon(localizedName: {}, isSelected: false));
+                    });
+                  },
+                  child: Icon(Icons.add),
+                ),
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              Text(
+                AppLocalizations.of(context).translate('Paid addons'),
+                textAlign: TextAlign.center,
+              ),
+              ...?widget.pc.selectableAddons
+                  ?.map((e) => Stack(
+                        children: [
+                          Column(
+                            children: [
+                              TextField(
+                                controller: TextEditingController(
+                                    text: e.localizedName[selectedLocal]),
+                                onChanged: (val) {
+                                  e.localizedName[selectedLocal] = val;
+                                },
+                                decoration: kinputFiledDecoration.copyWith(
+                                    suffixText: selectedLocal,
+                                    hintText: AppLocalizations.of(context)
+                                        .translate('Addon name')),
+                              ),
+                              TextField(
+                                controller: TextEditingController(
+                                    text: e.price?.toString() ?? ''),
+                                decoration: kinputFiledDecoration.copyWith(
+                                    hintText: AppLocalizations.of(context)
+                                        .translate('Price')),
+                                onChanged: (val) {
+                                  e.price = double.parse(val);
+                                },
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(AppLocalizations.of(context)
+                                      .translate('Is selected')),
+                                  Checkbox(
+                                    activeColor: kPrimary,
+                                    value: e.isSelected,
+                                    onChanged: (val) {
+                                      setState(() {
+                                        e.isSelected = val;
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                              Divider(
+                                height: 30,
                               )
                             ],
                           ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(
-                              Icons.add,
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                splashColor: kPrimary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10),
+                                onTap: () async {
+                                  setState(() {
+                                    widget.pc.selectableAddons.remove(e);
+                                  });
+                                },
+                                child: Icon(
+                                  Icons.close,
+                                  size: 22,
+                                  color: Colors.red.withOpacity(.5),
+                                ),
+                              ),
                             ),
                           ),
-                          onTap: () {
-                            setState(() {
-                              widget.pc.productsForms ??= [];
-                              widget.pc.productsForms.add(ProductForm(
-                                  localizedFormDescription:
-                                      Map.of(widget.pc.localizedDescription),
-                                  localizedFormName: {
-                                    AppLocalizations.of(context)
-                                            .locale
-                                            .languageCode:
-                                        AppLocalizations.of(context)
-                                            .translate('Product')
-                                  }));
-                            });
-                          },
-                        ),
-                      ),
-                    ],
+                        ],
+                      ))
+                  ?.toList(),
+              Center(
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      widget.pc.selectableAddons
+                          .add(PaidAddon(localizedName: {}, isSelected: false));
+                    });
+                  },
+                  child: Icon(Icons.add),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of(context).translate('Product images'),
                   ),
-                  if (widget?.pc?.selectedIndex != null) ...[
-                    TextField(
-                      maxLines: null,
-                      controller: productFormNameController,
-                      onChanged: (value) {
-                        setState(() {
-                          widget.pc.productsForms[widget.pc.selectedIndex]
-                              .localizedFormName ??= {};
-                          widget.pc.productsForms[widget.pc.selectedIndex]
-                              .localizedFormName[selectedLocal] = value;
-                        });
-                      },
-                      style: TextStyle(),
-                      cursorColor: kPrimary,
-                      decoration: kinputFiledDecoration.copyWith(
-                          hintText: AppLocalizations.of(context)
-                              .translate("Product form name")),
-                    ),
-                    TextField(
-                      maxLines: null,
-                      controller: productFormDescriptionController,
-                      onChanged: (value) {
-                        setState(() {
-                          widget.pc.productsForms[widget.pc.selectedIndex]
-                              .localizedFormDescription ??= {};
-                          widget.pc.productsForms[widget.pc.selectedIndex]
-                              .localizedFormDescription[selectedLocal] = value;
-                        });
-                      },
-                      style: TextStyle(),
-                      cursorColor: kPrimary,
-                      decoration: kinputFiledDecoration.copyWith(
-                          hintText: AppLocalizations.of(context)
-                              .translate("Product form name description")),
-                    ),
-                    TextField(
-                      keyboardType: TextInputType.number,
-                      maxLines: null,
-                      controller: productFormPriceController,
-                      onChanged: (value) {
-                        setState(() {
-                          widget.pc.productsForms[widget.pc.selectedIndex]
-                              .price = double.tryParse(value);
-                        });
-                      },
-                      style: TextStyle(),
-                      cursorColor: kPrimary,
-                      decoration: kinputFiledDecoration.copyWith(
-                          suffixText: curencyMark,
-                          hintText: AppLocalizations.of(context)
-                              .translate("Product form Price")),
-                    ),
-                    // TextField(
-                    //   keyboardType: TextInputType.number,
-                    //   maxLines: null,
-                    //   controller: productFormQuantityInSupplyController,
-                    //   onChanged: (value) {
-                    //     setState(() {
-                    //       widget.pc.productsForms[widget.pc.selectedIndex]
-                    //           .quantity = int.tryParse(value);
-                    //     });
-                    //   },
-                    //   style: TextStyle(),
-                    //   cursorColor: kPrimary,
-                    //   decoration: kinputFiledDecoration.copyWith(
-                    //       suffixText: curencyMark,
-                    //       hintText: AppLocalizations.of(context)
-                    //           .translate("Quantity in supply")),
-                    // ),
-                    SingleChildScrollView(
-                      physics: BouncingScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: <Widget>[
-                          ...?widget.pc.productsForms
-                              ?.elementAt(widget.pc.selectedIndex)
-                              ?.images
-                              ?.map((e) => Stack(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: InnerShadow(
-                                          shadows: [
+                  SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: <Widget>[
+                        ...?widget.pc?.images?.map((e) => Stack(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: InnerShadow(
+                                    shadows: [
+                                      BoxShadow(
+                                          color: Colors.white.withOpacity(.6),
+                                          offset: Offset(1, 1),
+                                          blurRadius: 2,
+                                          spreadRadius: 2)
+                                    ],
+                                    child: Container(
+                                      margin: EdgeInsets.all(4),
+                                      width: 100,
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                          boxShadow: [
                                             BoxShadow(
-                                                color: Colors.white
-                                                    .withOpacity(.6),
-                                                offset: Offset(1, 1),
+                                                color: Colors.black
+                                                    .withOpacity(.3),
+                                                offset: Offset(2, 2),
                                                 blurRadius: 2,
-                                                spreadRadius: 2)
+                                                spreadRadius: 1),
+                                            BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(.4),
+                                                offset: Offset(0, 0),
+                                                blurRadius: 2,
+                                                spreadRadius: .5)
                                           ],
-                                          child: Container(
-                                            margin: EdgeInsets.all(4),
-                                            width: 100,
-                                            height: 100,
-                                            decoration: BoxDecoration(
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                      color: Colors.black
-                                                          .withOpacity(.3),
-                                                      offset: Offset(2, 2),
-                                                      blurRadius: 2,
-                                                      spreadRadius: 1),
-                                                  BoxShadow(
-                                                      color: Colors.black
-                                                          .withOpacity(.4),
-                                                      offset: Offset(0, 0),
-                                                      blurRadius: 2,
-                                                      spreadRadius: .5)
-                                                ],
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10)),
-                                                image: DecorationImage(
-                                                    fit: BoxFit.cover,
-                                                    image: NetworkImage(
-                                                        e.downloadUrl))),
-                                          ),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                          image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image:
+                                                  NetworkImage(e.downloadUrl))),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: ButtonTheme(
+                                    padding: EdgeInsets.all(0),
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        splashColor: kPrimary.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(10),
+                                        onTap: () async {
+                                          await FirebaseStorage.instance
+                                              .ref()
+                                              .child(e.refPath)
+                                              .delete();
+                                          setState(() {
+                                            widget.pc.images.remove(e);
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.close,
+                                          size: 22,
+                                          color: Colors.red.withOpacity(.5),
                                         ),
                                       ),
-                                      Positioned(
-                                        top: 0,
-                                        right: 0,
-                                        child: ButtonTheme(
-                                          padding: EdgeInsets.all(0),
-                                          child: Material(
-                                            color: Colors.transparent,
-                                            child: InkWell(
-                                              splashColor:
-                                                  kPrimary.withOpacity(0.1),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              onTap: () async {
-                                                await FirebaseStorage.instance
-                                                    .ref()
-                                                    .child(e.refPath)
-                                                    .delete();
-                                                setState(() {
-                                                  widget
-                                                      .pc
-                                                      .productsForms[widget
-                                                          .pc.selectedIndex]
-                                                      .images
-                                                      .remove(e);
-                                                });
-                                              },
-                                              child: Icon(
-                                                Icons.close,
-                                                size: 22,
-                                                color:
-                                                    Colors.red.withOpacity(.5),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  )),
-                          IconButton(
-                            onPressed: () async {
-                              try {
-                                FirestoreImage im = FirestoreImage();
-                                var pickedImage = await ImagePicker()
-                                    .getImage(source: ImageSource.gallery);
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )),
+                        IconButton(
+                          onPressed: () async {
+                            try {
+                              FirestoreImage im = FirestoreImage();
+                              var pickedImage = await ImagePicker()
+                                  .getImage(source: ImageSource.gallery);
 
-                                if (pickedImage != null) {
-                                  File file = File(pickedImage.path);
-                                  Img.Image image_temp =
-                                      Img.decodeImage(file.readAsBytesSync());
-                                  Img.Image resized_img = Img.copyResize(
-                                      image_temp,
-                                      width: 800,
-                                      height: image_temp.height ~/
-                                          (image_temp.width / 800));
-                                  var data =
-                                      Img.encodeJpg(resized_img, quality: 60);
-                                  String filename =
-                                      '${Uuid().v4()}${ppp.basename(file.path)}';
-                                  isUploading.value = true;
-                                  var imageRef = FirebaseStorage.instance
-                                      .ref()
-                                      .child('images')
-                                      .child(filename);
+                              if (pickedImage != null) {
+                                File file = File(pickedImage.path);
+                                Img.Image image_temp =
+                                    Img.decodeImage(file.readAsBytesSync());
+                                Img.Image resized_img = Img.copyResize(
+                                    image_temp,
+                                    width: 800,
+                                    height: image_temp.height ~/
+                                        (image_temp.width / 800));
+                                var data =
+                                    Img.encodeJpg(resized_img, quality: 60);
+                                String filename =
+                                    '${Uuid().v4()}${ppp.basename(file.path)}';
+                                isUploading.value = true;
+                                var imageRef = FirebaseStorage.instance
+                                    .ref()
+                                    .child('images')
+                                    .child(filename);
 
-                                  var uploadTask = imageRef.putData(
-                                    data,
-                                  );
+                                var uploadTask = imageRef.putData(
+                                  data,
+                                );
 
 //                                  var uploadTask =
 //                                      imageRef.putFile(File(pickedImage.path));
-                                  im.refPath = imageRef.path;
-                                  var res = await uploadTask.onComplete;
-                                  if (!uploadTask.isSuccessful)
-                                    throw Exception(AppLocalizations.of(context)
-                                        .translate('File upload failed'));
-                                  String url = await res.ref.getDownloadURL();
-                                  String refPath = imageRef.path;
-                                  if (!((url?.length ?? 0) > 0)) {
-                                    throw Exception(AppLocalizations.of(context)
-                                        .translate('File upload failed'));
-                                  }
-                                  setState(() {
-                                    im.downloadUrl = url;
-                                    widget
-                                        .pc
-                                        .productsForms[widget.pc.selectedIndex]
-                                        .images ??= [];
-                                    widget
-                                        .pc
-                                        .productsForms[widget.pc.selectedIndex]
-                                        .images
-                                        .add(im);
-                                  });
+                                im.refPath = imageRef.path;
+                                var res = await uploadTask.onComplete;
+                                if (!uploadTask.isSuccessful)
+                                  throw Exception(AppLocalizations.of(context)
+                                      .translate('File upload failed'));
+                                String url = await res.ref.getDownloadURL();
+                                String refPath = imageRef.path;
+                                if (!((url?.length ?? 0) > 0)) {
+                                  throw Exception(AppLocalizations.of(context)
+                                      .translate('File upload failed'));
                                 }
-                              } catch (e) {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return OkDialog(
-                                          title: AppLocalizations.of(context)
-                                              .translate('Error'),
-                                          content: e.message);
-                                    });
-                              } finally {
-                                isUploading.value = false;
+                                setState(() {
+                                  im.downloadUrl = url;
+                                  widget.pc.images ??= [];
+                                  widget.pc.images.add(im);
+                                });
                               }
-                            },
-                            icon: Icon(Icons.add),
-                          )
-                        ],
-                      ),
+                            } catch (e) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return OkDialog(
+                                        title: AppLocalizations.of(context)
+                                            .translate('Error'),
+                                        content: e.message);
+                                  });
+                            } finally {
+                              isUploading.value = false;
+                            }
+                          },
+                          icon: Icon(Icons.add),
+                        )
+                      ],
                     ),
-                  ],
+                  ),
                 ],
               ),
               FlatButton(
                 color: kPrimary,
                 onPressed: () {
                   try {
-                    if (!((widget.pc?.productsForms?.length ?? 0) > 0))
-                      throw AppLocalizations.of(context).translate(
-                          'Product does not contain any product form');
-                    widget.pc.productsForms.forEach((element) {
-                      if (!((element.images?.length ?? 0) > 0))
-                        throw AppLocalizations.of(context).translate(
-                            'Product form does not contain any image');
-                    });
                     widget.onAddClicked(widget.pc);
                     Navigator.pop(context);
                   } catch (e) {

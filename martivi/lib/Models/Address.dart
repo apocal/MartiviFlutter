@@ -34,7 +34,7 @@ class UserAddress {
       this.coordinates,
       this.mobileNumber});
   UserAddress.fromDocument(DocumentSnapshot doc) {
-    var json = doc.data;
+    var json = doc.data();
     referance = doc.reference;
     name = json['name'] as String;
     addressName = json['addressName'] as String;

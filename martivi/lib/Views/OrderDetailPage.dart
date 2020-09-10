@@ -48,15 +48,15 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('/orders')
-          .document(widget.orderR.documentId)
+          .doc(widget.orderR.documentId)
           .snapshots(),
       builder: (context, snapshot) {
         Order order;
         if (snapshot.data?.data != null) {
-          order = Order.fromJson(snapshot.data.data);
-          order.documentId = snapshot.data.documentID;
+          order = Order.fromJson(snapshot.data.data());
+          order.documentId = snapshot.data.id;
         }
         return Scaffold(
           appBar: AppBar(
@@ -76,14 +76,16 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                       child: Text('No data'),
                     )
               : SingleChildScrollView(
-                  child: Consumer<MainViewModel>(builder: (context, viewModel, child) => ValueListenableBuilder<User>(valueListenable: viewModel.databaseUser,builder: (context, databaseUser, child) =>  Column(
+                  child: Consumer<MainViewModel>(builder: (context, viewModel, child) => ValueListenableBuilder<DatabaseUser>(valueListenable: viewModel.databaseUser,builder: (context, databaseUser, child) =>  Column(
                     children: [
                       ExpansionTile(
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text(
-                                '${order.products.length} ${AppLocalizations.of(context).translate('Product')} | ₾${order.products.fold(0, (previousValue, element) => previousValue + element.price * element.quantity)}'),
+                            Expanded(
+                              child: Text(
+                                  '${order.products.length} ${AppLocalizations.of(context).translate('Product')} | ₾${order.products.fold(0, (previousValue, element) => previousValue + element.totalProductPrice)}'),
+                            ),
                           ],
                         ),
                         leading: Text(AppLocalizations.of(context).translate('Ordered products')),
@@ -91,19 +93,19 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                             .map((e) => Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: OrderedProductWidget(
-                          productForm: e,
+                          product: e,
                         ),
                             ))
                             .toList(),
                       ),
                       StreamBuilder<DocumentSnapshot>(
-                        stream: Firestore.instance
+                        stream: FirebaseFirestore.instance
                             .collection('/users')
-                            .document(order.uid)
+                            .doc(order.uid)
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.data != null) {
-                            User user = User.fromMap(snapshot.data.data);
+                            DatabaseUser user = DatabaseUser.fromMap(snapshot.data.data());
                             return ExpansionTile(
                               title: Text(AppLocalizations.of(context)
                                   .translate('User')),
@@ -618,7 +620,7 @@ class _DeliveryStatusStepsState extends State<DeliveryStatusSteps> {
   @override
   Widget build(BuildContext context) {
     return Consumer<MainViewModel>(
-      builder: (context, viewModel, child) => ValueListenableBuilder<User>(
+      builder: (context, viewModel, child) => ValueListenableBuilder<DatabaseUser>(
         valueListenable: viewModel.databaseUser,
         builder: (context, databaseUser, child) {
           steps = [
@@ -785,10 +787,10 @@ class _DeliveryStatusStepsState extends State<DeliveryStatusSteps> {
                         .isActive = true;
                     widget.order.deliveryStatusSteps[steps[index].status]
                         .stepState = StepState.complete;
-                    Firestore.instance
+                    FirebaseFirestore.instance
                         .collection('/orders')
-                        .document(widget.order.documentId)
-                        .updateData({
+                        .doc(widget.order.documentId)
+                        .update({
                       'deliveryStatusSteps': widget.order.deliveryStatusSteps
                           .map((key, value) =>
                               MapEntry(EnumToString.parse(key), value.toJson()))
@@ -803,10 +805,10 @@ class _DeliveryStatusStepsState extends State<DeliveryStatusSteps> {
                                      value.isActive=false;
                                    });
                                    widget.order.deliveryStatusSteps[DeliveryStatus.Canceled]=DeliveryStatusStep(creationTimestamp: FieldValue.serverTimestamp(),isActive: true,stepState: StepState.error);
-                    Firestore.instance
+                                   FirebaseFirestore.instance
                         .collection('/orders')
-                        .document(widget.order.documentId)
-                        .updateData({
+                        .doc(widget.order.documentId)
+                        .update({
                       'deliveryStatusSteps': widget.order.deliveryStatusSteps
                           .map((key, value) =>
                               MapEntry(EnumToString.parse(key), value.toJson()))
@@ -881,8 +883,8 @@ class MapWidget extends StatelessWidget {
 }
 
 class OrderedProductWidget extends StatelessWidget {
-  final ProductForm productForm;
-  OrderedProductWidget({this.productForm});
+  final Product product;
+  OrderedProductWidget({this.product});
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -896,7 +898,7 @@ class OrderedProductWidget extends StatelessWidget {
               image: DecorationImage(
                 fit: BoxFit.cover,
                 image:
-                    NetworkImage(productForm?.images?.first?.downloadUrl ?? ''),
+                    NetworkImage(product?.images?.first?.downloadUrl ?? ''),
               )),
         ),SizedBox(width: 4,),
         Expanded(
@@ -904,7 +906,7 @@ class OrderedProductWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                productForm.localizedFormName[
+                product.localizedName[
                     AppLocalizations.of(context).locale.languageCode],
                 style: TextStyle(
                     fontFamily: "Sans",
@@ -912,7 +914,7 @@ class OrderedProductWidget extends StatelessWidget {
                     fontWeight: FontWeight.w700),
               ),
               Text(
-                productForm.localizedFormDescription[
+                product.localizedDescription[
                     AppLocalizations.of(context).locale.languageCode],
                 style: TextStyle(
                   color: Colors.black54,
@@ -920,17 +922,60 @@ class OrderedProductWidget extends StatelessWidget {
                   fontSize: 12.0,
                 ),
               ),
-              Text(
-               '${AppLocalizations.of(context).translate('Quantity')}: ${productForm.quantity}',
-                style: TextStyle(
-                  color: Colors.black54,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12.0,
+              if (product.selectableAddons?.firstWhere(
+                      (element) => element.isSelected,
+                  orElse: () => null) !=
+                  null)
+                Row(
+                  children: [
+                    Text(
+                      '${product.selectableAddons.firstWhere((element) => element.isSelected, orElse: () => null).localizedName[AppLocalizations.of(context).locale.languageCode]}: ',
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    Text(
+                      '${product.selectableAddons.firstWhere((element) => element.isSelected, orElse: () => null).price}₾',
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ...?product.checkableAddons
+                  ?.where((element) => element.isSelected)
+                  ?.map(
+                    (e) => Row(
+                  children: [
+                    Text(
+                      '${e.localizedName[AppLocalizations.of(context).locale.languageCode]}: ',
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    if ((e.price ?? 0) > 0)
+                      Text(
+                        '${e.price}₾',
+                        style: TextStyle(
+                          fontFamily: 'Sans',
+                          color: Colors.black54,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12.0,
+                        ),
+                      ),
+                  ],
                 ),
               ),
               Text(
-                '₾${productForm.price.toString()}',
-                style: TextStyle(),
+                '₾${product.totalProductPrice.toString()}',
+                style: TextStyle(
+                    color: kPrimary, fontFamily: 'Sans'),
               ),
             ],
           ),
