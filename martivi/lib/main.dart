@@ -45,6 +45,7 @@ class MartiviApp extends StatelessWidget {
         ],
         localeResolutionCallback: (locale, supportedLocales) {
           for (var supportedLocale in supportedLocales) {
+            print(supportedLocale.toLanguageTag());
             if (supportedLocale.languageCode == locale.languageCode &&
                 supportedLocale.countryCode == locale.countryCode) {
               return supportedLocale;

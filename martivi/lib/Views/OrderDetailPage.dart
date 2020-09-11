@@ -84,7 +84,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                           children: [
                             Expanded(
                               child: Text(
-                                  '${order.products.length} ${AppLocalizations.of(context).translate('Product')} | ₾${order.products.fold(0, (previousValue, element) => previousValue + element.totalProductPrice)}'),
+                                  '${order.products.length} ${AppLocalizations.of(context).translate('Product')} | ₾${order.products.fold(0, (previousValue, element) => previousValue + element.totalProductPrice)}',style: TextStyle(fontFamily: 'Sans'),),
                             ),
                           ],
                         ),

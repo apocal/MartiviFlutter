@@ -90,6 +90,7 @@ class _CartPageState extends State<CartPage> {
                                           '${cart.length.toString()} ${AppLocalizations.of(context).translate('Product')} | '),
                                       Text(
                                         '₾${totalPrice.toStringAsFixed(2)}',
+                                        style: TextStyle(fontFamily: 'Sans'),
                                       )
                                     ],
                                   ),
@@ -229,6 +230,7 @@ class _CartPageState extends State<CartPage> {
                                     Text(
                                       '₾${(totalPrice == 0 ? 0 : totalPrice > settigns.minimumOrderPrice ? 0 : settigns.deliveryFeeUnderMaximumOrderPrice).toString()}',
                                       style: TextStyle(
+                                          fontFamily: 'Sans',
                                           color: totalPrice >
                                                   settigns.minimumOrderPrice
                                               ? Colors.green
@@ -250,7 +252,9 @@ class _CartPageState extends State<CartPage> {
                                     Text(AppLocalizations.of(context)
                                         .translate('Total price')),
                                     Text(
-                                        '₾${(totalPrice == 0 ? 0 : totalPrice > settigns.minimumOrderPrice ? totalPrice : totalPrice + settigns.deliveryFeeUnderMaximumOrderPrice).toString()}')
+                                      '₾${(totalPrice == 0 ? 0 : totalPrice > settigns.minimumOrderPrice ? totalPrice : totalPrice + settigns.deliveryFeeUnderMaximumOrderPrice).toString()}',
+                                      style: TextStyle(fontFamily: 'Sans'),
+                                    )
                                   ],
                                 ),
                               ),

@@ -212,7 +212,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                     ?.toList(),
                                 Text(
                                   '₾${widget.p.totalProductPrice.toString()}',
-                                  style: TextStyle(),
+                                  style: TextStyle(
+                                      fontFamily: 'Sans', color: kPrimary),
                                 ),
                                 if (user?.role == UserType.user) child,
                               ],

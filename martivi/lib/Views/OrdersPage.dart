@@ -251,7 +251,7 @@ class OrderWidget extends StatelessWidget {
                       Flexible(
                         child: Text(
                           '${AppLocalizations.of(context).translate('Order price')}: ₾${(order.products.fold<double>(0, (previousValue, element) => previousValue + element.totalProductPrice))?.toString() ?? '0'}',
-                          style: TextStyle(color: kPrimary),
+                          style: TextStyle(color: kPrimary, fontFamily: 'Sans'),
                         ),
                       ),
                       SizedBox(
@@ -260,7 +260,7 @@ class OrderWidget extends StatelessWidget {
                       Flexible(
                         child: Text(
                           '${AppLocalizations.of(context).translate('Delivery fee')}: ₾${order.deliveryFee?.toString() ?? '0'}',
-                          style: TextStyle(color: kPrimary),
+                          style: TextStyle(color: kPrimary, fontFamily: 'Sans'),
                         ),
                       )
                     ],
