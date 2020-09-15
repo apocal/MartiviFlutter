@@ -87,7 +87,7 @@ class itemCard extends StatelessWidget {
                               shape: CircleBorder(),
                               child: Icon(
                                 Icons.keyboard_arrow_up,
-                                color: kPrimary.withOpacity(0.3),
+                                color: Colors.grey.withOpacity(0.7),
                               ),
                             ),
                           ),
@@ -100,7 +100,7 @@ class itemCard extends StatelessWidget {
                               shape: CircleBorder(),
                               child: Icon(
                                 Icons.keyboard_arrow_down,
-                                color: kPrimary.withOpacity(0.3),
+                                color: Colors.grey.withOpacity(0.7),
                               ),
                             ),
                           ),

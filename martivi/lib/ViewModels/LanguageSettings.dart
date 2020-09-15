@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LanguageSettings {
+class LanguageSettings extends ChangeNotifier {
   SharedPreferences prefs;
   ValueNotifier<Locale> userLocale = ValueNotifier(null);
   LanguageSettings();
@@ -9,7 +9,10 @@ class LanguageSettings {
     prefs = await SharedPreferences.getInstance();
   }
 
-  void setLocale(Locale locale) {}
+  void setLocale(Locale locale) {
+    userLocale.value = locale;
+    notifyListeners();
+  }
 }
 
 extension localeToJson on Locale {

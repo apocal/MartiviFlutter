@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class AppLocalizations {
-  static List<String> supportedLocales = ['en', 'ka'];
+  static List<Locale> supportedLocales = [
+    Locale('ka', 'GE'),
+    Locale('en', 'US')
+  ];
   final Locale locale;
 
   AppLocalizations(this.locale);

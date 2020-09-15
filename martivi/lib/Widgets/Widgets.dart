@@ -5,6 +5,11 @@ import 'package:flutter/rendering.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
 
+ImageProvider safeNetworkImage(String url) {
+  if ((url?.length ?? 0) > 0) return NetworkImage(url);
+  return AssetImage('assets/placeHolder.png');
+}
+
 class InnerShadow extends SingleChildRenderObjectWidget {
   const InnerShadow({
     Key key,

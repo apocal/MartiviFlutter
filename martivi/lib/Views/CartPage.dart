@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:audioplayers/audio_cache.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -371,6 +372,7 @@ class _CartPageState extends State<CartPage> {
                                               .translate('Information'),
                                         ),
                                       );
+                                      AudioCache().play('OrderRecieved.mp3');
                                     } on MessageException catch (me) {
                                       showDialog(
                                         context: context,
@@ -449,8 +451,9 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: NetworkImage(
-                          widget.p?.product?.images?.first?.downloadUrl ?? ''),
+                      image: safeNetworkImage(widget.p?.product?.images
+                          ?.firstWhere((element) => true, orElse: () => null)
+                          ?.downloadUrl),
                     )),
               ),
               Expanded(
@@ -463,9 +466,10 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                         children: <Widget>[
                           Text(
                             widget.p.product.localizedName[
-                                AppLocalizations.of(context)
-                                    .locale
-                                    .languageCode],
+                                    AppLocalizations.of(context)
+                                        .locale
+                                        .languageCode] ??
+                                '',
                             style: TextStyle(
                                 fontFamily: "Sans",
                                 color: Colors.black87,
@@ -474,7 +478,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                           ...?widget.p.product.addonDescriptions.map((e) => Row(
                                 children: [
                                   Text(
-                                    '${e.localizedAddonDescriptionName[AppLocalizations.of(context).locale.languageCode]}: ',
+                                    '${e.localizedAddonDescriptionName[AppLocalizations.of(context).locale.languageCode] ?? ''}: ',
                                     style: TextStyle(
                                       color: Colors.black54,
                                       fontWeight: FontWeight.w500,
@@ -482,7 +486,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                     ),
                                   ),
                                   Text(
-                                    '${e.localizedAddonDescription[AppLocalizations.of(context).locale.languageCode]}',
+                                    '${e.localizedAddonDescription[AppLocalizations.of(context).locale.languageCode] ?? ''}',
                                     style: TextStyle(
                                       color: Colors.black54,
                                       fontWeight: FontWeight.w500,
@@ -503,8 +507,9 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                             ),
                           ),
                           Text(
-                            '₾${widget.p.product.totalProductPrice.toString()}',
-                            style: TextStyle(),
+                            '₾${widget.p.product.totalProductPrice?.toString() ?? '0'}',
+                            style:
+                                TextStyle(fontFamily: 'Sans', color: kPrimary),
                           ),
                           if (user?.role == UserType.user) child,
                         ],

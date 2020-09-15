@@ -5,13 +5,20 @@ import 'FirestoreImage.dart';
 
 class Product {
   double get totalProductPrice =>
-      this.basePrice +
-      (selectableAddons?.where((element) => element.isSelected)?.fold<double>(
-              0, (previousValue, element) => previousValue + element.price) ??
-          0) +
-      (checkableAddons?.where((element) => element.isSelected)?.fold(
-              0, (previousValue, element) => previousValue + element.price) ??
-          0);
+      this.basePrice ??
+      0 +
+          (selectableAddons
+                  ?.where((element) => element.isSelected)
+                  ?.fold<double>(
+                      0.0,
+                      (previousValue, element) =>
+                          previousValue + (element?.price ?? 0.0)) ??
+              0) +
+          (checkableAddons?.where((element) => element.isSelected)?.fold(
+                  0,
+                  (previousValue, element) =>
+                      previousValue + (element?.price ?? 0)) ??
+              0);
   String documentId;
   String productDocumentId;
   Map<String, String> localizedName;
@@ -48,8 +55,10 @@ class Product {
 
   Map<String, dynamic> toCheckoutJson(BuildContext context) => {
         'Quantity': 1,
-        'Price': totalProductPrice,
-        'Name': localizedName[AppLocalizations.of(context).locale.languageCode],
+        'Price': totalProductPrice ?? 0,
+        'Name':
+            localizedName[AppLocalizations.of(context).locale.languageCode] ??
+                '',
         'Description':
             '${nullSafeMapValue(localizedDescription, AppLocalizations.of(context).locale.languageCode) ?? ''}, ${nullSafeMapValue(selectableAddons?.firstWhere((element) => element.isSelected, orElse: () => null)?.localizedName, AppLocalizations.of(context).locale.languageCode)}, ${checkableAddons?.where((element) => element.isSelected)?.fold('', (previousValue, element) => previousValue + nullSafeMapValue(element?.localizedName, AppLocalizations.of(context).locale.languageCode) ?? '')}',
       };

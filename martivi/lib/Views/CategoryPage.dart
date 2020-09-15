@@ -242,7 +242,6 @@ class _CategoryPageState extends State<CategoryPage> {
                             var encoded =
                                 List.castFrom<dynamic, Map<String, dynamic>>(
                                     jsonDecode(response.body) as List<dynamic>);
-                            await Future.delayed(Duration(seconds: 3));
                             await Future.forEach(encoded, (element) async {
                               var res =
                                   await http.get(element['image'] as String);
@@ -523,7 +522,7 @@ class AddCategoryWidget extends StatefulWidget {
 
 class _AddCategoryWidgetState extends State<AddCategoryWidget> {
   TextEditingController categoryController = TextEditingController();
-  String selectedLocal = AppLocalizations.supportedLocales.first;
+  String selectedLocal = AppLocalizations.supportedLocales.first.languageCode;
   ValueNotifier<bool> isUploading = ValueNotifier<bool>(false);
   Category category = Category(image: FirestoreImage(), localizedName: {});
   bool addClicked = false;
@@ -565,7 +564,9 @@ class _AddCategoryWidgetState extends State<AddCategoryWidget> {
                           padding: EdgeInsets.all(0),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: e == selectedLocal ? kPrimary : kIcons,
+                            color: e.languageCode == selectedLocal
+                                ? kPrimary
+                                : kIcons,
                           ),
                           duration: Duration(milliseconds: 200),
                           child: RawMaterialButton(
@@ -574,16 +575,18 @@ class _AddCategoryWidgetState extends State<AddCategoryWidget> {
                             shape: CircleBorder(),
                             onPressed: () {
                               setState(() {
-                                selectedLocal = e;
+                                selectedLocal = e.languageCode;
                                 categoryController.text =
                                     category.localizedName[selectedLocal] ?? '';
                               });
                             },
                             padding: EdgeInsets.all(0),
                             child: Text(
-                              e,
+                              e.languageCode,
                               style: TextStyle(
-                                color: e == selectedLocal ? kIcons : kPrimary,
+                                color: e.languageCode == selectedLocal
+                                    ? kIcons
+                                    : kPrimary,
                               ),
                             ),
                           ),
@@ -805,7 +808,7 @@ class EditCategoryWidget extends StatefulWidget {
 }
 
 class _EditCategoryWidgetState extends State<EditCategoryWidget> {
-  String selectedLocal = AppLocalizations.supportedLocales.first;
+  String selectedLocal = AppLocalizations.supportedLocales.first.languageCode;
   TextEditingController categoryController;
   ValueNotifier<bool> isUploading = ValueNotifier<bool>(false);
   @override
@@ -843,7 +846,9 @@ class _EditCategoryWidgetState extends State<EditCategoryWidget> {
                           padding: EdgeInsets.all(0),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: e == selectedLocal ? kPrimary : kIcons,
+                            color: e.languageCode == selectedLocal
+                                ? kPrimary
+                                : kIcons,
                           ),
                           duration: Duration(milliseconds: 200),
                           child: RawMaterialButton(
@@ -852,7 +857,7 @@ class _EditCategoryWidgetState extends State<EditCategoryWidget> {
                             shape: CircleBorder(),
                             onPressed: () {
                               setState(() {
-                                selectedLocal = e;
+                                selectedLocal = e.languageCode;
                                 categoryController.text = widget.category
                                         .localizedName[selectedLocal] ??
                                     '';
@@ -860,9 +865,11 @@ class _EditCategoryWidgetState extends State<EditCategoryWidget> {
                             },
                             padding: EdgeInsets.all(0),
                             child: Text(
-                              e,
+                              e.languageCode,
                               style: TextStyle(
-                                color: e == selectedLocal ? kIcons : kPrimary,
+                                color: e.languageCode == selectedLocal
+                                    ? kIcons
+                                    : kPrimary,
                               ),
                             ),
                           ),

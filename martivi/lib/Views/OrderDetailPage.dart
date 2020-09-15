@@ -21,6 +21,7 @@ import 'package:martivi/Models/enums.dart';
 import 'package:martivi/Uitls/ExportInvoice.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
 import 'package:martivi/Views/UserPage.dart';
+import 'package:martivi/Widgets/Widgets.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
@@ -78,26 +79,38 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               : SingleChildScrollView(
                   child: Consumer<MainViewModel>(builder: (context, viewModel, child) => ValueListenableBuilder<DatabaseUser>(valueListenable: viewModel.databaseUser,builder: (context, databaseUser, child) =>  Column(
                     children: [
-                      ExpansionTile(
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Expanded(
-                              child: Text(
+                      Theme(
+                        data: ThemeData(
+                          accentColor: kPrimary,
+                          textTheme: Theme.of(context)
+                              .textTheme
+                              .copyWith(
+                              subtitle1: TextStyle(
+                                  color: Colors.black
+                                      .withOpacity(.7))),
+                        ),
+                        child: ExpansionTile(
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Expanded(
+                                child: Text(
                                   '${order.products.length} ${AppLocalizations.of(context).translate('Product')} | ₾${order.products.fold(0, (previousValue, element) => previousValue + element.totalProductPrice)}',style: TextStyle(fontFamily: 'Sans'),),
+                              ),
+                            ],
+                          ),
+                          leading: Text(AppLocalizations.of(context).translate('Ordered products')),
+                          children: order.products
+                              .map((e) => Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: OrderedProductWidget(
+                              product: e,
                             ),
-                          ],
+                          ))
+                              .toList(),
                         ),
-                        leading: Text(AppLocalizations.of(context).translate('Ordered products')),
-                        children: order.products
-                            .map((e) => Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: OrderedProductWidget(
-                          product: e,
-                        ),
-                            ))
-                            .toList(),
-                      ),
+                      )
+                      ,
                       StreamBuilder<DocumentSnapshot>(
                         stream: FirebaseFirestore.instance
                             .collection('/users')
@@ -590,12 +603,17 @@ print(e);
                         order: order,
                       ),
 if(databaseUser?.role==UserType.admin) FlatButton(child: Text(AppLocalizations.of(context).translate('Export pdf')),onPressed: ()async {
- var res = await exportInvoice(pageFormat: PdfPageFormat.a4,order: order,bContext: context);
- final Directory appDocDir = await getApplicationDocumentsDirectory();
- final String appDocPath = appDocDir.path;
- final File f = File(appDocPath+'/'+'doc.pdf');
- await f.writeAsBytes(res);
- OpenFile.open(f.path);
+ try{
+   var res = await exportInvoice(pageFormat: PdfPageFormat.a4,order: order,bContext: context);
+   final Directory appDocDir = await getApplicationDocumentsDirectory();
+   final String appDocPath = appDocDir.path;
+   final File f = File(appDocPath+'/'+'doc.pdf');
+   await f.writeAsBytes(res);
+   OpenFile.open(f.path);
+ }catch(e){
+   showDialog(context: context,builder: (context) => OkDialog(title: '',content: e.toString(),),);
+ }
+
 },),
 
                     ],
@@ -898,7 +916,7 @@ class OrderedProductWidget extends StatelessWidget {
               image: DecorationImage(
                 fit: BoxFit.cover,
                 image:
-                    NetworkImage(product?.images?.first?.downloadUrl ?? ''),
+                    safeNetworkImage(product?.images?.firstWhere((element) => true,orElse: ()=>null)?.downloadUrl),
               )),
         ),SizedBox(width: 4,),
         Expanded(

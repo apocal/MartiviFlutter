@@ -1,3 +1,4 @@
+import 'package:audioplayers/audio_cache.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -87,12 +88,20 @@ class _OrdersPageState extends State<OrdersPage> {
                                 )
                               ],
                             );
+                          bool newOrders = false;
                           return ListView.builder(
                             physics: BouncingScrollPhysics(),
                             itemCount: snapshot.data.docs.length,
                             itemBuilder: (context, index) {
                               var order = Order.fromJson(
                                   snapshot.data.docs[index].data());
+                              if (!order.isSeen) newOrders = true;
+
+                              if (index == snapshot.data.docs.length - 1 &&
+                                  databaseUser.role == UserType.admin &&
+                                  newOrders)
+                                AudioCache().play('OrderRecieved.mp3');
+
                               order.documentId = snapshot.data.docs[index].id;
                               return Slidable(
                                 actionPane: SlidableDrawerActionPane(),

@@ -8,6 +8,7 @@ import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
 import 'package:martivi/Views/CartPage.dart';
+import 'package:martivi/Widgets/Widgets.dart';
 import 'package:provider/provider.dart';
 
 class ProductDetailPage extends StatefulWidget {
@@ -108,8 +109,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           borderRadius: BorderRadius.circular(4),
                           image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: NetworkImage(
-                                widget.p?.images?.first?.downloadUrl ?? ''),
+                            image: safeNetworkImage(widget.p?.images
+                                ?.firstWhere((element) => true,
+                                    orElse: () => null)
+                                ?.downloadUrl),
                           )),
                     ),
                     Expanded(
@@ -137,15 +140,15 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                 ...?widget.p.addonDescriptions.map((e) => Row(
                                       children: [
                                         Text(
-                                          '${e.localizedAddonDescriptionName[AppLocalizations.of(context).locale.languageCode]}: ',
+                                          '${e.localizedAddonDescriptionName[AppLocalizations.of(context).locale.languageCode] ?? ''}: ',
                                           style: TextStyle(
                                             color: Colors.black54,
-                                            fontWeight: FontWeight.w500,
+                                            fontWeight: FontWeight.bold,
                                             fontSize: 12.0,
                                           ),
                                         ),
                                         Text(
-                                          '${e.localizedAddonDescription[AppLocalizations.of(context).locale.languageCode]}',
+                                          '${e.localizedAddonDescription[AppLocalizations.of(context).locale.languageCode] ?? ''}',
                                           style: TextStyle(
                                             color: Colors.black54,
                                             fontWeight: FontWeight.w500,
@@ -154,6 +157,27 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                         ),
                                       ],
                                     )),
+                                if (widget.p.quantityInSupply != null)
+                                  Row(
+                                    children: [
+                                      Text(
+                                        '${AppLocalizations.of(context).translate('Quantity in supply')}: ',
+                                        style: TextStyle(
+                                          color: Colors.black54,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12.0,
+                                        ),
+                                      ),
+                                      Text(
+                                        widget.p.quantityInSupply.toString(),
+                                        style: TextStyle(
+                                          color: Colors.black54,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 12.0,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ...?widget.p.checkableAddons
                                     ?.map((e) => Row(
                                           children: [
@@ -215,7 +239,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                   style: TextStyle(
                                       fontFamily: 'Sans', color: kPrimary),
                                 ),
-                                if (user?.role == UserType.user) child,
+                                if (user?.role == UserType.user &&
+                                    (widget.p.quantityInSupply > 0 ||
+                                        widget.p.quantityInSupply == null))
+                                  child,
                               ],
                             );
                           },
@@ -312,10 +339,15 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                                     Material(
                                                       child: InkWell(
                                                         onTap: () {
-                                                          try {
-                                                            viewModel.storeCart(
-                                                                widget.p);
-                                                          } catch (e) {}
+                                                          if (widget.p.quantityInSupply !=
+                                                                  null &&
+                                                              widget.p.quantityInSupply >
+                                                                  productsInCartCount)
+                                                            try {
+                                                              viewModel
+                                                                  .storeCart(
+                                                                      widget.p);
+                                                            } catch (e) {}
                                                         },
                                                         child: Container(
                                                           height: 30.0,
@@ -366,9 +398,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                   children: [
                                     Text(
                                       e.localizedName[
-                                          AppLocalizations.of(context)
-                                              .locale
-                                              .languageCode],
+                                              AppLocalizations.of(context)
+                                                  .locale
+                                                  .languageCode] ??
+                                          '',
                                       style: TextStyle(
                                         color: Colors.black54,
                                         fontWeight: FontWeight.w500,
@@ -376,7 +409,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                       ),
                                     ),
                                     Text(
-                                      '+${e.price.toString()}₾',
+                                      '+${e.price?.toString() ?? ''}₾',
                                       style: TextStyle(
                                         color: Colors.black54,
                                         fontWeight: FontWeight.w500,

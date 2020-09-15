@@ -216,7 +216,7 @@ class _ProductPageState extends State<ProductPage> {
                                         actions: <Widget>[
                                           SlideAction(
                                             onTap: () {
-                                              showModalBottomSheet(
+                                              showBottomSheet(
                                                   context: context,
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
@@ -536,7 +536,11 @@ class _ProductItemState extends State<ProductItem> {
             },
             child: Container(
               margin: EdgeInsets.all(1),
-              padding: EdgeInsets.only(top: 8, left: 8),
+              padding: EdgeInsets.only(
+                top: 8,
+                left: 8,
+                bottom: 8,
+              ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
                 color: Colors.white,
@@ -548,269 +552,287 @@ class _ProductItemState extends State<ProductItem> {
                   )
                 ],
               ),
-              child: Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        height: 140,
-                        width: 160,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(
-                                  widget.p?.images?.first?.downloadUrl),
-                            )),
-                      ),
-                      Expanded(
-                        child: Container(
-                          padding: EdgeInsets.only(left: 12, top: 12),
-                          child: ValueListenableBuilder<DatabaseUser>(
-                            builder: (context, user, child) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    widget.p.localizedName[
-                                            AppLocalizations.of(context)
-                                                .locale
-                                                .languageCode] ??
-                                        '',
-                                    style: TextStyle(
-                                        fontFamily: "Sans",
-                                        color: Colors.black87,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                  SizedBox(
-                                    height: 4,
-                                  ),
-                                  ...?widget.p.addonDescriptions
-                                      ?.map((e) => Row(
-                                            children: [
-                                              Text(
-                                                '${e.localizedAddonDescriptionName[AppLocalizations.of(context).locale.languageCode]}: ',
-                                                style: TextStyle(
-                                                  color: Colors.black54,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 12.0,
-                                                ),
-                                              ),
-                                              Text(
-                                                '${e.localizedAddonDescription[AppLocalizations.of(context).locale.languageCode]}',
-                                                style: TextStyle(
-                                                  color: Colors.black54,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 12.0,
-                                                ),
-                                              ),
-                                            ],
-                                          )),
-                                  Text(
-                                    widget.p.localizedDescription[
-                                            AppLocalizations.of(context)
-                                                .locale
-                                                .languageCode] ??
-                                        '',
-                                    style: TextStyle(
-                                      color: Colors.black54,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 12.0,
-                                    ),
-                                  ),
-                                  if (widget.p?.selectableAddons?.firstWhere(
-                                          (element) => element.isSelected,
-                                          orElse: () => null) !=
-                                      null)
-                                    Row(
-                                      children: [
-                                        Text(
-                                          '${widget.p.selectableAddons.firstWhere((element) => element.isSelected, orElse: () => null).localizedName[AppLocalizations.of(context).locale.languageCode]}: ',
-                                          style: TextStyle(
-                                            color: Colors.black54,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 12.0,
-                                          ),
-                                        ),
-                                        Text(
-                                          '${widget.p.selectableAddons.firstWhere((element) => element.isSelected, orElse: () => null).price}₾',
-                                          style: TextStyle(
-                                            color: Colors.black54,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 12.0,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ...?widget?.p?.checkableAddons
-                                      ?.where((element) => element.isSelected)
-                                      ?.map(
-                                        (e) => Row(
-                                          children: [
-                                            Text(
-                                              '${e.localizedName[AppLocalizations.of(context).locale.languageCode]}: ',
-                                              style: TextStyle(
-                                                color: Colors.black54,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 12.0,
-                                              ),
-                                            ),
-                                            if ((e.price ?? 0) > 0)
-                                              Text(
-                                                '${e.price}₾',
-                                                style: TextStyle(
-                                                  fontFamily: 'Sans',
-                                                  color: Colors.black54,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 12.0,
-                                                ),
-                                              ),
-                                          ],
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    height: 140,
+                    width: 160,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: safeNetworkImage(widget.p?.images
+                              ?.firstWhere((element) => true,
+                                  orElse: () => null)
+                              ?.downloadUrl),
+                        )),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.only(left: 12, top: 12),
+                      child: ValueListenableBuilder<DatabaseUser>(
+                        builder: (context, user, child) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                widget.p.localizedName[
+                                        AppLocalizations.of(context)
+                                            .locale
+                                            .languageCode] ??
+                                    '',
+                                style: TextStyle(
+                                    fontFamily: "Sans",
+                                    color: Colors.black87,
+                                    fontWeight: FontWeight.w700),
+                              ),
+                              SizedBox(
+                                height: 4,
+                              ),
+                              ...?widget.p.addonDescriptions?.map((e) => Row(
+                                    children: [
+                                      Text(
+                                        '${e.localizedAddonDescriptionName[AppLocalizations.of(context).locale.languageCode] ?? ''}: ',
+                                        style: TextStyle(
+                                          color: Colors.black54,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12.0,
                                         ),
                                       ),
-                                  Text(
-                                    '₾${widget.p?.totalProductPrice?.toString()}',
-                                    style: TextStyle(
-                                        color: kPrimary, fontFamily: 'Sans'),
+                                      Text(
+                                        '${e.localizedAddonDescription[AppLocalizations.of(context).locale.languageCode] ?? ''}',
+                                        style: TextStyle(
+                                          color: Colors.black54,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 12.0,
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                              if (widget.p.quantityInSupply != null)
+                                Row(
+                                  children: [
+                                    Text(
+                                      '${AppLocalizations.of(context).translate('Quantity in supply')}: ',
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12.0,
+                                      ),
+                                    ),
+                                    Text(
+                                      widget.p.quantityInSupply.toString(),
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              Text(
+                                widget.p.localizedDescription[
+                                        AppLocalizations.of(context)
+                                            .locale
+                                            .languageCode] ??
+                                    '',
+                                style: TextStyle(
+                                  color: Colors.black54,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12.0,
+                                ),
+                              ),
+                              if (widget.p?.selectableAddons?.firstWhere(
+                                      (element) => element.isSelected,
+                                      orElse: () => null) !=
+                                  null)
+                                Row(
+                                  children: [
+                                    Text(
+                                      '${widget.p.selectableAddons.firstWhere((element) => element.isSelected, orElse: () => null).localizedName[AppLocalizations.of(context).locale.languageCode] ?? ''}: ',
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12.0,
+                                      ),
+                                    ),
+                                    Text(
+                                      '${widget.p.selectableAddons.firstWhere((element) => element.isSelected, orElse: () => null)?.price ?? ''}₾',
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ...?widget?.p?.checkableAddons
+                                  ?.where((element) => element.isSelected)
+                                  ?.map(
+                                    (e) => Row(
+                                      children: [
+                                        Text(
+                                          '${e.localizedName[AppLocalizations.of(context).locale.languageCode] ?? ''}: ',
+                                          style: TextStyle(
+                                            color: Colors.black54,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 12.0,
+                                          ),
+                                        ),
+                                        if ((e.price ?? 0) > 0)
+                                          Text(
+                                            '${e.price ?? 0}₾',
+                                            style: TextStyle(
+                                              fontFamily: 'Sans',
+                                              color: Colors.black54,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 12.0,
+                                            ),
+                                          ),
+                                      ],
+                                    ),
                                   ),
-                                  if (user?.role == UserType.user) child,
-                                ],
-                              );
-                            },
-                            valueListenable: viewModel.databaseUser,
-                            child: Align(
-                                alignment: Alignment.topRight,
-                                child: ValueListenableBuilder<List<CartItem>>(
-                                  builder: (context, value, child) {
-                                    return Container(
-                                      child: () {
-                                        int productsInCartCount = value
-                                                ?.where(
-                                                  (element) =>
-                                                      element.product
-                                                          .productDocumentId ==
-                                                      widget
-                                                          .p.productDocumentId,
-                                                )
-                                                ?.length ??
-                                            0;
-                                        return productsInCartCount == 0
-                                            ? FlatButton(
-                                                child: Text(
-                                                  AppLocalizations.of(context)
-                                                      .translate('Add to cart'),
-                                                  style: TextStyle(
-                                                      color: Colors.black
-                                                          .withOpacity(.8)),
-                                                ),
-                                                onPressed: () {
-                                                  viewModel.storeCart(widget.p);
-                                                })
-                                            : Container(
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.white70,
-                                                      border: Border.all(
-                                                          color: Colors.black12
-                                                              .withOpacity(
-                                                                  0.1))),
-                                                  child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: <Widget>[
-                                                      /// Decrease of value item
-                                                      Material(
-                                                        child: InkWell(
-                                                          onTap: () {
-                                                            try {
-                                                              if (productsInCartCount ==
-                                                                  0) {
-                                                                return;
-                                                              }
-                                                              if (productsInCartCount >
-                                                                  0) {
-                                                                FirebaseFirestore
-                                                                    .instance
-                                                                    .collection(
-                                                                        '/cart')
-                                                                    .doc(value
-                                                                        .last
-                                                                        .documentId)
-                                                                    .delete();
-                                                                return;
-                                                              }
-                                                            } catch (e) {}
-                                                          },
-                                                          child: Container(
-                                                            height: 30.0,
-                                                            width: 30.0,
-                                                            decoration: BoxDecoration(
-                                                                border: Border(
-                                                                    right: BorderSide(
-                                                                        color: Colors
-                                                                            .black12
-                                                                            .withOpacity(0.1)))),
-                                                            child: Center(
-                                                                child:
-                                                                    Text("-")),
-                                                          ),
-                                                        ),
+                              Text(
+                                '₾${widget.p?.totalProductPrice?.toString()}',
+                                style: TextStyle(
+                                    color: kPrimary, fontFamily: 'Sans'),
+                              ),
+                              if (user?.role == UserType.user &&
+                                  (widget.p.quantityInSupply > 0 ||
+                                      widget.p.quantityInSupply == null))
+                                child,
+                            ],
+                          );
+                        },
+                        valueListenable: viewModel.databaseUser,
+                        child: Align(
+                            alignment: Alignment.topRight,
+                            child: ValueListenableBuilder<List<CartItem>>(
+                              builder: (context, value, child) {
+                                return Container(
+                                  child: () {
+                                    int productsInCartCount = value
+                                            ?.where(
+                                              (element) =>
+                                                  element.product
+                                                      .productDocumentId ==
+                                                  widget.p.productDocumentId,
+                                            )
+                                            ?.length ??
+                                        0;
+                                    return productsInCartCount == 0
+                                        ? FlatButton(
+                                            child: Text(
+                                              AppLocalizations.of(context)
+                                                  .translate('Add to cart'),
+                                              style: TextStyle(
+                                                  color: Colors.black
+                                                      .withOpacity(.8)),
+                                            ),
+                                            onPressed: () {
+                                              viewModel.storeCart(widget.p);
+                                            })
+                                        : Container(
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white70,
+                                                  border: Border.all(
+                                                      color: Colors.black12
+                                                          .withOpacity(0.1))),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: <Widget>[
+                                                  /// Decrease of value item
+                                                  Material(
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        try {
+                                                          if (productsInCartCount ==
+                                                              0) {
+                                                            return;
+                                                          }
+                                                          if (productsInCartCount >
+                                                              0) {
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    '/cart')
+                                                                .doc(value.last
+                                                                    .documentId)
+                                                                .delete();
+                                                            return;
+                                                          }
+                                                        } catch (e) {}
+                                                      },
+                                                      child: Container(
+                                                        height: 30.0,
+                                                        width: 30.0,
+                                                        decoration: BoxDecoration(
+                                                            border: Border(
+                                                                right: BorderSide(
+                                                                    color: Colors
+                                                                        .black12
+                                                                        .withOpacity(
+                                                                            0.1)))),
+                                                        child: Center(
+                                                            child: Text("-")),
                                                       ),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                horizontal:
-                                                                    18.0),
-                                                        child: Text(
-                                                            productsInCartCount
-                                                                    ?.toString() ??
-                                                                '0'),
-                                                      ),
-
-                                                      /// Increasing value of item
-                                                      Material(
-                                                        child: InkWell(
-                                                          onTap: () {
-                                                            try {
-                                                              viewModel
-                                                                  .storeCart(
-                                                                      widget.p);
-                                                            } catch (e) {}
-                                                          },
-                                                          child: Container(
-                                                            height: 30.0,
-                                                            width: 28.0,
-                                                            decoration: BoxDecoration(
-                                                                border: Border(
-                                                                    left: BorderSide(
-                                                                        color: Colors
-                                                                            .black12
-                                                                            .withOpacity(0.1)))),
-                                                            child: Center(
-                                                                child:
-                                                                    Text("+")),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
+                                                    ),
                                                   ),
-                                                ),
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 18.0),
+                                                    child: Text(
+                                                        productsInCartCount
+                                                                ?.toString() ??
+                                                            '0'),
+                                                  ),
+
+                                                  /// Increasing value of item
+                                                  Material(
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        if (widget.p.quantityInSupply !=
+                                                                null &&
+                                                            widget.p.quantityInSupply >
+                                                                productsInCartCount)
+                                                          try {
+                                                            viewModel.storeCart(
+                                                                widget.p);
+                                                          } catch (e) {}
+                                                      },
+                                                      child: Container(
+                                                        height: 30.0,
+                                                        width: 28.0,
+                                                        decoration: BoxDecoration(
+                                                            border: Border(
+                                                                left: BorderSide(
+                                                                    color: Colors
+                                                                        .black12
+                                                                        .withOpacity(
+                                                                            0.1)))),
+                                                        child: Center(
+                                                            child: Text("+")),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
 //
-                                              );
-                                      }(),
-                                    );
-                                  },
-                                  valueListenable: viewModel.cart,
-                                )),
-                          ),
-//
-                        ),
+                                          );
+                                  }(),
+                                );
+                              },
+                              valueListenable: viewModel.cart,
+                            )),
                       ),
-                    ],
+//
+                    ),
                   ),
                 ],
               ),
@@ -831,7 +853,7 @@ class AddProductWidget extends StatefulWidget {
 }
 
 class _AddProductWidgetState extends State<AddProductWidget> {
-  String selectedLocal = AppLocalizations.supportedLocales.first;
+  String selectedLocal = AppLocalizations.supportedLocales.first.languageCode;
   ValueNotifier<bool> isUploading = ValueNotifier<bool>(false);
   bool addClicked = false;
   @override
@@ -886,7 +908,9 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                               padding: EdgeInsets.all(0),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: e == selectedLocal ? kPrimary : kIcons,
+                                color: e.languageCode == selectedLocal
+                                    ? kPrimary
+                                    : kIcons,
                               ),
                               duration: Duration(milliseconds: 200),
                               child: RawMaterialButton(
@@ -895,16 +919,17 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                                 shape: CircleBorder(),
                                 onPressed: () {
                                   setState(() {
-                                    selectedLocal = e;
+                                    selectedLocal = e.languageCode;
                                     localeSelected();
                                   });
                                 },
                                 padding: EdgeInsets.all(0),
                                 child: Text(
-                                  e,
+                                  e.languageCode,
                                   style: TextStyle(
-                                    color:
-                                        e == selectedLocal ? kIcons : kPrimary,
+                                    color: e.languageCode == selectedLocal
+                                        ? kIcons
+                                        : kPrimary,
                                   ),
                                 ),
                               ),
@@ -980,7 +1005,8 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                     hintText: AppLocalizations.of(context)
                         .translate('Quantity in supply')),
                 onChanged: (val) {
-                  widget.pc.quantityInSupply = int.parse(val);
+                  widget.pc.quantityInSupply =
+                      int.parse(val, onError: (val) => null);
                 },
               ),
               SizedBox(

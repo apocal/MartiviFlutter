@@ -8,6 +8,7 @@ import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/Models/Category.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
+import 'package:martivi/ViewModels/LanguageSettings.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
 import 'package:martivi/Views/ContactPage.dart';
 import 'package:martivi/Views/OrdersPage.dart';
@@ -195,14 +196,43 @@ class _HomePageState extends State<HomePage> {
                                           color: Colors.white, fontSize: 22),
                                     ),
                                   ),
-                                  value
-                                      ? Center(
-                                          child: CircularProgressIndicator(
-                                            valueColor: AlwaysStoppedAnimation(
-                                                Colors.white),
-                                          ),
-                                        )
-                                      : Container()
+                                  if (value)
+                                    Center(
+                                      child: CircularProgressIndicator(
+                                        valueColor: AlwaysStoppedAnimation(
+                                            Colors.white),
+                                      ),
+                                    ),
+                                  Consumer<LanguageSettings>(
+                                    builder:
+                                        (context, languageSettings, child) =>
+                                            DropdownButton<Locale>(
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: kIcons,
+                                      ),
+                                      onChanged: (val) {
+                                        languageSettings.setLocale(val);
+                                      },
+                                      value:
+                                          AppLocalizations.of(context).locale,
+                                      items: AppLocalizations.supportedLocales
+                                          .map((e) => DropdownMenuItem(
+                                                value: e,
+                                                child: Text(e.languageCode),
+                                              ))
+                                          .toList(),
+                                      selectedItemBuilder: (context) =>
+                                          AppLocalizations.supportedLocales
+                                              .map((e) => Text(
+                                                    e.languageCode,
+                                                    style: TextStyle(
+                                                        color: kIcons),
+                                                  ))
+                                              .toList(),
+                                      elevation: 2,
+                                    ),
+                                  ),
                                 ],
                               ),
                             );

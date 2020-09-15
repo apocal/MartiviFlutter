@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audioplayers/audio_cache.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -167,6 +168,7 @@ class MainViewModel extends ChangeNotifier {
                       try {
                         newMessages.value =
                             event.data()['hasNewMessages'] as bool;
+                        if(newMessages.value)AudioCache().play('stairs.mp3');
                       } catch (e) {}
                     }
                   });
@@ -207,7 +209,9 @@ class MainViewModel extends ChangeNotifier {
                                 event.data()['hasNewMessages'] as bool;
                             adminNewMessages.value = users.value
                                 .any((element) => element.hasNewMessages.value);
-                            print(adminNewMessages.value);
+
+                            if (adminNewMessages.value)
+                              AudioCache().play('stairs.mp3');
                           } catch (e) {}
                         }
                       });
