@@ -5,20 +5,17 @@ import 'FirestoreImage.dart';
 
 class Product {
   double get totalProductPrice =>
-      this.basePrice ??
-      0 +
-          (selectableAddons
-                  ?.where((element) => element.isSelected)
-                  ?.fold<double>(
-                      0.0,
-                      (previousValue, element) =>
-                          previousValue + (element?.price ?? 0.0)) ??
-              0) +
-          (checkableAddons?.where((element) => element.isSelected)?.fold(
-                  0,
-                  (previousValue, element) =>
-                      previousValue + (element?.price ?? 0)) ??
-              0);
+      (this.basePrice ?? 0) +
+      (selectableAddons?.where((element) => element.isSelected)?.fold<double>(
+              0.0,
+              (previousValue, element) =>
+                  previousValue + (element?.price ?? 0.0)) ??
+          0) +
+      (checkableAddons?.where((element) => element.isSelected)?.fold(
+              0,
+              (previousValue, element) =>
+                  previousValue + (element?.price ?? 0)) ??
+          0);
   String documentId;
   String productDocumentId;
   Map<String, String> localizedName;
@@ -73,7 +70,7 @@ class Product {
     basePrice = (json['basePrice'] as num)?.toDouble();
     quantity = (json['quantity'] as num)?.toInt();
     documentId = json['documentId'] as String;
-    localizedName = Map<String, String>.from(json['localizedName']);
+    localizedName = Map<String, String>.from(json['localizedName'] ?? {});
     localizedDescription =
         Map<String, String>.from(json['localizedDescription']);
     addonDescriptions = (json['addonDescriptions'] as List<dynamic>)

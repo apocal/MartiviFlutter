@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
@@ -178,47 +177,47 @@ class SignUp extends StatelessWidget {
             SizedBox(
               height: 24,
             ),
-            Text(
-              AppLocalizations.of(context).translate('Or Signup with'),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: kPrimary,
-                height: 1,
-              ),
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                RawMaterialButton(
-                  constraints: BoxConstraints(minWidth: 2),
-                  padding: EdgeInsets.all(0),
-                  onPressed: () {},
-                  shape: CircleBorder(),
-                  child: Icon(
-                    Entypo.facebook_with_circle,
-                    size: 32,
-                    color: kPrimary,
-                  ),
-                ),
-                SizedBox(
-                  width: 24,
-                ),
-                RawMaterialButton(
-                  constraints: BoxConstraints(minWidth: 2),
-                  shape: CircleBorder(),
-                  onPressed: () {},
-                  child: Icon(
-                    Entypo.google__with_circle,
-                    size: 32,
-                    color: kPrimary,
-                  ),
-                ),
-              ],
-            )
+            // Text(
+            //   AppLocalizations.of(context).translate('Or Signup with'),
+            //   textAlign: TextAlign.center,
+            //   style: TextStyle(
+            //     fontSize: 16,
+            //     color: kPrimary,
+            //     height: 1,
+            //   ),
+            // ),
+            // SizedBox(
+            //   height: 16,
+            // ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: <Widget>[
+            //     RawMaterialButton(
+            //       constraints: BoxConstraints(minWidth: 2),
+            //       padding: EdgeInsets.all(0),
+            //       onPressed: () {},
+            //       shape: CircleBorder(),
+            //       child: Icon(
+            //         Entypo.facebook_with_circle,
+            //         size: 32,
+            //         color: kPrimary,
+            //       ),
+            //     ),
+            //     SizedBox(
+            //       width: 24,
+            //     ),
+            //     RawMaterialButton(
+            //       constraints: BoxConstraints(minWidth: 2),
+            //       shape: CircleBorder(),
+            //       onPressed: () {},
+            //       child: Icon(
+            //         Entypo.google__with_circle,
+            //         size: 32,
+            //         color: kPrimary,
+            //       ),
+            //     ),
+            //   ],
+            // )
           ],
         );
       },

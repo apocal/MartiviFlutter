@@ -222,6 +222,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                                     Text(
                                                       '+${e.price.toString()}₾',
                                                       style: TextStyle(
+                                                        fontFamily: 'Sans',
                                                         color: Colors.black54,
                                                         fontWeight:
                                                             FontWeight.w500,
@@ -411,6 +412,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                     Text(
                                       '+${e.price?.toString() ?? ''}₾',
                                       style: TextStyle(
+                                        fontFamily: 'Sans',
                                         color: Colors.black54,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 12.0,

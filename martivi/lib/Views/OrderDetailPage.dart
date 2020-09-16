@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -55,7 +56,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
           .snapshots(),
       builder: (context, snapshot) {
         Order order;
-        if (snapshot.data?.data != null) {
+        if (snapshot.data?.data() != null) {
           order = Order.fromJson(snapshot.data.data());
           order.documentId = snapshot.data.id;
         }
@@ -66,16 +67,43 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               style: TextStyle(color: kIcons),
             ),
           ),
-          body: snapshot.data?.data == null
+          body: snapshot.data?.data() == null
               ? snapshot.connectionState == ConnectionState.waiting
                   ? Center(
                       child: CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation(kPrimary),
                       ),
                     )
-                  : Center(
-                      child: Text('No data'),
-                    )
+                  : Stack(
+            children: [
+              Container(
+                  constraints: BoxConstraints.expand(),
+                  child: SvgPicture.asset(
+                      'assets/svg/NoItem.svg')),
+              Padding(
+                padding: EdgeInsets.only(
+                    bottom:
+                    MediaQuery.of(context).size.height /
+                        4),
+                child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Text(
+                      AppLocalizations.of(context)
+                          .translate('You have nothing here'),
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: kPrimary,
+                          shadows: [
+                            BoxShadow(
+                                color: Colors.white
+                                    .withOpacity(1),
+                                blurRadius: 10.0,
+                                spreadRadius: 2.0)
+                          ]),
+                    )),
+              )
+            ],
+          )
               : SingleChildScrollView(
                   child: Consumer<MainViewModel>(builder: (context, viewModel, child) => ValueListenableBuilder<DatabaseUser>(valueListenable: viewModel.databaseUser,builder: (context, databaseUser, child) =>  Column(
                     children: [
@@ -956,9 +984,8 @@ class OrderedProductWidget extends StatelessWidget {
                     ),
                     Text(
                       '${product.selectableAddons.firstWhere((element) => element.isSelected, orElse: () => null).price}₾',
-                      style: TextStyle(
+                      style: TextStyle(fontFamily: 'Sans',
                         color: Colors.black54,
-                        fontWeight: FontWeight.w500,
                         fontSize: 12.0,
                       ),
                     ),
@@ -983,7 +1010,6 @@ class OrderedProductWidget extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Sans',
                           color: Colors.black54,
-                          fontWeight: FontWeight.w500,
                           fontSize: 12.0,
                         ),
                       ),

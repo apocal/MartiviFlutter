@@ -155,5 +155,8 @@
   "Remove": "ამოღება",
   "Repeat in cart": "კალათაში გამეორება",
   "You have nothing here": "თქვენ აქ არაფერი გაქვთ",
-  "Weight": "წონა"
+  "Weight": "წონა",
+  "Back": "უკან",
+  "Send": "გაგზავნა",
+  "Password reset email was sent": "პაროლის შეცვლის მეილი გაგზავნილია"
 }

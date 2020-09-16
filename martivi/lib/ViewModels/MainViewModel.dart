@@ -168,7 +168,7 @@ class MainViewModel extends ChangeNotifier {
                       try {
                         newMessages.value =
                             event.data()['hasNewMessages'] as bool;
-                        if(newMessages.value)AudioCache().play('stairs.mp3');
+                        if (newMessages.value) AudioCache().play('stairs.mp3');
                       } catch (e) {}
                     }
                   });

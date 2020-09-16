@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/Models/Address.dart';
@@ -167,22 +168,56 @@ class _UserPageState extends State<UserPage> {
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.data != null) {
-                      return snapshot.data.docs.length > 0
-                          ? ListView.builder(
-                              physics: BouncingScrollPhysics(),
-                              itemCount: snapshot.data.docs.length,
-                              itemBuilder: (context, index) {
-                                var order = Order.fromJson(
-                                    snapshot.data.docs[index].data());
-                                order.documentId = snapshot.data.docs[index].id;
-                                return OrderWidget(
-                                  order: order,
-                                );
-                              },
+                      if (snapshot.connectionState == ConnectionState.waiting)
+                        return Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation(kPrimary),
+                          ),
+                        );
+                      if (snapshot.data == null) return Text('No Data');
+
+                      if (snapshot.data.docs.length == 0)
+                        return Stack(
+                          children: [
+                            Container(
+                                constraints: BoxConstraints.expand(),
+                                child:
+                                    SvgPicture.asset('assets/svg/NoItem.svg')),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).size.height / 4),
+                              child: Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Text(
+                                    AppLocalizations.of(context)
+                                        .translate('You have nothing here'),
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: kPrimary,
+                                        shadows: [
+                                          BoxShadow(
+                                              color:
+                                                  Colors.white.withOpacity(1),
+                                              blurRadius: 10.0,
+                                              spreadRadius: 2.0)
+                                        ]),
+                                  )),
                             )
-                          : Center(
-                              child: Text('No data'),
-                            );
+                          ],
+                        );
+                      return ListView.builder(
+                        physics: BouncingScrollPhysics(),
+                        itemCount: snapshot.data.docs.length,
+                        itemBuilder: (context, index) {
+                          var order =
+                              Order.fromJson(snapshot.data.docs[index].data());
+                          order.documentId = snapshot.data.docs[index].id;
+                          return OrderWidget(
+                            order: order,
+                          );
+                        },
+                      );
                     } else
                       return Align(
                           alignment: Alignment.center, child: Text('No Data'));

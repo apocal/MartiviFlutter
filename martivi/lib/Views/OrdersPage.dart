@@ -14,9 +14,9 @@ import 'package:martivi/Models/Product.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
-import 'package:martivi/Views/CategoryPage.dart';
 import 'package:martivi/Views/OrderDetailPage.dart';
 import 'package:martivi/Widgets/FadeInWidget.dart';
+import 'package:martivi/Widgets/Widgets.dart';
 import 'package:provider/provider.dart';
 
 class OrdersPage extends StatefulWidget {

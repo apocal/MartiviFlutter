@@ -660,6 +660,7 @@ class _ProductItemState extends State<ProductItem> {
                                     Text(
                                       '${widget.p.selectableAddons.firstWhere((element) => element.isSelected, orElse: () => null)?.price ?? ''}₾',
                                       style: TextStyle(
+                                        fontFamily: 'Sans',
                                         color: Colors.black54,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 12.0,
@@ -1183,6 +1184,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                 child: InkWell(
                   onTap: () {
                     setState(() {
+                      widget.pc.checkableAddons ??= [];
                       widget.pc.checkableAddons
                           .add(PaidAddon(localizedName: {}, isSelected: false));
                     });
@@ -1200,49 +1202,51 @@ class _AddProductWidgetState extends State<AddProductWidget> {
               ...?widget.pc.selectableAddons
                   ?.map((e) => Stack(
                         children: [
-                          Column(
+                          Row(
                             children: [
-                              TextField(
-                                controller: TextEditingController(
-                                    text: e.localizedName[selectedLocal]),
+                              Checkbox(
+                                activeColor: kPrimary,
+                                value: e.isSelected,
                                 onChanged: (val) {
-                                  e.localizedName[selectedLocal] = val;
-                                },
-                                decoration: kinputFiledDecoration.copyWith(
-                                    suffixText: selectedLocal,
-                                    hintText: AppLocalizations.of(context)
-                                        .translate('Addon name')),
-                              ),
-                              TextField(
-                                controller: TextEditingController(
-                                    text: e.price?.toString() ?? ''),
-                                decoration: kinputFiledDecoration.copyWith(
-                                    hintText: AppLocalizations.of(context)
-                                        .translate('Price')),
-                                onChanged: (val) {
-                                  e.price = double.parse(val);
+                                  setState(() {
+                                    e.isSelected = val;
+                                  });
                                 },
                               ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(AppLocalizations.of(context)
-                                      .translate('Is selected')),
-                                  Checkbox(
-                                    activeColor: kPrimary,
-                                    value: e.isSelected,
-                                    onChanged: (val) {
-                                      setState(() {
-                                        e.isSelected = val;
-                                      });
-                                    },
-                                  ),
-                                ],
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    TextField(
+                                      controller: TextEditingController(
+                                          text: e.localizedName[selectedLocal]),
+                                      onChanged: (val) {
+                                        e.localizedName[selectedLocal] = val;
+                                      },
+                                      decoration:
+                                          kinputFiledDecoration.copyWith(
+                                              suffixText: selectedLocal,
+                                              hintText:
+                                                  AppLocalizations.of(context)
+                                                      .translate('Addon name')),
+                                    ),
+                                    TextField(
+                                      controller: TextEditingController(
+                                          text: e.price?.toString() ?? ''),
+                                      decoration:
+                                          kinputFiledDecoration.copyWith(
+                                              hintText:
+                                                  AppLocalizations.of(context)
+                                                      .translate('Price')),
+                                      onChanged: (val) {
+                                        e.price = double.parse(val);
+                                      },
+                                    ),
+                                    Divider(
+                                      height: 30,
+                                    )
+                                  ],
+                                ),
                               ),
-                              Divider(
-                                height: 30,
-                              )
                             ],
                           ),
                           Align(
@@ -1272,6 +1276,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                 child: InkWell(
                   onTap: () {
                     setState(() {
+                      widget.pc.selectableAddons ??= [];
                       widget.pc.selectableAddons
                           .add(PaidAddon(localizedName: {}, isSelected: false));
                     });

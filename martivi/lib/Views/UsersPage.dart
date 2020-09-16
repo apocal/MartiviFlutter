@@ -28,8 +28,13 @@ class _UsersPageState extends State<UsersPage> {
               return ListView.builder(
                 itemCount: viewModel.users.value.length,
                 itemBuilder: (context, index) {
-                  return UserWidget(
-                    user: viewModel.users.value[index],
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      right: 8,
+                    ),
+                    child: UserWidget(
+                      user: viewModel.users.value[index],
+                    ),
                   );
                 },
               );

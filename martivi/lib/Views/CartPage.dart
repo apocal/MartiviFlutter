@@ -12,6 +12,7 @@ import 'package:martivi/Models/Address.dart';
 import 'package:martivi/Models/CartItem.dart';
 import 'package:martivi/Models/Exceptions.dart';
 import 'package:martivi/Models/Order.dart';
+import 'package:martivi/Models/Product.dart';
 import 'package:martivi/Models/Settings.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
@@ -335,6 +336,20 @@ class _CartPageState extends State<CartPage> {
                                             FieldValue.increment(1)
                                       }, SetOptions(merge: true));
                                       cart.forEach((element) {
+                                        if (element.product.quantityInSupply !=
+                                                null &&
+                                            element.product.quantityInSupply >
+                                                0) {
+                                          FirebaseFirestore.instance
+                                              .collection('products')
+                                              .doc(element
+                                                  .product.productDocumentId)
+                                              .update({
+                                            'quantityInSupply':
+                                                FieldValue.increment(-1)
+                                          });
+                                        }
+
                                         FirebaseFirestore.instance
                                             .collection('cart')
                                             .doc(element.documentId)
@@ -495,6 +510,60 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                   ),
                                 ],
                               )),
+                          ...?widget.p.product.checkableAddons
+                              ?.map((e) => Row(
+                                    children: [
+                                      Radio(
+                                        activeColor: kPrimary,
+                                        value: e,
+                                        groupValue: widget
+                                            ?.p?.product?.checkableAddons
+                                            ?.firstWhere(
+                                                (element) => element.isSelected,
+                                                orElse: () => null),
+                                        onChanged: (val) {
+                                          setState(() {
+                                            widget.p.product.checkableAddons
+                                                .forEach((element) {
+                                              element.isSelected = false;
+                                            });
+                                            (val as PaidAddon).isSelected =
+                                                true;
+                                          });
+                                        },
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              e.localizedName[
+                                                      AppLocalizations.of(
+                                                              context)
+                                                          .locale
+                                                          .languageCode] ??
+                                                  '',
+                                              style: TextStyle(
+                                                color: Colors.black54,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 12.0,
+                                              ),
+                                            ),
+                                            if ((e.price ?? 0) > 0)
+                                              Text(
+                                                '+${e.price.toString()}₾',
+                                                style: TextStyle(
+                                                  fontFamily: 'Sans',
+                                                  color: Colors.black54,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 12.0,
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ))
+                              ?.toList(),
                           Text(
                             widget.p.product.localizedDescription[
                                 AppLocalizations.of(context)
@@ -506,6 +575,51 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                               fontSize: 12.0,
                             ),
                           ),
+                          ...?widget.p.product.selectableAddons
+                              ?.map((e) => Stack(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Checkbox(
+                                            activeColor: kPrimary,
+                                            value: e.isSelected,
+                                            onChanged: (val) {
+                                              setState(() {
+                                                e.isSelected = val;
+                                              });
+                                            },
+                                          ),
+                                          Column(
+                                            children: [
+                                              Text(
+                                                e.localizedName[
+                                                        AppLocalizations.of(
+                                                                context)
+                                                            .locale
+                                                            .languageCode] ??
+                                                    '',
+                                                style: TextStyle(
+                                                  color: Colors.black54,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 12.0,
+                                                ),
+                                              ),
+                                              Text(
+                                                '+${e.price?.toString() ?? ''}₾',
+                                                style: TextStyle(
+                                                  fontFamily: 'Sans',
+                                                  color: Colors.black54,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 12.0,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ))
+                              ?.toList(),
                           Text(
                             '₾${widget.p.product.totalProductPrice?.toString() ?? '0'}',
                             style:
