@@ -99,6 +99,9 @@ class _CartPageState extends State<CartPage> {
                                   children: [
                                     ...viewModel.cart.value
                                         .map((e) => CartItemWidget(
+                                              cartItemChanged: () {
+                                                setState(() {});
+                                              },
                                               p: e,
                                             ))
                                         .toList(),
@@ -422,7 +425,9 @@ class _CartPageState extends State<CartPage> {
 }
 
 class CartItemWidget extends StatefulWidget {
+  final Function cartItemChanged;
   const CartItemWidget({
+    this.cartItemChanged,
     @required this.p,
   });
 
@@ -522,14 +527,12 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                                 (element) => element.isSelected,
                                                 orElse: () => null),
                                         onChanged: (val) {
-                                          setState(() {
-                                            widget.p.product.checkableAddons
-                                                .forEach((element) {
-                                              element.isSelected = false;
-                                            });
-                                            (val as PaidAddon).isSelected =
-                                                true;
+                                          widget.p.product.checkableAddons
+                                              .forEach((element) {
+                                            element.isSelected = false;
                                           });
+                                          (val as PaidAddon).isSelected = true;
+                                          widget.cartItemChanged?.call();
                                         },
                                       ),
                                       Expanded(
@@ -584,9 +587,8 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                             activeColor: kPrimary,
                                             value: e.isSelected,
                                             onChanged: (val) {
-                                              setState(() {
-                                                e.isSelected = val;
-                                              });
+                                              e.isSelected = val;
+                                              widget.cartItemChanged?.call();
                                             },
                                           ),
                                           Column(

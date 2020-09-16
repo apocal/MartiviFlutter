@@ -60,6 +60,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
           order = Order.fromJson(snapshot.data.data());
           order.documentId = snapshot.data.id;
         }
+
         return Scaffold(
           appBar: AppBar(
             title: Text(
