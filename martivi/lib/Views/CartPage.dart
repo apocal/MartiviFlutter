@@ -59,7 +59,9 @@ class _CartPageState extends State<CartPage> {
                     double totalPrice = cart.fold<double>(
                         0,
                         (previousValue, element) =>
-                            previousValue + element.product.totalProductPrice);
+                            previousValue +
+                            element.product.totalProductPrice *
+                                element.product.quantity);
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: SingleChildScrollView(
@@ -89,7 +91,7 @@ class _CartPageState extends State<CartPage> {
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Text(
-                                          '${cart.length.toString()} ${AppLocalizations.of(context).translate('Product')} | '),
+                                          '${cart.fold(0, (previousValue, element) => previousValue + element.product.quantity)} ${AppLocalizations.of(context).translate('Product')} | '),
                                       Text(
                                         '₾${totalPrice.toStringAsFixed(2)}',
                                         style: TextStyle(fontFamily: 'Sans'),
@@ -341,15 +343,16 @@ class _CartPageState extends State<CartPage> {
                                       cart.forEach((element) {
                                         if (element.product.quantityInSupply !=
                                                 null &&
-                                            element.product.quantityInSupply >
-                                                0) {
+                                            element.product.quantityInSupply >=
+                                                element.product.quantity) {
                                           FirebaseFirestore.instance
                                               .collection('products')
                                               .doc(element
                                                   .product.productDocumentId)
                                               .update({
                                             'quantityInSupply':
-                                                FieldValue.increment(-1)
+                                                FieldValue.increment(
+                                                    -element.product.quantity)
                                           });
                                         }
 
@@ -480,118 +483,66 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                 child: Container(
                   padding: EdgeInsets.only(left: 12, top: 12),
                   child: ValueListenableBuilder<DatabaseUser>(
-                    builder: (context, user, child) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            widget.p.product.localizedName[
-                                    AppLocalizations.of(context)
-                                        .locale
-                                        .languageCode] ??
-                                '',
-                            style: TextStyle(
-                                fontFamily: "Sans",
-                                color: Colors.black87,
-                                fontWeight: FontWeight.w700),
-                          ),
-                          ...?widget.p.product.addonDescriptions.map((e) => Row(
-                                children: [
-                                  Text(
-                                    '${e.localizedAddonDescriptionName[AppLocalizations.of(context).locale.languageCode] ?? ''}: ',
-                                    style: TextStyle(
-                                      color: Colors.black54,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 12.0,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${e.localizedAddonDescription[AppLocalizations.of(context).locale.languageCode] ?? ''}',
-                                    style: TextStyle(
-                                      color: Colors.black54,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 12.0,
-                                    ),
-                                  ),
-                                ],
-                              )),
-                          ...?widget.p.product.checkableAddons
-                              ?.map((e) => Row(
-                                    children: [
-                                      Radio(
-                                        activeColor: kPrimary,
-                                        value: e,
-                                        groupValue: widget
-                                            ?.p?.product?.checkableAddons
-                                            ?.firstWhere(
-                                                (element) => element.isSelected,
-                                                orElse: () => null),
-                                        onChanged: (val) {
-                                          widget.p.product.checkableAddons
-                                              .forEach((element) {
-                                            element.isSelected = false;
-                                          });
-                                          (val as PaidAddon).isSelected = true;
-                                          widget.cartItemChanged?.call();
-                                        },
-                                      ),
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              e.localizedName[
-                                                      AppLocalizations.of(
-                                                              context)
-                                                          .locale
-                                                          .languageCode] ??
-                                                  '',
-                                              style: TextStyle(
-                                                color: Colors.black54,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 12.0,
-                                              ),
-                                            ),
-                                            if ((e.price ?? 0) > 0)
-                                              Text(
-                                                '+${e.price.toString()}₾',
-                                                style: TextStyle(
-                                                  fontFamily: 'Sans',
-                                                  color: Colors.black54,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 12.0,
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ))
-                              ?.toList(),
-                          Text(
-                            widget.p.product.localizedDescription[
-                                AppLocalizations.of(context)
-                                    .locale
-                                    .languageCode],
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12.0,
+                      builder: (context, user, child) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              widget.p.product.localizedName[
+                                      AppLocalizations.of(context)
+                                          .locale
+                                          .languageCode] ??
+                                  '',
+                              style: TextStyle(
+                                  fontFamily: "Sans",
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.w700),
                             ),
-                          ),
-                          ...?widget.p.product.selectableAddons
-                              ?.map((e) => Stack(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Checkbox(
-                                            activeColor: kPrimary,
-                                            value: e.isSelected,
-                                            onChanged: (val) {
-                                              e.isSelected = val;
-                                              widget.cartItemChanged?.call();
-                                            },
+                            ...?widget.p.product.addonDescriptions
+                                .map((e) => Row(
+                                      children: [
+                                        Text(
+                                          '${e.localizedAddonDescriptionName[AppLocalizations.of(context).locale.languageCode] ?? ''}: ',
+                                          style: TextStyle(
+                                            color: Colors.black54,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 12.0,
                                           ),
-                                          Column(
+                                        ),
+                                        Text(
+                                          '${e.localizedAddonDescription[AppLocalizations.of(context).locale.languageCode] ?? ''}',
+                                          style: TextStyle(
+                                            color: Colors.black54,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 12.0,
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                            ...?widget.p.product.checkableAddons
+                                ?.map((e) => Row(
+                                      children: [
+                                        Radio(
+                                          activeColor: kPrimary,
+                                          value: e,
+                                          groupValue: widget
+                                              ?.p?.product?.checkableAddons
+                                              ?.firstWhere(
+                                                  (element) =>
+                                                      element.isSelected,
+                                                  orElse: () => null),
+                                          onChanged: (val) {
+                                            widget.p.product.checkableAddons
+                                                .forEach((element) {
+                                              element.isSelected = false;
+                                            });
+                                            (val as PaidAddon).isSelected =
+                                                true;
+                                            widget.cartItemChanged?.call();
+                                          },
+                                        ),
+                                        Expanded(
+                                          child: Column(
                                             children: [
                                               Text(
                                                 e.localizedName[
@@ -606,49 +557,91 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                                                   fontSize: 12.0,
                                                 ),
                                               ),
-                                              Text(
-                                                '+${e.price?.toString() ?? ''}₾',
-                                                style: TextStyle(
-                                                  fontFamily: 'Sans',
-                                                  color: Colors.black54,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 12.0,
+                                              if ((e.price ?? 0) > 0)
+                                                Text(
+                                                  '+${e.price.toString()}₾',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Sans',
+                                                    color: Colors.black54,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 12.0,
+                                                  ),
                                                 ),
-                                              ),
                                             ],
                                           ),
-                                        ],
-                                      ),
-                                    ],
-                                  ))
-                              ?.toList(),
-                          Text(
-                            '₾${widget.p.product.totalProductPrice?.toString() ?? '0'}',
-                            style:
-                                TextStyle(fontFamily: 'Sans', color: kPrimary),
-                          ),
-                          if (user?.role == UserType.user) child,
-                        ],
-                      );
-                    },
-                    valueListenable: viewModel.databaseUser,
-                    child: Align(
-                      alignment: Alignment.topRight,
-                      child: Container(
-                        child: RawMaterialButton(
-                          onPressed: () {
-                            FirebaseFirestore.instance
-                                .collection('/cart')
-                                .doc(widget.p.documentId)
-                                .delete();
-                          },
-                          child: Text(AppLocalizations.of(context)
-                                  .translate('Remove') ??
-                              'Remove'),
-                        ),
-                      ),
-                    ),
-                  ), //
+                                        ),
+                                      ],
+                                    ))
+                                ?.toList(),
+                            Text(
+                              widget.p.product.localizedDescription[
+                                      AppLocalizations.of(context)
+                                          .locale
+                                          .languageCode] ??
+                                  '',
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12.0,
+                              ),
+                            ),
+                            ...?widget.p.product.selectableAddons
+                                ?.map((e) => Stack(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Checkbox(
+                                              activeColor: kPrimary,
+                                              value: e.isSelected,
+                                              onChanged: (val) {
+                                                e.isSelected = val;
+                                                widget.cartItemChanged?.call();
+                                              },
+                                            ),
+                                            Column(
+                                              children: [
+                                                Text(
+                                                  e.localizedName[
+                                                          AppLocalizations.of(
+                                                                  context)
+                                                              .locale
+                                                              .languageCode] ??
+                                                      '',
+                                                  style: TextStyle(
+                                                    color: Colors.black54,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 12.0,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '+${e.price?.toString() ?? ''}₾',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Sans',
+                                                    color: Colors.black54,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 12.0,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ))
+                                ?.toList(),
+                            Text(
+                              '₾${widget.p.product.totalProductPrice?.toString() ?? '0'}',
+                              style: TextStyle(
+                                  fontFamily: 'Sans', color: kPrimary),
+                            ),
+                            if (user?.role == UserType.user) child,
+                          ],
+                        );
+                      },
+                      valueListenable: viewModel.databaseUser,
+                      child: CartControl(
+                        product: widget.p.product,
+                      )), //
                 ),
               ),
             ],

@@ -50,15 +50,17 @@ class Product {
     };
   }
 
-  Map<String, dynamic> toCheckoutJson(BuildContext context) => {
-        'Quantity': 1,
-        'Price': totalProductPrice ?? 0,
-        'Name':
-            localizedName[AppLocalizations.of(context).locale.languageCode] ??
-                '',
-        'Description':
-            '${nullSafeMapValue(localizedDescription, AppLocalizations.of(context).locale.languageCode) ?? ''}, ${nullSafeMapValue(selectableAddons?.firstWhere((element) => element.isSelected, orElse: () => null)?.localizedName, AppLocalizations.of(context).locale.languageCode)}, ${checkableAddons?.where((element) => element.isSelected)?.fold('', (previousValue, element) => previousValue + nullSafeMapValue(element?.localizedName, AppLocalizations.of(context).locale.languageCode) ?? '')}',
-      };
+  Map<String, dynamic> toCheckoutJson(BuildContext context) {
+    return {
+      'Quantity': quantity,
+      'Price': totalProductPrice ?? 0,
+      'Name':
+          localizedName[AppLocalizations.of(context).locale.languageCode] ?? '',
+      'Description':
+          '${nullSafeMapValue(localizedDescription, AppLocalizations.of(context).locale.languageCode) ?? ''} ${nullSafeMapValue(selectableAddons?.firstWhere((element) => element.isSelected, orElse: () => null)?.localizedName, AppLocalizations.of(context).locale.languageCode) ?? ''} ${(checkableAddons?.where((element) => element.isSelected)?.fold('', (previousValue, element) => previousValue + nullSafeMapValue(element?.localizedName, AppLocalizations.of(context).locale.languageCode)) ?? '')}',
+    };
+  }
+
   V nullSafeMapValue<K, V>(Map<K, V> map, K key) {
     if (map?.containsKey(key) ?? false) return map[key];
     return null;

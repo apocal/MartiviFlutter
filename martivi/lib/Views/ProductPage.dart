@@ -700,137 +700,16 @@ class _ProductItemState extends State<ProductItem> {
                                     color: kPrimary, fontFamily: 'Sans'),
                               ),
                               if (user?.role == UserType.user &&
-                                  (widget.p.quantityInSupply > 0 ||
+                                  ((widget.p.quantityInSupply ?? 0) > 0 ||
                                       widget.p.quantityInSupply == null))
                                 child,
                             ],
                           );
                         },
                         valueListenable: viewModel.databaseUser,
-                        child: Align(
-                            alignment: Alignment.topRight,
-                            child: ValueListenableBuilder<List<CartItem>>(
-                              builder: (context, value, child) {
-                                return Container(
-                                  child: () {
-                                    int productsInCartCount = value
-                                            ?.where(
-                                              (element) =>
-                                                  element.product
-                                                      .productDocumentId ==
-                                                  widget.p.productDocumentId,
-                                            )
-                                            ?.length ??
-                                        0;
-                                    return productsInCartCount == 0
-                                        ? FlatButton(
-                                            child: Text(
-                                              AppLocalizations.of(context)
-                                                  .translate('Add to cart'),
-                                              style: TextStyle(
-                                                  color: Colors.black
-                                                      .withOpacity(.8)),
-                                            ),
-                                            onPressed: () {
-                                              viewModel.storeCart(widget.p);
-                                            })
-                                        : Container(
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white70,
-                                                  border: Border.all(
-                                                      color: Colors.black12
-                                                          .withOpacity(0.1))),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: <Widget>[
-                                                  /// Decrease of value item
-                                                  Material(
-                                                    child: InkWell(
-                                                      onTap: () {
-                                                        try {
-                                                          if (productsInCartCount ==
-                                                              0) {
-                                                            return;
-                                                          }
-                                                          if (productsInCartCount >
-                                                              0) {
-                                                            FirebaseFirestore
-                                                                .instance
-                                                                .collection(
-                                                                    '/cart')
-                                                                .doc(value.last
-                                                                    .documentId)
-                                                                .delete();
-                                                            return;
-                                                          }
-                                                        } catch (e) {}
-                                                      },
-                                                      child: Container(
-                                                        height: 30.0,
-                                                        width: 30.0,
-                                                        decoration: BoxDecoration(
-                                                            border: Border(
-                                                                right: BorderSide(
-                                                                    color: Colors
-                                                                        .black12
-                                                                        .withOpacity(
-                                                                            0.1)))),
-                                                        child: Center(
-                                                            child: Text("-")),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 18.0),
-                                                    child: Text(
-                                                        productsInCartCount
-                                                                ?.toString() ??
-                                                            '0'),
-                                                  ),
-
-                                                  /// Increasing value of item
-                                                  Material(
-                                                    child: InkWell(
-                                                      onTap: () {
-                                                        if (widget.p.quantityInSupply !=
-                                                                null &&
-                                                            widget.p.quantityInSupply >
-                                                                productsInCartCount)
-                                                          try {
-                                                            viewModel.storeCart(
-                                                                widget.p);
-                                                          } catch (e) {}
-                                                      },
-                                                      child: Container(
-                                                        height: 30.0,
-                                                        width: 28.0,
-                                                        decoration: BoxDecoration(
-                                                            border: Border(
-                                                                left: BorderSide(
-                                                                    color: Colors
-                                                                        .black12
-                                                                        .withOpacity(
-                                                                            0.1)))),
-                                                        child: Center(
-                                                            child: Text("+")),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-//
-                                          );
-                                  }(),
-                                );
-                              },
-                              valueListenable: viewModel.cart,
-                            )),
+                        child: CartControl(
+                          product: widget.p,
+                        ),
                       ),
 //
                     ),

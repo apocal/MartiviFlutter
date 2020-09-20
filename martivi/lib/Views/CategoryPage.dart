@@ -302,7 +302,9 @@ class _CategoryPageState extends State<CategoryPage> {
                                         key: (e) => (e as Locale).languageCode,
                                         value: (e) =>
                                             element['description'] as String);
-                                pf.basePrice = element['price'];
+                                pf.basePrice = double.parse(
+                                    (element['price'] as num)
+                                        .toStringAsFixed(2));
                                 pf.addonDescriptions = [
                                   AddonDescription(
                                       localizedAddonDescription:
@@ -353,7 +355,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 child: FlatButton(
                   color: kPrimary,
                   onPressed: () {
-                    showModalBottomSheet(
+                    showBottomSheet(
                         context: context,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(

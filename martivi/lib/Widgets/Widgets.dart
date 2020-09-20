@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -8,9 +9,13 @@ import 'package:image/image.dart' as Img;
 import 'package:image_picker/image_picker.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
+import 'package:martivi/Models/CartItem.dart';
 import 'package:martivi/Models/Category.dart';
 import 'package:martivi/Models/FirestoreImage.dart';
+import 'package:martivi/Models/Product.dart';
+import 'package:martivi/ViewModels/MainViewModel.dart';
 import 'package:path/path.dart' as ppp;
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 ImageProvider safeNetworkImage(String url) {
@@ -784,6 +789,149 @@ class _EditCategoryWidgetState extends State<EditCategoryWidget> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class CartControl extends StatelessWidget {
+  const CartControl({
+    Key key,
+    @required this.product,
+  }) : super(key: key);
+
+  final Product product;
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<MainViewModel>(
+      builder: (context, viewModel, child) => Align(
+          alignment: Alignment.topRight,
+          child: ValueListenableBuilder<List<CartItem>>(
+            builder: (context, value, child) {
+              return Container(
+                child: () {
+                  CartItem inCartProduct = value.firstWhere(
+                      (element) =>
+                          element.product.productDocumentId ==
+                          product.productDocumentId,
+                      orElse: () => null);
+                  return inCartProduct == null
+                      ? FlatButton(
+                          child: Text(
+                            AppLocalizations.of(context)
+                                .translate('Add to cart'),
+                            style:
+                                TextStyle(color: Colors.black.withOpacity(.8)),
+                          ),
+                          onPressed: () {
+                            product.quantity = 1;
+                            viewModel.storeCart(product);
+                          })
+                      : Container(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white70,
+                                border: Border.all(
+                                    color: Colors.black12.withOpacity(0.1))),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                /// Decrease of value item
+                                Material(
+                                  child: InkWell(
+                                    onTap: () {
+                                      try {
+                                        inCartProduct.product.quantity ??= 0;
+                                        if (inCartProduct.product.quantity ==
+                                            0) {
+                                          return;
+                                        }
+                                        inCartProduct.product.quantity--;
+                                        if (!(inCartProduct.product.quantity >
+                                            0)) {
+                                          FirebaseFirestore.instance
+                                              .collection('/cart')
+                                              .doc(inCartProduct.documentId)
+                                              .delete();
+                                          return;
+                                        }
+                                        FirebaseFirestore.instance
+                                            .collection('/cart')
+                                            .doc(inCartProduct.documentId)
+                                            .set(inCartProduct.toJson(),
+                                                SetOptions(merge: true));
+                                      } catch (e) {}
+                                    },
+                                    child: Container(
+                                      height: 30.0,
+                                      width: 30.0,
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              right: BorderSide(
+                                                  color: Colors.black12
+                                                      .withOpacity(0.1)))),
+                                      child: Center(child: Text("-")),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 18.0),
+                                  child: Text(inCartProduct.product.quantity
+                                          ?.toString() ??
+                                      '0'),
+                                ),
+
+                                /// Increasing value of item
+                                Material(
+                                  child: InkWell(
+                                    onTap: () {
+                                      try {
+                                        inCartProduct.product.quantity ??= 0;
+                                        if (inCartProduct
+                                                    .product.quantityInSupply !=
+                                                null &&
+                                            inCartProduct
+                                                    .product.quantityInSupply <
+                                                inCartProduct.product.quantity +
+                                                    1) return;
+                                        inCartProduct.product.quantity++;
+                                        FirebaseFirestore.instance
+                                            .collection('/cart')
+                                            .doc(inCartProduct.documentId)
+                                            .set(inCartProduct.toJson(),
+                                                SetOptions(merge: true));
+                                      } catch (e) {}
+                                    },
+                                    child: Container(
+                                      height: 30.0,
+                                      width: 28.0,
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              left: BorderSide(
+                                                  color: Colors.black12
+                                                      .withOpacity(0.1)))),
+                                      child: Center(child: Text("+")),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+//                                              child: Text(inCartProduct
+//                                                      .product
+//                                                      .productsForms[widget
+//                                                          .p.selectedIndex]
+//                                                      .quantity
+//                                                      ?.toString() ??
+//                                                  '0'),
+                        );
+                }(),
+              );
+            },
+            valueListenable: viewModel.cart,
+          )),
     );
   }
 }

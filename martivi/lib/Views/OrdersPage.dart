@@ -144,6 +144,26 @@ class _OrdersPageState extends State<OrdersPage> {
                                   if (databaseUser?.role == UserType.admin)
                                     SlideAction(
                                         onTap: () {
+                                          order.products.forEach((element) {
+                                            if (element.quantityInSupply !=
+                                                    null &&
+                                                order
+                                                        .deliveryStatusSteps[
+                                                            DeliveryStatus
+                                                                .Completed]
+                                                        .isActive ==
+                                                    false) {
+                                              FirebaseFirestore.instance
+                                                  .collection('products')
+                                                  .doc(
+                                                      element.productDocumentId)
+                                                  .update({
+                                                'quantityInSupply':
+                                                    FieldValue.increment(
+                                                        element.quantity)
+                                              });
+                                            }
+                                          });
                                           FirebaseFirestore.instance
                                               .collection('orders')
                                               .doc(order.documentId)
@@ -259,7 +279,7 @@ class OrderWidget extends StatelessWidget {
                     children: [
                       Flexible(
                         child: Text(
-                          '${AppLocalizations.of(context).translate('Order price')}: ₾${(order.products.fold<double>(0, (previousValue, element) => previousValue + element.totalProductPrice))?.toString() ?? '0'}',
+                          '${AppLocalizations.of(context).translate('Order price')}: ₾${(order.products.fold<double>(0, (previousValue, element) => previousValue + element.totalProductPrice * (element.quantity ?? 1)))?.toString() ?? '0'}',
                           style: TextStyle(color: kPrimary, fontFamily: 'Sans'),
                         ),
                       ),

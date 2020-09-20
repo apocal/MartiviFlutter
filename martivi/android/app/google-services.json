@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:698656596097:android:6bf009975e7f789f836d80",
+        "mobilesdk_app_id": "1:698656596097:android:20dfa469f7e51b34836d80",
         "android_client_info": {
-          "package_name": "com.bsoft.martivi"
+          "package_name": "com.bSoft.martivi"
         }
       },
       "oauth_client": [
@@ -30,6 +30,13 @@
             {
               "client_id": "698656596097-sshhtk7a2nkqlsrg386dibljpm3vfqlb.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "698656596097-iaoqssphj70vs6hjctnbrusqb780osgo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bSoft.martivi"
+              }
             }
           ]
         }

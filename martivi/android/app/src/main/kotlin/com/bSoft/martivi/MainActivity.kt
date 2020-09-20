@@ -1,4 +1,4 @@
-package com.bsoft.martivi
+package com.bSoft.martivi
 
 import io.flutter.embedding.android.FlutterActivity
 

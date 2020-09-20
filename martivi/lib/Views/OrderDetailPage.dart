@@ -124,7 +124,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  '${order.products.length} ${AppLocalizations.of(context).translate('Product')} | ₾${order.products.fold(0, (previousValue, element) => previousValue + element.totalProductPrice)}',style: TextStyle(fontFamily: 'Sans'),),
+                                  '${order.products.fold(0, (previousValue, element) => previousValue+(element.quantity??1))} ${AppLocalizations.of(context).translate('Product')} | ₾${order.products.fold(0, (previousValue, element) => previousValue + element.totalProductPrice*(element.quantity??1))}',style: TextStyle(fontFamily: 'Sans'),),
                               ),
                             ],
                           ),
@@ -834,6 +834,7 @@ class _DeliveryStatusStepsState extends State<DeliveryStatusSteps> {
                         .isActive = true;
                     widget.order.deliveryStatusSteps[steps[index].status]
                         .stepState = StepState.complete;
+
                     FirebaseFirestore.instance
                         .collection('/orders')
                         .doc(widget.order.documentId)
@@ -858,7 +859,7 @@ class _DeliveryStatusStepsState extends State<DeliveryStatusSteps> {
                         .update({
                       'deliveryStatusSteps': widget.order.deliveryStatusSteps
                           .map((key, value) =>
-                              MapEntry(EnumToString.parse(key), value.toJson()))
+                              MapEntry(EnumToString.convertToString(key), value.toJson()))
                     });
                  },)
                 ],),
@@ -954,7 +955,7 @@ class OrderedProductWidget extends StatelessWidget {
             children: <Widget>[
               Text(
                 product.localizedName[
-                    AppLocalizations.of(context).locale.languageCode],
+                    AppLocalizations.of(context).locale.languageCode]??'',
                 style: TextStyle(
                     fontFamily: "Sans",
                     color: Colors.black87,
@@ -962,7 +963,15 @@ class OrderedProductWidget extends StatelessWidget {
               ),
               Text(
                 product.localizedDescription[
-                    AppLocalizations.of(context).locale.languageCode],
+                    AppLocalizations.of(context).locale.languageCode]??'',
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12.0,
+                ),
+              ),
+              Text(
+                '${product.quantity??1.toString()}x',
                 style: TextStyle(
                   color: Colors.black54,
                   fontWeight: FontWeight.w500,
@@ -1017,6 +1026,7 @@ class OrderedProductWidget extends StatelessWidget {
                   ],
                 ),
               ),
+
               Text(
                 '₾${product.totalProductPrice.toString()}',
                 style: TextStyle(

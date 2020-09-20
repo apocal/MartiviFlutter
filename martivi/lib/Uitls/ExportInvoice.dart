@@ -60,8 +60,11 @@ class Invoice {
   PdfColor get _accentTextColor =>
       baseColor.luminance < 0.5 ? _lightColor : _darkColor;
 
-  double get _total => products.fold(0,
-      (previousValue, element) => previousValue + (element.totalProductPrice));
+  double get _total => products.fold(
+      0,
+      (previousValue, element) =>
+          previousValue +
+          (element.totalProductPrice * (element.quantity ?? 1)));
 
   double get _grandTotal => _total + deliveryFee;
 
@@ -472,6 +475,7 @@ class Invoice {
     var tableHeaders = [
       AppLocalizations.of(bContext).translate('Name'),
       AppLocalizations.of(bContext).translate('Description'),
+      AppLocalizations.of(bContext).translate('Quantity'),
       AppLocalizations.of(bContext).translate('Price'),
       AppLocalizations.of(bContext).translate('Total'),
     ];
@@ -528,10 +532,14 @@ class Invoice {
                 case 1:
                   return '${products[row].localizedDescription[AppLocalizations.of(bContext).locale.languageCode]}, ${products[row].addonDescriptions.fold('', (previousValue, element) => previousValue + '${element.localizedAddonDescriptionName[AppLocalizations.of(bContext).locale.languageCode]}: ${element.localizedAddonDescription[AppLocalizations.of(bContext).locale.languageCode]}')}, ${products[row].checkableAddons?.where((element) => element.isSelected)?.fold('', (previousValue, element) => previousValue + element.localizedName[AppLocalizations.of(bContext).locale.languageCode] + ': ' + '+${element.price}₾, ') ?? ''}${products[row].selectableAddons?.where((element) => element.isSelected)?.fold('', (previousValue, element) => previousValue + element.localizedName[AppLocalizations.of(bContext).locale.languageCode] + ': ' + '+${element.price}₾') ?? ''}';
                 case 2:
+                  return (products[row].quantity ?? 1).toString();
+                case 3:
                   return products[row].basePrice.toString();
 
-                case 3:
-                  return (products[row].totalProductPrice).toString();
+                case 4:
+                  return ((products[row].totalProductPrice) *
+                          (products[row].quantity ?? 1))
+                      .toString();
               }
             }(),
           );
