@@ -467,8 +467,10 @@ class CategorySearch extends SearchDelegate<String> {
                       ...?snapshot.data.docs.map((element) {
                         var p = Product.fromJson(element.data());
                         p.productDocumentId = element.id;
-                        return ProductItem(
-                          p: p,
+                        return Container(padding: EdgeInsets.only(left: 30,right: 8,top: 4,bottom: 4),
+                          child: ProductItem(
+                            p: p,
+                          ),
                         );
                       }).toList(),
                   ],
