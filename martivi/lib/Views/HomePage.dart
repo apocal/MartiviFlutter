@@ -6,6 +6,7 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/Models/Category.dart';
+import 'package:martivi/Models/Product.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
 import 'package:martivi/ViewModels/LanguageSettings.dart';
@@ -441,20 +442,43 @@ class CategorySearch extends SearchDelegate<String> {
                 .localizedName[AppLocalizations.of(context).locale.languageCode]
                 ?.contains(query))
             .toList();
-    return ListView.builder(
-        itemCount: suggestionList.length,
-        itemBuilder: (context, index) {
-          return itemCard(
-            category: suggestionList[index],
-            onCategoryPress: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (BuildContext context) {
-                return ProductPage(
-                  category: suggestionList[index],
+
+    var items = suggestionList
+        .map<Widget>((e) => FutureBuilder<QuerySnapshot>(
+              future: FirebaseFirestore.instance
+                  .collection('products')
+                  .where('documentId', isEqualTo: e.documentId)
+                  .get(),
+              builder: (context, snapshot) {
+                return Column(
+                  children: [
+                    itemCard(
+                      category: e,
+                      onCategoryPress: () {
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (BuildContext context) {
+                          return ProductPage(
+                            category: e,
+                          );
+                        }));
+                      },
+                    ),
+                    if (snapshot.hasData)
+                      ...?snapshot.data.docs.map((element) {
+                        var p = Product.fromJson(element.data());
+                        p.productDocumentId = element.id;
+                        return ProductItem(
+                          p: p,
+                        );
+                      }).toList(),
+                  ],
                 );
-              }));
-            },
-          );
-        });
+              },
+            ))
+        .toList();
+    return ListView.builder(
+      itemBuilder: (context, index) => items[index],
+      itemCount: items.length,
+    );
   }
 }
