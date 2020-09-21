@@ -440,47 +440,62 @@ class CategorySearch extends SearchDelegate<String> {
         : categories
             .where((element) => element
                 .localizedName[AppLocalizations.of(context).locale.languageCode]
-                ?.contains(query))
+                .contains(query))
             .toList();
+    Map<Category, List<Product>> resultsMap =
+        Map.fromIterable(suggestionList, key: (c) => c, value: (c) => null);
 
-    var items = suggestionList
-        .map<Widget>((e) => FutureBuilder<QuerySnapshot>(
-              future: FirebaseFirestore.instance
-                  .collection('products')
-                  .where('documentId', isEqualTo: e.documentId)
-                  .get(),
-              builder: (context, snapshot) {
-                return Column(
-                  children: [
-                    itemCard(
-                      category: e,
-                      onCategoryPress: () {
-                        Navigator.of(context).push(
-                            MaterialPageRoute(builder: (BuildContext context) {
-                          return ProductPage(
-                            category: e,
-                          );
-                        }));
-                      },
-                    ),
-                    if (snapshot.hasData)
-                      ...?snapshot.data.docs.map((element) {
-                        var p = Product.fromJson(element.data());
-                        p.productDocumentId = element.id;
-                        return Container(padding: EdgeInsets.only(left: 30,right: 8,top: 4,bottom: 4),
-                          child: ProductItem(
-                            p: p,
-                          ),
-                        );
-                      }).toList(),
-                  ],
-                );
-              },
-            ))
-        .toList();
-    return ListView.builder(
-      itemBuilder: (context, index) => items[index],
-      itemCount: items.length,
+    return FutureBuilder<QuerySnapshot>(
+      future: FirebaseFirestore.instance.collection('products').get(),
+      builder: (context, snapshot) {
+        var products = snapshot?.data?.docs?.map((e) {
+          Product p = Product.fromJson(e.data());
+          p.productDocumentId = e.id;
+          return p;
+        })?.where((element) => element
+            .localizedName[AppLocalizations.of(context).locale.languageCode]
+            .contains(query));
+        products ??= [];
+        products.forEach((element) {
+          var cat = categories.firstWhere(
+              (cat) => element.documentId == cat.documentId,
+              orElse: () => null);
+          if (cat != null) {
+            resultsMap[cat] ??= [];
+            resultsMap[cat].add(element);
+          }
+        });
+
+        return ListView.builder(
+          itemCount: resultsMap.keys.length,
+          itemBuilder: (context, index) {
+            var c = resultsMap.keys.toList()[index];
+            return Column(
+              children: [
+                itemCard(
+                  category: c,
+                  onCategoryPress: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (BuildContext context) {
+                      return ProductPage(
+                        category: c,
+                      );
+                    }));
+                  },
+                ),
+                if ((resultsMap[c]?.length ?? 0) > 0)
+                  ...?resultsMap[c].map((e) => Container(
+                        padding: EdgeInsets.only(
+                            left: 30, right: 8, top: 4, bottom: 4),
+                        child: ProductItem(
+                          p: e,
+                        ),
+                      )),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }
