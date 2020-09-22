@@ -534,7 +534,7 @@ class Invoice {
                 case 2:
                   return (products[row].quantity ?? 1).toString();
                 case 3:
-                  return products[row].basePrice.toString();
+                  return products[row].totalProductPrice.toString();
 
                 case 4:
                   return ((products[row].totalProductPrice) *

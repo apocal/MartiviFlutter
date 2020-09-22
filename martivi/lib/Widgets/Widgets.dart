@@ -811,9 +811,7 @@ class CartControl extends StatelessWidget {
               return Container(
                 child: () {
                   CartItem inCartProduct = value.firstWhere(
-                      (element) =>
-                          element.product.productDocumentId ==
-                          product.productDocumentId,
+                      (element) => element.product == product,
                       orElse: () => null);
                   return inCartProduct == null
                       ? FlatButton(
