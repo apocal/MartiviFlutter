@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\martivi\\build\\open_file\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values-az\\values-az.xml",
+            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\build\\open_file\\intermediates\\res\\merged\\release\\values-az\\values-az.xml",
             "map": [
                 {
                     "source": "C:\\Users\\bivan\\.gradle\\caches\\transforms-2\\files-2.1\\3aaf6e5219b7f981ec263df919098c6f\\core-1.1.0\\res\\values-az\\values-az.xml",
@@ -16,7 +16,7 @@
             ]
         },
         {
-            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\martivi\\build\\open_file\\intermediates\\res\\merged\\release\\values-az\\values-az.xml",
+            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\build\\open_file\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values-az\\values-az.xml",
             "map": [
                 {
                     "source": "C:\\Users\\bivan\\.gradle\\caches\\transforms-2\\files-2.1\\3aaf6e5219b7f981ec263df919098c6f\\core-1.1.0\\res\\values-az\\values-az.xml",

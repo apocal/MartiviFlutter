@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\martivi\\build\\google_maps_flutter\\intermediates\\res\\merged\\release\\values\\values.xml",
+            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\build\\google_maps_flutter\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values\\values.xml",
             "map": [
                 {
                     "source": "C:\\Users\\bivan\\.gradle\\caches\\transforms-2\\files-2.1\\6f4e6eb26f6c204062e462fe30c558b2\\play-services-maps-17.0.0\\res\\values\\values.xml",
@@ -80,7 +80,7 @@
             ]
         },
         {
-            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\martivi\\build\\google_maps_flutter\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values\\values.xml",
+            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\build\\google_maps_flutter\\intermediates\\res\\merged\\release\\values\\values.xml",
             "map": [
                 {
                     "source": "C:\\Users\\bivan\\.gradle\\caches\\transforms-2\\files-2.1\\6f4e6eb26f6c204062e462fe30c558b2\\play-services-maps-17.0.0\\res\\values\\values.xml",

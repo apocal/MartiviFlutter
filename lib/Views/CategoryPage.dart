@@ -269,8 +269,10 @@ class _CategoryPageState extends State<CategoryPage> {
                               var products =
                                   element['products'] as List<dynamic>;
                               var catRef = await viewModel.storeCategory(c);
+                              int counter = 0;
                               await Future.forEach(products, (element) async {
-                                Product pf = Product();
+                                counter++;
+                                Product pf = Product(order: counter);
                                 pf.documentId = catRef.id;
                                 pf.localizedName =
                                     Map<String, String>.fromIterable(

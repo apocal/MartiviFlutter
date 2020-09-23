@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\martivi\\build\\app\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values-da\\values-da.xml",
+            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\build\\app\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values-da\\values-da.xml",
             "map": [
                 {
                     "source": "C:\\Users\\bivan\\.gradle\\caches\\transforms-2\\files-2.1\\c74e9d76b9181d3585ba58111e512b89\\play-services-base-17.2.1\\res\\values-da\\values.xml",

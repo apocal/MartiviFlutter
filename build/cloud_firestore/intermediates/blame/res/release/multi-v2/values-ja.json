@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\martivi\\build\\cloud_firestore\\intermediates\\res\\merged\\release\\values-ja\\values-ja.xml",
+            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\build\\cloud_firestore\\intermediates\\res\\merged\\release\\values-ja\\values-ja.xml",
             "map": [
                 {
                     "source": "C:\\Users\\bivan\\.gradle\\caches\\transforms-2\\files-2.1\\3aaf6e5219b7f981ec263df919098c6f\\core-1.1.0\\res\\values-ja\\values-ja.xml",
@@ -57,7 +57,7 @@
             ]
         },
         {
-            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\martivi\\build\\cloud_firestore\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values-ja\\values-ja.xml",
+            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\build\\cloud_firestore\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values-ja\\values-ja.xml",
             "map": [
                 {
                     "source": "C:\\Users\\bivan\\.gradle\\caches\\transforms-2\\files-2.1\\3aaf6e5219b7f981ec263df919098c6f\\core-1.1.0\\res\\values-ja\\values-ja.xml",

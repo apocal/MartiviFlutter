@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bSoft.martivi"
     android:targetSandboxVersion="2"
-    android:versionCode="602000"
-    android:versionName="6.0.2" >
+    android:versionCode="603000"
+    android:versionName="6.0.3" >
 
     <uses-sdk
         android:minSdkVersion="16"

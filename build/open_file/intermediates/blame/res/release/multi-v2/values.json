@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\martivi\\build\\open_file\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values\\values.xml",
+            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\build\\open_file\\intermediates\\res\\merged\\release\\values\\values.xml",
             "map": [
                 {
                     "source": "C:\\Users\\bivan\\.gradle\\caches\\transforms-2\\files-2.1\\d255798b3263f4a3c8e304b7de4de531\\coordinatorlayout-1.0.0\\res\\values\\values.xml",
@@ -61,7 +61,7 @@
             ]
         },
         {
-            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\martivi\\build\\open_file\\intermediates\\res\\merged\\release\\values\\values.xml",
+            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\build\\open_file\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values\\values.xml",
             "map": [
                 {
                     "source": "C:\\Users\\bivan\\.gradle\\caches\\transforms-2\\files-2.1\\d255798b3263f4a3c8e304b7de4de531\\coordinatorlayout-1.0.0\\res\\values\\values.xml",

@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\martivi\\build\\app\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values\\values.xml",
+            "outputFile": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\build\\app\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values\\values.xml",
             "map": [
                 {
                     "source": "C:\\Users\\bivan\\.gradle\\caches\\transforms-2\\files-2.1\\d255798b3263f4a3c8e304b7de4de531\\coordinatorlayout-1.0.0\\res\\values\\values.xml",
@@ -114,24 +114,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\martivi\\build\\app\\generated\\res\\google-services\\debug\\values\\values.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,199,307,389,493,602,722,819",
-                        "endColumns": "143,107,81,103,108,119,96,73",
-                        "endOffsets": "194,302,384,488,597,717,814,888"
-                    },
-                    "to": {
-                        "startLines": "113,114,115,116,117,118,119,120",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "8296,8440,8548,8630,8734,8843,8963,9060",
-                        "endColumns": "143,107,81,103,108,119,96,73",
-                        "endOffsets": "8435,8543,8625,8729,8838,8958,9055,9129"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\martivi\\android\\app\\src\\main\\res\\values\\styles.xml",
+                    "source": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\android\\app\\src\\main\\res\\values\\styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",
@@ -147,6 +130,23 @@
                         "endLines": "126,129",
                         "endColumns": "12,12",
                         "endOffsets": "9497,9662"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\build\\app\\generated\\res\\google-services\\debug\\values\\values.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,199,307,389,493,602,722,819",
+                        "endColumns": "143,107,81,103,108,119,96,73",
+                        "endOffsets": "194,302,384,488,597,717,814,888"
+                    },
+                    "to": {
+                        "startLines": "113,114,115,116,117,118,119,120",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "8296,8440,8548,8630,8734,8843,8963,9060",
+                        "endColumns": "143,107,81,103,108,119,96,73",
+                        "endOffsets": "8435,8543,8625,8729,8838,8958,9055,9129"
                     }
                 }
             ]

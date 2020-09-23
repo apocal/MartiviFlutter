@@ -5,9 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1edc41a1-3826-49da-ae5a-5c8309c4f169" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.packages" beforeDir="false" afterPath="$PROJECT_DIR$/.packages" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app-release.apk" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app-release.apk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app.apk" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app.apk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app.apk.sha1" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app.apk.sha1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/outputs/logs/manifest-merger-release-report.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/logs/manifest-merger-release-report.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/reports/lint-results-release-fatal.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/reports/lint-results-release-fatal.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/f872507f30e2ff2523f0f1d19160266e.cache.dill.track.dill" beforeDir="false" afterPath="$PROJECT_DIR$/build/f872507f30e2ff2523f0f1d19160266e.cache.dill.track.dill" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/Models/Product.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Models/Product.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Uitls/ExportInvoice.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Uitls/ExportInvoice.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Views/CategoryPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Views/CategoryPage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Views/ProductPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Views/ProductPage.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/Widgets/Widgets.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Widgets/Widgets.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -23,7 +36,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1eoLTcw0iUMEqhcVI5YCTmQliVa" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -36,9 +49,9 @@
     <property name="dart.analysis.tool.window.force.activate" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/lib" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../MaleFlutter" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="Errors" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="RecentsManager">
@@ -73,6 +86,11 @@
       <updated>1594983007934</updated>
     </task>
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/.." />
+    </ignored-roots>
   </component>
   <component name="WindowStateProjectService">
     <state x="373" y="274" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1599963282946">
@@ -134,47 +152,47 @@
     </state>
     <state x="420" y="226" key="FileChooserDialogImpl/-1280.0.1280.943/0.0.1280.943@0.0.1280.943" timestamp="1596570032468" />
     <state x="420" y="226" key="FileChooserDialogImpl/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1600384834887" />
-    <state width="1237" height="272" key="GridCell.Tab.0.bottom" timestamp="1600778511939">
+    <state width="1237" height="195" key="GridCell.Tab.0.bottom" timestamp="1600827213497">
       <screen x="0" y="0" width="1280" height="943" />
     </state>
     <state width="1220" height="245" key="GridCell.Tab.0.bottom/-1280.0.1280.943/0.0.1280.943@-1280.0.1280.943" timestamp="1595025240835" />
     <state width="1237" height="366" key="GridCell.Tab.0.bottom/-1280.0.1280.943/0.0.1280.943@0.0.1280.943" timestamp="1597365038968" />
     <state width="1237" height="149" key="GridCell.Tab.0.bottom/-1280.0.1280.984/0.0.1280.984@0.0.1280.984" timestamp="1598190098267" />
     <state width="1220" height="195" key="GridCell.Tab.0.bottom/0.0.1280.943/-1280.0.1280.984@-1280.0.1280.984" timestamp="1600629640816" />
-    <state width="1237" height="272" key="GridCell.Tab.0.bottom/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1600778511939" />
+    <state width="1237" height="195" key="GridCell.Tab.0.bottom/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1600827213497" />
     <state width="1220" height="136" key="GridCell.Tab.0.bottom/0.0.1280.984/-1280.0.1280.984@0.0.1280.984" timestamp="1598463779145" />
-    <state width="1237" height="272" key="GridCell.Tab.0.center" timestamp="1600778511939">
+    <state width="1237" height="195" key="GridCell.Tab.0.center" timestamp="1600827213497">
       <screen x="0" y="0" width="1280" height="943" />
     </state>
     <state width="1220" height="245" key="GridCell.Tab.0.center/-1280.0.1280.943/0.0.1280.943@-1280.0.1280.943" timestamp="1595025240835" />
     <state width="1237" height="366" key="GridCell.Tab.0.center/-1280.0.1280.943/0.0.1280.943@0.0.1280.943" timestamp="1597365038967" />
     <state width="1237" height="149" key="GridCell.Tab.0.center/-1280.0.1280.984/0.0.1280.984@0.0.1280.984" timestamp="1598190098267" />
     <state width="1220" height="195" key="GridCell.Tab.0.center/0.0.1280.943/-1280.0.1280.984@-1280.0.1280.984" timestamp="1600629640815" />
-    <state width="1237" height="272" key="GridCell.Tab.0.center/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1600778511939" />
+    <state width="1237" height="195" key="GridCell.Tab.0.center/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1600827213497" />
     <state width="1220" height="136" key="GridCell.Tab.0.center/0.0.1280.984/-1280.0.1280.984@0.0.1280.984" timestamp="1598463779145" />
-    <state width="1237" height="272" key="GridCell.Tab.0.left" timestamp="1600778511939">
+    <state width="1237" height="195" key="GridCell.Tab.0.left" timestamp="1600827213497">
       <screen x="0" y="0" width="1280" height="943" />
     </state>
     <state width="1220" height="245" key="GridCell.Tab.0.left/-1280.0.1280.943/0.0.1280.943@-1280.0.1280.943" timestamp="1595025240835" />
     <state width="1237" height="366" key="GridCell.Tab.0.left/-1280.0.1280.943/0.0.1280.943@0.0.1280.943" timestamp="1597365038967" />
     <state width="1237" height="149" key="GridCell.Tab.0.left/-1280.0.1280.984/0.0.1280.984@0.0.1280.984" timestamp="1598190098266" />
     <state width="1220" height="195" key="GridCell.Tab.0.left/0.0.1280.943/-1280.0.1280.984@-1280.0.1280.984" timestamp="1600629640815" />
-    <state width="1237" height="272" key="GridCell.Tab.0.left/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1600778511939" />
+    <state width="1237" height="195" key="GridCell.Tab.0.left/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1600827213497" />
     <state width="1220" height="136" key="GridCell.Tab.0.left/0.0.1280.984/-1280.0.1280.984@0.0.1280.984" timestamp="1598463779145" />
-    <state width="1237" height="272" key="GridCell.Tab.0.right" timestamp="1600778511939">
+    <state width="1237" height="195" key="GridCell.Tab.0.right" timestamp="1600827213497">
       <screen x="0" y="0" width="1280" height="943" />
     </state>
     <state width="1220" height="245" key="GridCell.Tab.0.right/-1280.0.1280.943/0.0.1280.943@-1280.0.1280.943" timestamp="1595025240835" />
     <state width="1237" height="366" key="GridCell.Tab.0.right/-1280.0.1280.943/0.0.1280.943@0.0.1280.943" timestamp="1597365038968" />
     <state width="1237" height="149" key="GridCell.Tab.0.right/-1280.0.1280.984/0.0.1280.984@0.0.1280.984" timestamp="1598190098267" />
     <state width="1220" height="195" key="GridCell.Tab.0.right/0.0.1280.943/-1280.0.1280.984@-1280.0.1280.984" timestamp="1600629640815" />
-    <state width="1237" height="272" key="GridCell.Tab.0.right/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1600778511939" />
+    <state width="1237" height="195" key="GridCell.Tab.0.right/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1600827213497" />
     <state width="1220" height="136" key="GridCell.Tab.0.right/0.0.1280.984/-1280.0.1280.984@0.0.1280.984" timestamp="1598463779145" />
-    <state x="141" y="114" key="SettingsEditor" timestamp="1598455901656">
+    <state x="141" y="114" key="SettingsEditor" timestamp="1600790086727">
       <screen x="0" y="0" width="1280" height="943" />
     </state>
     <state x="141" y="114" key="SettingsEditor/-1280.0.1280.943/0.0.1280.943@0.0.1280.943" timestamp="1596416244652" />
-    <state x="141" y="114" key="SettingsEditor/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1598455901656" />
+    <state x="141" y="114" key="SettingsEditor/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1600790086727" />
     <state width="648" height="479" key="XDebugger.FullValuePopup" timestamp="1599955208184">
       <screen x="0" y="0" width="1280" height="943" />
     </state>
@@ -267,11 +285,6 @@
           <url>file://$PROJECT_DIR$/lib/Views/OrderDetailPage.dart</url>
           <line>585</line>
           <option name="timeStamp" value="27" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/Views/ProductPage.dart</url>
-          <line>202</line>
-          <option name="timeStamp" value="37" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

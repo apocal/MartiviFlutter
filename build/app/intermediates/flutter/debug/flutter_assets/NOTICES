@@ -7590,6 +7590,7 @@ SOFTWARE.
 
 --------------------------------------------------------------------------------
 google_maps_flutter
+webview_flutter
 
 Copyright 2018 The Chromium Authors. All rights reserved.
 
@@ -7619,7 +7620,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 --------------------------------------------------------------------------------
 google_maps_flutter_platform_interface
-webview_flutter
 
 // Copyright 2018 The Chromium Authors. All rights reserved.
 //

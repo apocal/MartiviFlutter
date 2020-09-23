@@ -43,7 +43,7 @@ class MartiviApp extends StatelessWidget {
             ProductPage.id: (context) => ProductPage(),
             SingUpLoginPage.id: (context) => SingUpLoginPage()
           },
-          supportedLocales: [Locale('ka', 'GE'), Locale('en', 'US')],
+          supportedLocales: AppLocalizations.supportedLocales,
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
@@ -53,7 +53,6 @@ class MartiviApp extends StatelessWidget {
             if (setting.userLocale.value != null)
               return setting.userLocale.value;
             for (var supportedLocale in supportedLocales) {
-              print(supportedLocale.toLanguageTag());
               if (supportedLocale.languageCode == locale.languageCode &&
                   supportedLocale.countryCode == locale.countryCode) {
                 return supportedLocale;
