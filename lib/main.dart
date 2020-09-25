@@ -72,6 +72,4 @@ class MartiviApp extends StatelessWidget {
       ),
     );
   }
-
-  Locale systemLocale() {}
 }
