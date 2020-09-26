@@ -7,17 +7,81 @@
     <list default="true" id="1edc41a1-3826-49da-ae5a-5c8309c4f169" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.packages" beforeDir="false" afterPath="$PROJECT_DIR$/.packages" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/generated/source/buildConfig/release/com/bSoft/martivi/BuildConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/generated/source/buildConfig/release/com/bSoft/martivi/BuildConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/apk_list/release/mainApkListPersistenceRelease/apk-list.gson" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/apk_list/release/mainApkListPersistenceRelease/apk-list.gson" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/bundle_manifest/release/processReleaseManifest/bundle-manifest/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/bundle_manifest/release/processReleaseManifest/bundle-manifest/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/bundle_manifest/release/processReleaseManifest/bundle-manifest/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/bundle_manifest/release/processReleaseManifest/bundle-manifest/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/debug/flutter_assets/kernel_blob.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/flutter/debug/flutter_assets/kernel_blob.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/debug/flutter_assets/lang/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/flutter/debug/flutter_assets/lang/en.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/debug/flutter_assets/lang/ka.json" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/flutter/debug/flutter_assets/lang/ka.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/debug/flutter_build.d" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/flutter/debug/flutter_build.d" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/release/arm64-v8a/app.so" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/flutter/release/arm64-v8a/app.so" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/release/armeabi-v7a/app.so" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/flutter/release/armeabi-v7a/app.so" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/release/flutter_assets/lang/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/flutter/release/flutter_assets/lang/en.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/release/flutter_assets/lang/ka.json" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/flutter/release/flutter_assets/lang/ka.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/release/flutter_build.d" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/flutter/release/flutter_build.d" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/release/libs.jar" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/flutter/release/libs.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/release/x86_64/app.so" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/flutter/release/x86_64/app.so" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/incremental/packageDebug/tmp/debug/dex-renamer-state.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/incremental/packageDebug/tmp/debug/dex-renamer-state.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/incremental/packageRelease/tmp/release/dex-renamer-state.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/incremental/packageRelease/tmp/release/dex-renamer-state.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/instant_app_manifest/release/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/instant_app_manifest/release/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/instant_app_manifest/release/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/instant_app_manifest/release/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/intermediary_bundle/release/app-release.aab" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/intermediary_bundle/release/app-release.aab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/javac/release/classes/com/bSoft/martivi/BuildConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/javac/release/classes/com/bSoft/martivi/BuildConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/linked_res_for_bundle/release/bundleReleaseResources/bundled-res.ap_" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/linked_res_for_bundle/release/bundleReleaseResources/bundled-res.ap_" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/manifest_merge_blame_file/release/manifest-merger-blame-release-report.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/manifest_merge_blame_file/release/manifest-merger-blame-release-report.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/merged_assets/debug/out/flutter_assets/kernel_blob.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/merged_assets/debug/out/flutter_assets/kernel_blob.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/merged_assets/debug/out/flutter_assets/lang/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/merged_assets/debug/out/flutter_assets/lang/en.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/merged_assets/debug/out/flutter_assets/lang/ka.json" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/merged_assets/debug/out/flutter_assets/lang/ka.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/merged_assets/release/out/flutter_assets/lang/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/merged_assets/release/out/flutter_assets/lang/en.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/merged_assets/release/out/flutter_assets/lang/ka.json" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/merged_assets/release/out/flutter_assets/lang/ka.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/merged_manifests/release/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/merged_manifests/release/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/merged_manifests/release/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/merged_manifests/release/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/merged_native_libs/release/out/lib/arm64-v8a/libapp.so" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/merged_native_libs/release/out/lib/arm64-v8a/libapp.so" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/merged_native_libs/release/out/lib/armeabi-v7a/libapp.so" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/merged_native_libs/release/out/lib/armeabi-v7a/libapp.so" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/merged_native_libs/release/out/lib/x86_64/libapp.so" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/merged_native_libs/release/out/lib/x86_64/libapp.so" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/metadata_feature_manifest/release/processReleaseManifest/metadata-feature/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/metadata_feature_manifest/release/processReleaseManifest/metadata-feature/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/module_bundle/release/buildReleasePreBundle/out/base.zip" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/module_bundle/release/buildReleasePreBundle/out/base.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/processed_res/release/processReleaseResources/out/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/processed_res/release/processReleaseResources/out/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/processed_res/release/processReleaseResources/out/resources-release.ap_" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/processed_res/release/processReleaseResources/out/resources-release.ap_" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/res_stripped/release/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/res_stripped/release/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/res_stripped/release/resources-release-stripped.ap_" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/res_stripped/release/resources-release-stripped.ap_" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/shrunk_linked_res_for_bundle/release/shrinkReleaseResources/shrunk-bundled-res.ap_" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/shrunk_linked_res_for_bundle/release/shrinkReleaseResources/shrunk-bundled-res.ap_" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/stripped_native_libs/release/out/lib/arm64-v8a/libapp.so" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/stripped_native_libs/release/out/lib/arm64-v8a/libapp.so" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/stripped_native_libs/release/out/lib/armeabi-v7a/libapp.so" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/stripped_native_libs/release/out/lib/armeabi-v7a/libapp.so" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/stripped_native_libs/release/out/lib/x86_64/libapp.so" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/stripped_native_libs/release/out/lib/x86_64/libapp.so" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/kotlin/compileReleaseKotlin/build-history.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/kotlin/compileReleaseKotlin/build-history.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/kotlin/compileReleaseKotlin/last-build.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/kotlin/compileReleaseKotlin/last-build.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/outputs/apk/debug/app-debug.apk" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/apk/debug/app-debug.apk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/outputs/apk/debug/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/apk/debug/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/outputs/apk/release/app-release.apk" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/apk/release/app-release.apk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/outputs/apk/release/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/apk/release/output.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/app/outputs/bundle/release/app-release.aab" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/bundle/release/app-release.aab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app-debug.apk" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app-debug.apk" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app-release.apk" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app-release.apk" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app.apk" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app.apk" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app.apk.sha1" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app.apk.sha1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/outputs/mapping/release/resources.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/mapping/release/resources.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/app/reports/lint-results-release-fatal.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/reports/lint-results-release-fatal.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/f872507f30e2ff2523f0f1d19160266e.cache.dill.track.dill" beforeDir="false" afterPath="$PROJECT_DIR$/build/f872507f30e2ff2523f0f1d19160266e.cache.dill.track.dill" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Views/OrderDetailPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Views/OrderDetailPage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lang/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/lang/en.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lang/ka.json" beforeDir="false" afterPath="$PROJECT_DIR$/lang/ka.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Models/Category.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Models/Category.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Uitls/ExportInvoice.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Uitls/ExportInvoice.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/ViewModels/MainViewModel.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ViewModels/MainViewModel.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Views/CartPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Views/CartPage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Views/CategoryPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Views/CategoryPage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Views/HomePage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Views/HomePage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Views/OrdersPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Views/OrdersPage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Views/ProductPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Views/ProductPage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Views/UserPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Views/UserPage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Widgets/AddressesList.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Widgets/AddressesList.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Widgets/Widgets.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Widgets/Widgets.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -52,23 +116,23 @@
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
-      <recent name="" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\bivan\Documents\GitHub\MartiviFlutter\martivi\android\app" />
-      <recent name="C:\Users\bivan\Documents\GitHub\MartiviFlutter\martivi\assets\sounds" />
-      <recent name="C:\Users\bivan\Documents\GitHub\MartiviFlutter\martivi\assets" />
-    </key>
-    <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
-      <recent name="com.bSoft.martivi" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\bivan\Documents\GitHub\MartiviFlutter\martivi\assets" />
       <recent name="C:\Users\bivan\Documents\GitHub\MartiviFlutter\martivi\android\app\src\main\res\mipmap-xxxhdpi" />
       <recent name="C:\Users\bivan\Documents\GitHub\MartiviFlutter\martivi\android\app\src\main\res\mipmap-xxhdpi" />
       <recent name="C:\Users\bivan\Documents\GitHub\MartiviFlutter\martivi\android\app\src\main\res\mipmap-xhdpi" />
       <recent name="C:\Users\bivan\Documents\GitHub\MartiviFlutter\martivi\android\app\src\main\res\mipmap-mdpi" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
+    <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
+      <recent name="com.bSoft.martivi" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\bivan\Documents\GitHub\MartiviFlutter\martivi\android\app" />
+      <recent name="C:\Users\bivan\Documents\GitHub\MartiviFlutter\martivi\assets\sounds" />
+      <recent name="C:\Users\bivan\Documents\GitHub\MartiviFlutter\martivi\assets" />
     </key>
   </component>
   <component name="SvnConfiguration">
@@ -149,41 +213,41 @@
     </state>
     <state x="420" y="226" key="FileChooserDialogImpl/-1280.0.1280.943/0.0.1280.943@0.0.1280.943" timestamp="1596570032468" />
     <state x="420" y="226" key="FileChooserDialogImpl/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1600384834887" />
-    <state width="1237" height="195" key="GridCell.Tab.0.bottom" timestamp="1601039696467">
+    <state width="1237" height="195" key="GridCell.Tab.0.bottom" timestamp="1601145654266">
       <screen x="0" y="0" width="1280" height="943" />
     </state>
     <state width="1220" height="245" key="GridCell.Tab.0.bottom/-1280.0.1280.943/0.0.1280.943@-1280.0.1280.943" timestamp="1595025240835" />
     <state width="1237" height="366" key="GridCell.Tab.0.bottom/-1280.0.1280.943/0.0.1280.943@0.0.1280.943" timestamp="1597365038968" />
     <state width="1237" height="149" key="GridCell.Tab.0.bottom/-1280.0.1280.984/0.0.1280.984@0.0.1280.984" timestamp="1598190098267" />
     <state width="1220" height="195" key="GridCell.Tab.0.bottom/0.0.1280.943/-1280.0.1280.984@-1280.0.1280.984" timestamp="1600629640816" />
-    <state width="1237" height="195" key="GridCell.Tab.0.bottom/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1601039696467" />
+    <state width="1237" height="195" key="GridCell.Tab.0.bottom/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1601145654266" />
     <state width="1220" height="136" key="GridCell.Tab.0.bottom/0.0.1280.984/-1280.0.1280.984@0.0.1280.984" timestamp="1598463779145" />
-    <state width="1237" height="195" key="GridCell.Tab.0.center" timestamp="1601039696467">
+    <state width="1237" height="195" key="GridCell.Tab.0.center" timestamp="1601145654265">
       <screen x="0" y="0" width="1280" height="943" />
     </state>
     <state width="1220" height="245" key="GridCell.Tab.0.center/-1280.0.1280.943/0.0.1280.943@-1280.0.1280.943" timestamp="1595025240835" />
     <state width="1237" height="366" key="GridCell.Tab.0.center/-1280.0.1280.943/0.0.1280.943@0.0.1280.943" timestamp="1597365038967" />
     <state width="1237" height="149" key="GridCell.Tab.0.center/-1280.0.1280.984/0.0.1280.984@0.0.1280.984" timestamp="1598190098267" />
     <state width="1220" height="195" key="GridCell.Tab.0.center/0.0.1280.943/-1280.0.1280.984@-1280.0.1280.984" timestamp="1600629640815" />
-    <state width="1237" height="195" key="GridCell.Tab.0.center/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1601039696467" />
+    <state width="1237" height="195" key="GridCell.Tab.0.center/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1601145654265" />
     <state width="1220" height="136" key="GridCell.Tab.0.center/0.0.1280.984/-1280.0.1280.984@0.0.1280.984" timestamp="1598463779145" />
-    <state width="1237" height="195" key="GridCell.Tab.0.left" timestamp="1601039696467">
+    <state width="1237" height="195" key="GridCell.Tab.0.left" timestamp="1601145654265">
       <screen x="0" y="0" width="1280" height="943" />
     </state>
     <state width="1220" height="245" key="GridCell.Tab.0.left/-1280.0.1280.943/0.0.1280.943@-1280.0.1280.943" timestamp="1595025240835" />
     <state width="1237" height="366" key="GridCell.Tab.0.left/-1280.0.1280.943/0.0.1280.943@0.0.1280.943" timestamp="1597365038967" />
     <state width="1237" height="149" key="GridCell.Tab.0.left/-1280.0.1280.984/0.0.1280.984@0.0.1280.984" timestamp="1598190098266" />
     <state width="1220" height="195" key="GridCell.Tab.0.left/0.0.1280.943/-1280.0.1280.984@-1280.0.1280.984" timestamp="1600629640815" />
-    <state width="1237" height="195" key="GridCell.Tab.0.left/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1601039696467" />
+    <state width="1237" height="195" key="GridCell.Tab.0.left/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1601145654265" />
     <state width="1220" height="136" key="GridCell.Tab.0.left/0.0.1280.984/-1280.0.1280.984@0.0.1280.984" timestamp="1598463779145" />
-    <state width="1237" height="195" key="GridCell.Tab.0.right" timestamp="1601039696467">
+    <state width="1237" height="195" key="GridCell.Tab.0.right" timestamp="1601145654265">
       <screen x="0" y="0" width="1280" height="943" />
     </state>
     <state width="1220" height="245" key="GridCell.Tab.0.right/-1280.0.1280.943/0.0.1280.943@-1280.0.1280.943" timestamp="1595025240835" />
     <state width="1237" height="366" key="GridCell.Tab.0.right/-1280.0.1280.943/0.0.1280.943@0.0.1280.943" timestamp="1597365038968" />
     <state width="1237" height="149" key="GridCell.Tab.0.right/-1280.0.1280.984/0.0.1280.984@0.0.1280.984" timestamp="1598190098267" />
     <state width="1220" height="195" key="GridCell.Tab.0.right/0.0.1280.943/-1280.0.1280.984@-1280.0.1280.984" timestamp="1600629640815" />
-    <state width="1237" height="195" key="GridCell.Tab.0.right/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1601039696467" />
+    <state width="1237" height="195" key="GridCell.Tab.0.right/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1601145654265" />
     <state width="1220" height="136" key="GridCell.Tab.0.right/0.0.1280.984/-1280.0.1280.984@0.0.1280.984" timestamp="1598463779145" />
     <state x="141" y="114" key="SettingsEditor" timestamp="1600790086727">
       <screen x="0" y="0" width="1280" height="943" />
@@ -251,11 +315,11 @@
       <screen x="-1280" y="0" width="1280" height="943" />
     </state>
     <state x="-1280" y="0" width="948" height="760" maximized="true" key="dock-window-5/-1280.0.1280.943/0.0.1280.943@0.0.1280.943" timestamp="1595632011954" />
-    <state x="336" y="203" width="607" height="536" key="find.popup" timestamp="1600637353336">
+    <state x="336" y="203" width="607" height="536" key="find.popup" timestamp="1601137076553">
       <screen x="0" y="0" width="1280" height="943" />
     </state>
     <state x="336" y="203" width="607" height="536" key="find.popup/-1280.0.1280.943/0.0.1280.943@0.0.1280.943" timestamp="1597265821930" />
-    <state x="336" y="203" width="607" height="536" key="find.popup/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1600637353336" />
+    <state x="336" y="203" width="607" height="536" key="find.popup/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1601137076553" />
     <state x="336" y="212" width="607" height="560" key="find.popup/0.0.1280.984/-1280.0.1280.984@0.0.1280.984" timestamp="1597608514223" />
     <state x="296" y="226" key="run.anything.popup" timestamp="1599828904601">
       <screen x="0" y="0" width="1280" height="943" />
@@ -282,6 +346,11 @@
           <url>file://$PROJECT_DIR$/lib/Views/OrderDetailPage.dart</url>
           <line>585</line>
           <option name="timeStamp" value="27" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/Views/CategoryPage.dart</url>
+          <line>324</line>
+          <option name="timeStamp" value="47" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

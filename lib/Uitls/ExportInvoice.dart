@@ -539,7 +539,7 @@ class Invoice {
                 case 4:
                   return ((products[row].totalProductPrice) *
                           (products[row].quantity ?? 1))
-                      .toString();
+                      .toStringAsFixed(2);
               }
             }(),
           );

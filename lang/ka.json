@@ -78,6 +78,7 @@
   "Settings": "პარამეტრები",
   "Stop ordering": "შეკვეთების შეჩერება",
   "Maximum order price": "მაქსიმალური ღირებულება",
+  "The order price exceeds the maximum amount": "შეკვეთის ფასი აღემატება მაქსიმალურ თანხას",
   "Minimum order price": "მინიმალური ღირებულება",
   "Delivery fee under maximum order price": "მიწოდების საფასური მინიმალური ღირებულების ქვემოთ",
   "General": "ზოგადი",
@@ -137,7 +138,6 @@
   "Invoice": "ინვოისი",
   "Date": "თარიღი",
   "Invoice to": "ინვოისი მასზედ",
-  "Thank you for your business": "მადლობა თქვენი საქმიანობისთვის",
   "Payment Info": "გადახდის დეტალები",
   "Sub Total": "ქვე სრული",
   "Thank you for your business": "გმადლობთ საქმიანობისთვის",
@@ -146,7 +146,6 @@
   "Product does not contain any product form": "პროდუქტი არ შეიცავს არცერთ პროდუქტის ფორმას",
   "Product form does not contain any image": "პროდუქტის ფორმა არ შეიცავს არცერთ სურათს",
   "Additional descriptions": "დამატებითი აღწერები",
-  "Description": "აღწერა",
   "Description name": "აღწერის სახელი",
   "Paid addons": "ფასიანი დანამატები",
   "Selectable paid addons": "არჩევადი ფასიანი დანამატები",
@@ -158,5 +157,15 @@
   "Weight": "წონა",
   "Back": "უკან",
   "Send": "გაგზავნა",
-  "Password reset email was sent": "პაროლის შეცვლის მეილი გაგზავნილია"
+  "Password reset email was sent": "პაროლის შეცვლის მეილი გაგზავნილია",
+
+  "Orders summary": "Orders summary",
+  "Orders count": "Orders count",
+  "Total orders": "Total orders",
+  "Completed orders": "Completed orders",
+  "Accepted orders": "Accepted orders",
+  "Canceled orders": "Canceled orders",
+  "Pending orders": "Pending orders",
+  "Orders by users": "Orders by users",
+  "Total paid": "Total paid"
 }

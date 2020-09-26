@@ -98,6 +98,12 @@
       "languageVersion": "2.0"
     },
     {
+      "name": "date_range_picker",
+      "rootUri": "file:///C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/date_range_picker-1.0.6",
+      "packageUri": "lib/",
+      "languageVersion": "2.0"
+    },
+    {
       "name": "enum_to_string",
       "rootUri": "file:///C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/enum_to_string-1.0.11",
       "packageUri": "lib/",
@@ -620,7 +626,7 @@
       "languageVersion": "2.7"
     }
   ],
-  "generated": "2020-09-25T13:08:49.358076Z",
+  "generated": "2020-09-26T16:52:17.929930Z",
   "generator": "pub",
   "generatorVersion": "2.9.2"
 }

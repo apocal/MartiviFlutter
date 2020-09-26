@@ -298,6 +298,7 @@ class _CategoryPageState extends State<CategoryPage> {
                               var res =
                                   await http.get(element['image'] as String);
                               var byteRes = res.bodyBytes;
+
                               Category c = Category(
                                   image: FirestoreImage(),
                                   localizedName:
