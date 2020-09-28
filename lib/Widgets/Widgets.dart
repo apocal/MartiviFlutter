@@ -21,6 +21,7 @@ import 'package:martivi/Models/enums.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
 import 'package:martivi/Views/OrderDetailPage.dart';
 import 'package:path/path.dart' as ppp;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -423,8 +424,9 @@ class _AddCategoryWidgetState extends State<AddCategoryWidget> {
                             : IconButton(
                                 onPressed: () async {
                                   try {
+
                                     var pickedImage = await ImagePicker()
-                                        .getImage(source: ImageSource.gallery);
+                                        .getImage(source: ImageSource.gallery,imageQuality: 50);
                                     if (pickedImage != null) {
                                       File file = File(pickedImage.path);
                                       Img.Image image_temp = Img.decodeImage(
@@ -696,6 +698,8 @@ class _EditCategoryWidgetState extends State<EditCategoryWidget> {
                             : IconButton(
                                 onPressed: () async {
                                   try {
+
+
                                     var pickedImage = await ImagePicker()
                                         .getImage(source: ImageSource.gallery);
                                     if (pickedImage != null) {

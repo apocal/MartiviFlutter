@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/Models/Category.dart';
@@ -408,7 +409,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 },
                 child: FlatButton(
                   color: kPrimary,
-                  onPressed: () {
+                  onPressed: (){
                     showBottomSheet(
                         context: context,
                         shape: RoundedRectangleBorder(

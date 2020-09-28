@@ -47,6 +47,7 @@ class MartiviApp extends StatelessWidget {
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
             AppLocalizations.delegate
           ],
           localeResolutionCallback: (locale, supportedLocales) {
