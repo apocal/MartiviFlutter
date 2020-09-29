@@ -9,24 +9,16 @@
       <change beforePath="$PROJECT_DIR$/.flutter-plugins" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.packages" beforeDir="false" afterPath="$PROJECT_DIR$/.packages" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/debug/flutter_build.d" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/flutter/debug/flutter_build.d" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/f872507f30e2ff2523f0f1d19160266e.cache.dill.track.dill" beforeDir="false" afterPath="$PROJECT_DIR$/build/f872507f30e2ff2523f0f1d19160266e.cache.dill.track.dill" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Flutter/Debug.xcconfig" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Flutter/Debug.xcconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Flutter/Release.xcconfig" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Flutter/Release.xcconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Runner.xcodeproj/project.pbxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Runner.xcworkspace/contents.xcworkspacedata" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Runner.xcworkspace/contents.xcworkspacedata" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Runner/AppDelegate.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Runner/AppDelegate.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Runner/Info.plist" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Runner/Info.plist" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Views/CategoryPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Views/CategoryPage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Widgets/Widgets.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Widgets/Widgets.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Uitls/ExportInvoice.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Uitls/ExportInvoice.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Views/CartPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Views/CartPage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Views/ProductDetailPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Views/ProductDetailPage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Views/ProductPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Views/ProductPage.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -205,11 +197,11 @@
     <state width="1036" height="204" key="GridCell.Tab.0.right/0.23.1078.802@0.23.1078.802" timestamp="1601332152716" />
     <state width="1036" height="254" key="GridCell.Tab.0.right/0.23.1078.803@0.23.1078.803" timestamp="1601337038589" />
     <state width="1036" height="204" key="GridCell.Tab.0.right/0.23.1078.804@0.23.1078.804" timestamp="1601332352330" />
-    <state x="81" y="101" key="SettingsEditor" timestamp="1601319704836">
-      <screen x="0" y="23" width="1078" height="800" />
+    <state x="141" y="114" key="SettingsEditor" timestamp="1601340954916">
+      <screen x="0" y="0" width="1280" height="943" />
     </state>
     <state x="141" y="114" key="SettingsEditor/-1280.0.1280.943/0.0.1280.943@0.0.1280.943" timestamp="1596416244652" />
-    <state x="141" y="114" key="SettingsEditor/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1600790086727" />
+    <state x="141" y="114" key="SettingsEditor/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1601340954916" />
     <state x="81" y="101" key="SettingsEditor/0.23.1078.800@0.23.1078.800" timestamp="1601319704836" />
     <state width="648" height="479" key="XDebugger.FullValuePopup" timestamp="1599955208184">
       <screen x="0" y="0" width="1280" height="943" />
@@ -219,14 +211,14 @@
       <screen x="0" y="0" width="1280" height="943" />
     </state>
     <state x="456" y="249" key="chooseDestDirectoryDialog/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1600311757233" />
-    <state x="-1188" y="96" width="1096" height="792" key="com.android.tools.idea.avdmanager.AvdListDialog" timestamp="1600610032836">
-      <screen x="-1280" y="0" width="1280" height="984" />
+    <state x="92" y="92" width="1096" height="759" key="com.android.tools.idea.avdmanager.AvdListDialog" timestamp="1601341040512">
+      <screen x="0" y="0" width="1280" height="943" />
     </state>
     <state x="92" y="92" width="1096" height="759" key="com.android.tools.idea.avdmanager.AvdListDialog/-1280.0.1280.943/0.0.1280.943@0.0.1280.943" timestamp="1597355689891" />
     <state x="92" y="96" width="1096" height="792" key="com.android.tools.idea.avdmanager.AvdListDialog/-1280.0.1280.984/0.0.1280.984@0.0.1280.984" timestamp="1598184155669" />
     <state x="92" y="66" width="1096" height="548" key="com.android.tools.idea.avdmanager.AvdListDialog/0.0.1280.680@0.0.1280.680" timestamp="1598213721359" />
     <state x="-1188" y="96" width="1096" height="792" key="com.android.tools.idea.avdmanager.AvdListDialog/0.0.1280.943/-1280.0.1280.984@-1280.0.1280.984" timestamp="1600610032836" />
-    <state x="92" y="92" width="1096" height="759" key="com.android.tools.idea.avdmanager.AvdListDialog/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1600195199528" />
+    <state x="92" y="92" width="1096" height="759" key="com.android.tools.idea.avdmanager.AvdListDialog/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1601341040512" />
     <state x="-1289" y="122" width="1096" height="759" maximized="true" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1600450213326">
       <screen x="-1280" y="0" width="1280" height="984" />
     </state>
@@ -272,11 +264,11 @@
       <screen x="-1280" y="0" width="1280" height="943" />
     </state>
     <state x="-1280" y="0" width="948" height="760" maximized="true" key="dock-window-5/-1280.0.1280.943/0.0.1280.943@0.0.1280.943" timestamp="1595632011954" />
-    <state x="283" y="195" width="695" height="486" key="find.popup" timestamp="1601321034755">
-      <screen x="0" y="23" width="1078" height="800" />
+    <state x="336" y="203" width="607" height="536" key="find.popup" timestamp="1601344882938">
+      <screen x="0" y="0" width="1280" height="943" />
     </state>
     <state x="336" y="203" width="607" height="536" key="find.popup/-1280.0.1280.943/0.0.1280.943@0.0.1280.943" timestamp="1597265821930" />
-    <state x="336" y="203" width="607" height="536" key="find.popup/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1601137076553" />
+    <state x="336" y="203" width="607" height="536" key="find.popup/0.0.1280.943/-1280.0.1280.984@0.0.1280.943" timestamp="1601344882938" />
     <state x="336" y="212" width="607" height="560" key="find.popup/0.0.1280.984/-1280.0.1280.984@0.0.1280.984" timestamp="1597608514223" />
     <state x="283" y="195" width="695" height="486" key="find.popup/0.23.1078.800@0.23.1078.800" timestamp="1601321034755" />
     <state x="296" y="226" key="run.anything.popup" timestamp="1599828904601">
