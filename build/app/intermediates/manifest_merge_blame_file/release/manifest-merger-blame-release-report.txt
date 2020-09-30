@@ -1,8 +1,8 @@
 1<?xml version="1.0" encoding="utf-8"?>
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 3    package="com.bSoft.martivi"
-4    android:versionCode="607000"
-5    android:versionName="6.0.7" >
+4    android:versionCode="608000"
+5    android:versionName="6.0.8" >
 6
 7    <uses-sdk
 8        android:minSdkVersion="16"
@@ -10,24 +10,24 @@
 9        android:targetSdkVersion="28" />
 9-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml
 10
-11    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-11-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:3:5-79
-11-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:3:22-76
-12    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-12-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:4:5-81
-12-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:4:22-78
-13    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-13-->[:image_picker] C:\Users\bivan\Documents\GitHub\MartiviFlutter\build\image_picker\intermediates\library_manifest\release\AndroidManifest.xml:7:5-80
-13-->[:image_picker] C:\Users\bivan\Documents\GitHub\MartiviFlutter\build\image_picker\intermediates\library_manifest\release\AndroidManifest.xml:7:22-77
-14    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-14-->[:image_picker] C:\Users\bivan\Documents\GitHub\MartiviFlutter\build\image_picker\intermediates\library_manifest\release\AndroidManifest.xml:8:5-81
-14-->[:image_picker] C:\Users\bivan\Documents\GitHub\MartiviFlutter\build\image_picker\intermediates\library_manifest\release\AndroidManifest.xml:8:22-78
-15    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> <!-- Required permission for App measurement to run. -->
-15-->[:open_file] C:\Users\bivan\Documents\GitHub\MartiviFlutter\build\open_file\intermediates\library_manifest\release\AndroidManifest.xml:8:5-83
-15-->[:open_file] C:\Users\bivan\Documents\GitHub\MartiviFlutter\build\open_file\intermediates\library_manifest\release\AndroidManifest.xml:8:22-80
-16    <uses-permission android:name="android.permission.INTERNET" />
-16-->[com.google.android.gms:play-services-measurement:17.4.1] C:\Users\bivan\.gradle\caches\transforms-2\files-2.1\76c05ba4f7e9122f3787bc7627889336\play-services-measurement-17.4.1\AndroidManifest.xml:23:5-67
-16-->[com.google.android.gms:play-services-measurement:17.4.1] C:\Users\bivan\.gradle\caches\transforms-2\files-2.1\76c05ba4f7e9122f3787bc7627889336\play-services-measurement-17.4.1\AndroidManifest.xml:23:22-64
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:3:5-66
+11-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:3:22-64
+12    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+12-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:4:5-79
+12-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:4:22-76
+13    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+13-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:5:5-81
+13-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:5:22-78
+14    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+14-->[:image_picker] C:\Users\bivan\Documents\GitHub\MartiviFlutter\build\image_picker\intermediates\library_manifest\release\AndroidManifest.xml:7:5-80
+14-->[:image_picker] C:\Users\bivan\Documents\GitHub\MartiviFlutter\build\image_picker\intermediates\library_manifest\release\AndroidManifest.xml:7:22-77
+15    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+15-->[:image_picker] C:\Users\bivan\Documents\GitHub\MartiviFlutter\build\image_picker\intermediates\library_manifest\release\AndroidManifest.xml:8:5-81
+15-->[:image_picker] C:\Users\bivan\Documents\GitHub\MartiviFlutter\build\image_picker\intermediates\library_manifest\release\AndroidManifest.xml:8:22-78
+16    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+16-->[:open_file] C:\Users\bivan\Documents\GitHub\MartiviFlutter\build\open_file\intermediates\library_manifest\release\AndroidManifest.xml:8:5-83
+16-->[:open_file] C:\Users\bivan\Documents\GitHub\MartiviFlutter\build\open_file\intermediates\library_manifest\release\AndroidManifest.xml:8:22-80
 17    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 17-->[com.google.android.gms:play-services-measurement:17.4.1] C:\Users\bivan\.gradle\caches\transforms-2\files-2.1\76c05ba4f7e9122f3787bc7627889336\play-services-measurement-17.4.1\AndroidManifest.xml:24:5-79
 17-->[com.google.android.gms:play-services-measurement:17.4.1] C:\Users\bivan\.gradle\caches\transforms-2\files-2.1\76c05ba4f7e9122f3787bc7627889336\play-services-measurement-17.4.1\AndroidManifest.xml:24:22-76
@@ -55,29 +55,29 @@
 30         FlutterApplication and put your custom class here.
 31    -->
 32    <application
-32-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:10:5-50:19
+32-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:11:5-51:19
 33        android:name="io.flutter.app.FlutterApplication"
-33-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:11:9-57
+33-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:12:9-57
 34        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
 34-->[androidx.core:core:1.2.0] C:\Users\bivan\.gradle\caches\transforms-2\files-2.1\35f29bb1a578f0319e9c3e21730b6b49\core-1.2.0\AndroidManifest.xml:24:18-86
 35        android:icon="@mipmap/ic_launcher"
-35-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:13:9-43
-36        android:label="martivi" >
-36-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:12:9-32
+35-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:14:9-43
+36        android:label="Martivi" >
+36-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:13:9-32
 37        <activity
-37-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:14:9-42:20
+37-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:15:9-43:20
 38            android:name="com.bSoft.martivi.MainActivity"
-38-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:15:13-41
+38-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:16:13-41
 39            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-39-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:18:13-163
+39-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:19:13-163
 40            android:hardwareAccelerated="true"
-40-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:19:13-47
+40-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:20:13-47
 41            android:launchMode="singleTop"
-41-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:16:13-43
+41-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:17:13-43
 42            android:theme="@style/LaunchTheme"
-42-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:17:13-47
+42-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:18:13-47
 43            android:windowSoftInputMode="adjustResize" >
-43-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:20:13-55
+43-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:21:13-55
 44
 45            <!--
 46                 Specifies an Android theme to apply to this Activity as soon as
@@ -86,11 +86,11 @@
 49                 to determine the Window background behind the Flutter UI.
 50            -->
 51            <meta-data
-51-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:25:13-28:17
+51-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:26:13-29:17
 52                android:name="io.flutter.embedding.android.NormalTheme"
-52-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:26:15-70
+52-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:27:15-70
 53                android:resource="@style/NormalTheme" />
-53-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:27:15-52
+53-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:28:15-52
 54            <!--
 55                 Displays an Android View that continues showing the launch screen
 56                 Drawable until Flutter paints its first frame, then this splash
@@ -99,21 +99,21 @@
 59                 Flutter's first frame.
 60            -->
 61            <meta-data
-61-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:34:13-37:17
+61-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:35:13-38:17
 62                android:name="io.flutter.embedding.android.SplashScreenDrawable"
-62-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:35:15-79
+62-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:36:15-79
 63                android:resource="@drawable/launch_background" />
-63-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:36:15-61
+63-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:37:15-61
 64
 65            <intent-filter>
-65-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:38:13-41:29
+65-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:39:13-42:29
 66                <action android:name="android.intent.action.MAIN" />
-66-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:39:17-68
-66-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:39:25-66
+66-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:40:17-68
+66-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:40:25-66
 67
 68                <category android:name="android.intent.category.LAUNCHER" />
-68-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:40:17-76
-68-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:40:27-74
+68-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:41:17-76
+68-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:41:27-74
 69            </intent-filter>
 70        </activity>
 71        <!--
@@ -121,17 +121,17 @@
 73             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java
 74        -->
 75        <meta-data
-75-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:45:9-47:33
+75-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:46:9-48:33
 76            android:name="flutterEmbedding"
-76-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:46:13-44
+76-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:47:13-44
 77            android:value="2" />
-77-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:47:13-30
+77-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:48:13-30
 78        <meta-data
-78-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:48:9-49:70
+78-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:49:9-50:70
 79            android:name="com.google.android.geo.API_KEY"
-79-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:48:20-65
+79-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:49:20-65
 80            android:value="AIzaSyCLCGeW_GR7oRPVAEOJYkqTXxc_YtGRQ-0" />
-80-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:49:13-68
+80-->C:\Users\bivan\Documents\GitHub\MartiviFlutter\android\app\src\main\AndroidManifest.xml:50:13-68
 81
 82        <service
 82-->[:firebase_storage] C:\Users\bivan\Documents\GitHub\MartiviFlutter\build\firebase_storage\intermediates\library_manifest\release\AndroidManifest.xml:8:9-12:19

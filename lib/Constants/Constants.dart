@@ -8,6 +8,7 @@ const Color kAccent = Color(0xFFFF5252);
 const Color kPrimary_text = Color(0xFF212121);
 const Color kIcons = Color(0xFFFFFFFF);
 const Color kDivider = Color(0xFFBDBDBD);
+
 const String curencyMark = '₾';
 InputDecoration kOutlineInputText = InputDecoration(
   contentPadding: EdgeInsets.symmetric(horizontal: 10),
@@ -39,3 +40,19 @@ const InputDecoration kinputFiledDecoration = InputDecoration(
   ),
   hintStyle: TextStyle(),
 );
+const TextStyle kSmallHeader = TextStyle(
+  fontFamily: 'Sans',
+  color: Colors.black54,
+  fontWeight: FontWeight.bold,
+  fontSize: 12.0,
+);
+const TextStyle kContentStyle = TextStyle(
+  color: Colors.black54,
+  fontWeight: FontWeight.w500,
+  fontSize: 12.0,
+);
+const TextStyle kDescriptionTextStyle = TextStyle(
+    fontFamily: "Sofia",
+    color: Colors.black54,
+    fontSize: 16.0,
+    fontWeight: FontWeight.w400);

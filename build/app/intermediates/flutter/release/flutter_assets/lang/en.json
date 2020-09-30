@@ -89,8 +89,6 @@
   "Order made": "Order made",
   "Payment status": "Payment status",
   "Order status": "Order status",
-
-
   "Pending": "Pending",
   "Accepted": "Accepted",
   "Completed": "Completed",
@@ -159,6 +157,7 @@
   "Back": "Back",
   "Send": "Send",
   "Password reset email was sent": "Password reset email was sent",
+
   "Orders summary": "Orders summary",
   "Orders count": "Orders count",
   "Total orders": "Total orders",
@@ -167,5 +166,7 @@
   "Canceled orders": "Canceled orders",
   "Pending orders": "Pending orders",
   "Orders by users": "Orders by users",
-  "Total paid": "Total paid"
+  "Total paid": "Total paid",
+  "Addons": "Addons",
+  "Leave us a message": "Leave us a message"
 }

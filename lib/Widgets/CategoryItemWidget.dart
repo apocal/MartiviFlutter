@@ -3,12 +3,12 @@ import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/Models/Category.dart';
 
-class itemCard extends StatelessWidget {
+class CategoryWidget extends StatelessWidget {
   final Function onUpPress;
   final Function onDownPress;
   final Function onCategoryPress;
   final Category category;
-  const itemCard(
+  const CategoryWidget(
       {this.category, this.onDownPress, this.onUpPress, this.onCategoryPress});
 
   @override

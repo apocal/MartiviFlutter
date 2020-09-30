@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
 import 'package:martivi/Constants/Constants.dart';
 import 'package:martivi/Localizations/app_localizations.dart';
 import 'package:martivi/Models/Category.dart';
@@ -225,7 +224,7 @@ class _CategoryPageState extends State<CategoryPage> {
                                               ),
                                             ),
                                           ],
-                                          child: itemCard(
+                                          child: CategoryWidget(
                                             onCategoryPress: () {
                                               Navigator.of(context).push(
                                                   MaterialPageRoute(
@@ -269,17 +268,18 @@ class _CategoryPageState extends State<CategoryPage> {
                                       })
                                   : ListView(
                                       children: <Widget>[
-                                        ...(categories.map((e) => itemCard(
-                                              onCategoryPress: () {
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (c) =>
-                                                            ProductPage(
-                                                              category: e,
-                                                            )));
-                                              },
-                                              category: e,
-                                            )))
+                                        ...(categories
+                                            .map((e) => CategoryWidget(
+                                                  onCategoryPress: () {
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute(
+                                                            builder: (c) =>
+                                                                ProductPage(
+                                                                  category: e,
+                                                                )));
+                                                  },
+                                                  category: e,
+                                                )))
                                       ],
                                     );
                             },
@@ -291,7 +291,7 @@ class _CategoryPageState extends State<CategoryPage> {
                         FlatButton(
                           onPressed: () async {
                             var response = await http.get(
-                                'http://martivi.net/api/Categories/GetFilteredCategories');
+                                'http://male.net/api/Categories/GetFilteredCategories');
                             var encoded =
                                 List.castFrom<dynamic, Map<String, dynamic>>(
                                     jsonDecode(response.body) as List<dynamic>);
@@ -299,7 +299,6 @@ class _CategoryPageState extends State<CategoryPage> {
                               var res =
                                   await http.get(element['image'] as String);
                               var byteRes = res.bodyBytes;
-
                               Category c = Category(
                                   image: FirestoreImage(),
                                   localizedName:
@@ -409,7 +408,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 },
                 child: FlatButton(
                   color: kPrimary,
-                  onPressed: (){
+                  onPressed: () {
                     showBottomSheet(
                         context: context,
                         shape: RoundedRectangleBorder(

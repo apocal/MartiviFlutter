@@ -89,7 +89,6 @@
   "Order made": "შეკვეთა შესრულდა",
   "Payment status": "გადახდის სტატუსი",
   "Order status": "შეკვეთის სტატუსი",
-
   "Pending": "მოლოდინში",
   "Accepted": "მიღებული",
   "Completed": "შესრულებული",
@@ -131,7 +130,6 @@
   "Cancel": "გაუქმება",
   "Canceled": "გაუქმებული",
   "Export pdf": "Pdf ექსპორტი",
-  "Description": "აღწერა",
   "Quantity": "რაოდენობა",
   "Total": "სრულად",
   "INVOICE": "ინვოისი",
@@ -146,6 +144,7 @@
   "Product does not contain any product form": "პროდუქტი არ შეიცავს არცერთ პროდუქტის ფორმას",
   "Product form does not contain any image": "პროდუქტის ფორმა არ შეიცავს არცერთ სურათს",
   "Additional descriptions": "დამატებითი აღწერები",
+  "Description": "აღწერა",
   "Description name": "აღწერის სახელი",
   "Paid addons": "ფასიანი დანამატები",
   "Selectable paid addons": "არჩევადი ფასიანი დანამატები",
@@ -159,13 +158,15 @@
   "Send": "გაგზავნა",
   "Password reset email was sent": "პაროლის შეცვლის მეილი გაგზავნილია",
 
-  "Orders summary": "Orders summary",
-  "Orders count": "Orders count",
-  "Total orders": "Total orders",
-  "Completed orders": "Completed orders",
-  "Accepted orders": "Accepted orders",
-  "Canceled orders": "Canceled orders",
-  "Pending orders": "Pending orders",
-  "Orders by users": "Orders by users",
-  "Total paid": "Total paid"
+  "Orders summary": "შეკვეთების ანგარიში",
+  "Orders count": "შეკვეთების რაოდენობა",
+  "Total orders": "შეკვეთები სრულად",
+  "Completed orders": "შესრულებული შეკვეთები",
+  "Accepted orders": "მღებული შეკვეთები",
+  "Canceled orders": "გაუქმებული შეკვეთები",
+  "Pending orders": "მომლოდინე შეკვეთები",
+  "Orders by users": "შეკვეთები მომხმარებლებით",
+  "Total paid": "გადახდილი სრულად",
+  "Addons": "დანამატები",
+  "Leave us a message": "დაგვიტოვე შეტყობინება"
 }

@@ -2,19 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bSoft.martivi"
     android:targetSandboxVersion="2"
-    android:versionCode="607000"
-    android:versionName="6.0.7" >
+    android:versionCode="608000"
+    android:versionName="6.0.8" >
 
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="28" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> <!-- Required permission for App measurement to run. -->
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
@@ -34,7 +34,7 @@
         android:name="io.flutter.app.FlutterApplication"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:icon="@mipmap/ic_launcher"
-        android:label="martivi" >
+        android:label="Martivi" >
         <activity
             android:name="com.bSoft.martivi.MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"

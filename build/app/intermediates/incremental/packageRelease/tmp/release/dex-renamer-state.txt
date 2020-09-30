@@ -1,4 +1,4 @@
-#Sat Sep 26 20:53:21 GET 2020
+#Wed Sep 30 23:24:02 GET 2020
 base.0=C\:\\Users\\bivan\\Documents\\GitHub\\MartiviFlutter\\build\\app\\intermediates\\transforms\\r8\\release\\0\\classes.dex
 path.0=classes.dex
 renamed.0=classes.dex
