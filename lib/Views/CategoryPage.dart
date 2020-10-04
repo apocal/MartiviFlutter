@@ -15,6 +15,7 @@ import 'package:martivi/Models/Product.dart';
 import 'package:martivi/Models/Settings.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
+import 'package:martivi/Uitls/Utils.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
 import 'package:martivi/Views/ProductPage.dart';
 import 'package:martivi/Widgets/CategoryItemWidget.dart';
@@ -153,10 +154,10 @@ class _CategoryPageState extends State<CategoryPage> {
                                           viewModel.categories.value.length,
                                       itemBuilder: (context, index) {
                                         return Slidable(
-                                          key: Key(viewModel.categories
-                                                  .value[index].localizedName[
-                                              AppLocalizations
-                                                  .supportedLocales.first]),
+                                          key: Key(getLocalizedName(
+                                              viewModel.categories.value[index]
+                                                  .localizedName,
+                                              context)),
                                           actionPane:
                                               SlidableDrawerActionPane(),
                                           actions: <Widget>[
@@ -291,7 +292,7 @@ class _CategoryPageState extends State<CategoryPage> {
                         FlatButton(
                           onPressed: () async {
                             var response = await http.get(
-                                'http://male.net/api/Categories/GetFilteredCategories');
+                                'http://martivi.net/api/Categories/GetFilteredCategories');
                             var encoded =
                                 List.castFrom<dynamic, Map<String, dynamic>>(
                                     jsonDecode(response.body) as List<dynamic>);

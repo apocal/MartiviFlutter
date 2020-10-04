@@ -21,7 +21,6 @@ import 'package:martivi/Models/enums.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
 import 'package:martivi/Views/OrderDetailPage.dart';
 import 'package:path/path.dart' as ppp;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -424,9 +423,8 @@ class _AddCategoryWidgetState extends State<AddCategoryWidget> {
                             : IconButton(
                                 onPressed: () async {
                                   try {
-
                                     var pickedImage = await ImagePicker()
-                                        .getImage(source: ImageSource.gallery,imageQuality: 50);
+                                        .getImage(source: ImageSource.gallery);
                                     if (pickedImage != null) {
                                       File file = File(pickedImage.path);
                                       Img.Image image_temp = Img.decodeImage(
@@ -698,8 +696,6 @@ class _EditCategoryWidgetState extends State<EditCategoryWidget> {
                             : IconButton(
                                 onPressed: () async {
                                   try {
-
-
                                     var pickedImage = await ImagePicker()
                                         .getImage(source: ImageSource.gallery);
                                     if (pickedImage != null) {
@@ -961,9 +957,12 @@ class OrdersSummaryWidget extends StatelessWidget {
         child: ExpansionTile(
           leading:
               Text(AppLocalizations.of(context).translate('Orders summary')),
-          title: Text(
-            '${AppLocalizations.of(context).translate('Orders count')}: ${orders.length.toString()}',
-            textAlign: TextAlign.right,
+          title: Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              '${AppLocalizations.of(context).translate('Orders count')}: ${orders.length.toString()}',
+              textAlign: TextAlign.left,
+            ),
           ),
           children: [
             Column(
@@ -974,95 +973,98 @@ class OrdersSummaryWidget extends StatelessWidget {
                   "Orders",
                   textAlign: TextAlign.center,
                 ),
-                DataTable(
-                  columns: [
-                    DataColumn(
-                        label: Text(AppLocalizations.of(context)
-                            .translate('Order status'))),
-                    DataColumn(
-                        label: Text(AppLocalizations.of(context)
-                            .translate('Quantity'))),
-                    DataColumn(
-                        label: Text(
-                            AppLocalizations.of(context).translate('Price')))
-                  ],
-                  rows: [
-                    DataRow(cells: [
-                      DataCell(Text(AppLocalizations.of(context)
-                          .translate('Total orders'))),
-                      DataCell(Text((orders?.length ?? 0).toString())),
-                      DataCell(Text(
-                        '${orders?.fold<double>(0, (previousValue, element) => previousValue + (element.products.fold<double>(0, (previousValue, element) => previousValue + element.totalProductPrice * (element.quantity ?? 1))) + element.deliveryFee)?.toStringAsFixed(0) ?? 0}₾',
-                        style: TextStyle(fontFamily: 'Sans'),
-                      )),
-                    ]),
-                    DataRow(cells: [
-                      DataCell(Text(AppLocalizations.of(context)
-                          .translate('Completed orders'))),
-                      DataCell(Text((orders
-                                  ?.where((element) => element
-                                      .deliveryStatusSteps[
-                                          DeliveryStatus.Completed]
-                                      .isActive)
-                                  ?.length ??
-                              0)
-                          .toString())),
-                      DataCell(Text(
-                        '${orders?.where((element) => element.deliveryStatusSteps[DeliveryStatus.Completed].isActive)?.fold<double>(0, (previousValue, element) => previousValue + (element.products.fold<double>(0, (previousValue, element) => previousValue + element.totalProductPrice * (element.quantity ?? 1))) + element.deliveryFee)?.toStringAsFixed(0) ?? 0}₾',
-                        style: TextStyle(fontFamily: 'Sans'),
-                      )),
-                    ]),
-                    DataRow(cells: [
-                      DataCell(Text(AppLocalizations.of(context)
-                          .translate('Accepted orders'))),
-                      DataCell(Text((orders
-                                  ?.where((element) => element
-                                      .deliveryStatusSteps[
-                                          DeliveryStatus.Accepted]
-                                      .isActive)
-                                  ?.length ??
-                              0)
-                          .toString())),
-                      DataCell(Text(
-                        '${orders?.where((element) => element.deliveryStatusSteps[DeliveryStatus.Accepted].isActive)?.fold<double>(0, (previousValue, element) => previousValue + (element.products.fold<double>(0, (previousValue, element) => previousValue + element.totalProductPrice * (element.quantity ?? 1))) + element.deliveryFee)?.toStringAsFixed(0) ?? 0}₾',
-                        style: TextStyle(fontFamily: 'Sans'),
-                      )),
-                    ]),
-                    DataRow(cells: [
-                      DataCell(Text(AppLocalizations.of(context)
-                          .translate('Pending orders'))),
-                      DataCell(Text((orders
-                                  ?.where((element) => element
-                                      .deliveryStatusSteps[
-                                          DeliveryStatus.Pending]
-                                      .isActive)
-                                  ?.length ??
-                              0)
-                          .toString())),
-                      DataCell(Text(
-                        '${orders?.where((element) => element.deliveryStatusSteps[DeliveryStatus.Pending].isActive)?.fold<double>(0, (previousValue, element) => previousValue + (element.products.fold<double>(0, (previousValue, element) => previousValue + element.totalProductPrice * (element.quantity ?? 1))) + element.deliveryFee)?.toStringAsFixed(0) ?? 0}₾',
-                        style: TextStyle(fontFamily: 'Sans'),
-                      )),
-                    ]),
-                    DataRow(cells: [
-                      DataCell(Text(AppLocalizations.of(context)
-                          .translate('Canceled orders'))),
-                      DataCell(Text((orders
-                                  ?.where((element) =>
-                                      element
-                                          .deliveryStatusSteps[
-                                              DeliveryStatus.Canceled]
-                                          ?.isActive ??
-                                      false)
-                                  ?.length ??
-                              0)
-                          .toString())),
-                      DataCell(Text(
-                        '${orders?.where((element) => element.deliveryStatusSteps[DeliveryStatus.Canceled]?.isActive ?? false)?.fold<double>(0, (previousValue, element) => previousValue + (element.products.fold<double>(0, (previousValue, element) => previousValue + element.totalProductPrice * (element.quantity ?? 1))) + element.deliveryFee)?.toStringAsFixed(2) ?? 0}₾',
-                        style: TextStyle(fontFamily: 'Sans'),
-                      )),
-                    ]),
-                  ],
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columns: [
+                      DataColumn(
+                          label: Text(AppLocalizations.of(context)
+                              .translate('Order status'))),
+                      DataColumn(
+                          label: Text(AppLocalizations.of(context)
+                              .translate('Quantity'))),
+                      DataColumn(
+                          label: Text(
+                              AppLocalizations.of(context).translate('Price')))
+                    ],
+                    rows: [
+                      DataRow(cells: [
+                        DataCell(Text(AppLocalizations.of(context)
+                            .translate('Total orders'))),
+                        DataCell(Text((orders?.length ?? 0).toString())),
+                        DataCell(Text(
+                          '${orders?.fold<double>(0, (previousValue, element) => previousValue + (element.products.fold<double>(0, (previousValue, element) => previousValue + element.totalProductPrice * (element.quantity ?? 1))) + element.deliveryFee)?.toStringAsFixed(0) ?? 0}₾',
+                          style: TextStyle(fontFamily: 'Sans'),
+                        )),
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text(AppLocalizations.of(context)
+                            .translate('Completed orders'))),
+                        DataCell(Text((orders
+                                    ?.where((element) => element
+                                        .deliveryStatusSteps[
+                                            DeliveryStatus.Completed]
+                                        .isActive)
+                                    ?.length ??
+                                0)
+                            .toString())),
+                        DataCell(Text(
+                          '${orders?.where((element) => element.deliveryStatusSteps[DeliveryStatus.Completed].isActive)?.fold<double>(0, (previousValue, element) => previousValue + (element.products.fold<double>(0, (previousValue, element) => previousValue + element.totalProductPrice * (element.quantity ?? 1))) + element.deliveryFee)?.toStringAsFixed(0) ?? 0}₾',
+                          style: TextStyle(fontFamily: 'Sans'),
+                        )),
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text(AppLocalizations.of(context)
+                            .translate('Accepted orders'))),
+                        DataCell(Text((orders
+                                    ?.where((element) => element
+                                        .deliveryStatusSteps[
+                                            DeliveryStatus.Accepted]
+                                        .isActive)
+                                    ?.length ??
+                                0)
+                            .toString())),
+                        DataCell(Text(
+                          '${orders?.where((element) => element.deliveryStatusSteps[DeliveryStatus.Accepted].isActive)?.fold<double>(0, (previousValue, element) => previousValue + (element.products.fold<double>(0, (previousValue, element) => previousValue + element.totalProductPrice * (element.quantity ?? 1))) + element.deliveryFee)?.toStringAsFixed(0) ?? 0}₾',
+                          style: TextStyle(fontFamily: 'Sans'),
+                        )),
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text(AppLocalizations.of(context)
+                            .translate('Pending orders'))),
+                        DataCell(Text((orders
+                                    ?.where((element) => element
+                                        .deliveryStatusSteps[
+                                            DeliveryStatus.Pending]
+                                        .isActive)
+                                    ?.length ??
+                                0)
+                            .toString())),
+                        DataCell(Text(
+                          '${orders?.where((element) => element.deliveryStatusSteps[DeliveryStatus.Pending].isActive)?.fold<double>(0, (previousValue, element) => previousValue + (element.products.fold<double>(0, (previousValue, element) => previousValue + element.totalProductPrice * (element.quantity ?? 1))) + element.deliveryFee)?.toStringAsFixed(0) ?? 0}₾',
+                          style: TextStyle(fontFamily: 'Sans'),
+                        )),
+                      ]),
+                      DataRow(cells: [
+                        DataCell(Text(AppLocalizations.of(context)
+                            .translate('Canceled orders'))),
+                        DataCell(Text((orders
+                                    ?.where((element) =>
+                                        element
+                                            .deliveryStatusSteps[
+                                                DeliveryStatus.Canceled]
+                                            ?.isActive ??
+                                        false)
+                                    ?.length ??
+                                0)
+                            .toString())),
+                        DataCell(Text(
+                          '${orders?.where((element) => element.deliveryStatusSteps[DeliveryStatus.Canceled]?.isActive ?? false)?.fold<double>(0, (previousValue, element) => previousValue + (element.products.fold<double>(0, (previousValue, element) => previousValue + element.totalProductPrice * (element.quantity ?? 1))) + element.deliveryFee)?.toStringAsFixed(2) ?? 0}₾',
+                          style: TextStyle(fontFamily: 'Sans'),
+                        )),
+                      ]),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -1203,8 +1205,7 @@ class OrderWidget extends StatelessWidget {
                                 Text(AppLocalizations.of(context)
                                     .translate('Payment status')),
                                 Text(AppLocalizations.of(context).translate(
-                                    EnumToString.convertToString(
-                                        order.paymentStatus))),
+                                    EnumToString.parse(order.paymentStatus))),
                               ],
                             ),
                           ))

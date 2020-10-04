@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bSoft.martivi"
-    android:versionCode="607000"
-    android:versionName="6.0.7" >
+    android:versionCode="608000"
+    android:versionName="6.0.8" >
 
     <uses-sdk
         android:minSdkVersion="16"
-        android:targetSdkVersion="28" />
+        android:targetSdkVersion="29" />
     <!--
          Flutter needs it to communicate with the running application
          to allow setting breakpoints, to provide hot reload, etc.

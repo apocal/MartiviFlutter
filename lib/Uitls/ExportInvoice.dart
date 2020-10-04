@@ -11,6 +11,8 @@ import 'package:martivi/Models/Product.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import 'Utils.dart';
+
 Future<Uint8List> exportInvoice(
     {PdfPageFormat pageFormat, Order order, BuildContext bContext}) async {
   final lorem = pw.LoremText();
@@ -527,13 +529,13 @@ class Invoice {
             (col) => () {
               switch (col) {
                 case 0:
-                  return products[row].localizedName[
-                      AppLocalizations.of(bContext).locale.languageCode];
+                  return getLocalizedName(
+                      products[row].localizedName, bContext);
                 case 1:
-                  return '${products[row].localizedDescription[AppLocalizations.of(bContext).locale.languageCode] ?? ''}'
-                      ' ${products[row].addonDescriptions?.fold('', (previousValue, element) => previousValue + '${element.localizedAddonDescriptionName[AppLocalizations.of(bContext).locale.languageCode]}: '
-                          '${element.localizedAddonDescription[AppLocalizations.of(bContext).locale.languageCode]}')}'
-                      '${products[row].checkedAddon?.localizedName != null ? '\n' + products[row].checkedAddon?.localizedName[AppLocalizations.of(bContext).locale.languageCode] : ''} ${products[row].checkedAddon?.price != null ? ' +${products[row].checkedAddon?.price}₾' : ''} \n${products[row].selectedSelectableAddons?.fold('', (previousValue, element) => previousValue + element.localizedName[AppLocalizations.of(bContext).locale.languageCode] + '${element?.price != null ? ' +${element.price}₾' : ''}\n') ?? ''}';
+                  return '${getLocalizedName(products[row].localizedDescription, bContext)}'
+                      ' ${products[row].addonDescriptions?.fold('', (previousValue, element) => previousValue + '${getLocalizedName(element.localizedAddonDescriptionName, bContext)}: '
+                          '${getLocalizedName(element.localizedAddonDescription, bContext)}')}'
+                      '${products[row].checkedAddon?.localizedName != null ? '\n' + getLocalizedName(products[row].checkedAddon?.localizedName, bContext) : ''} ${products[row].checkedAddon?.price != null ? ' +${products[row].checkedAddon?.price}₾' : ''} \n${products[row].selectedSelectableAddons?.fold('', (previousValue, element) => previousValue + getLocalizedName(element.localizedName, bContext) + '${element?.price != null ? ' +${element.price}₾' : ''}\n') ?? ''}';
                 case 2:
                   return (products[row].quantity ?? 1).toString();
                 case 3:

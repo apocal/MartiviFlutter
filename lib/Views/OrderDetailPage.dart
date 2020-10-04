@@ -20,6 +20,7 @@ import 'package:martivi/Models/Product.dart';
 import 'package:martivi/Models/User.dart';
 import 'package:martivi/Models/enums.dart';
 import 'package:martivi/Uitls/ExportInvoice.dart';
+import 'package:martivi/Uitls/Utils.dart';
 import 'package:martivi/ViewModels/MainViewModel.dart';
 import 'package:martivi/Views/UserPage.dart';
 import 'package:martivi/Widgets/Widgets.dart';
@@ -958,49 +959,30 @@ class OrderedProductWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                product.localizedName[
-                AppLocalizations.of(context).locale.languageCode]??'',
-                style: TextStyle(
-                    fontFamily: "Sans",
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w700),
+              Text(getLocalizedName(product.localizedName, context),
+                style: kProductNameTextStyle,
               ),
-              Text(
-                product.localizedDescription[
-                AppLocalizations.of(context).locale.languageCode]??'',
-                style: TextStyle(
-                  color: Colors.black54,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12.0,
-                ),
+              Text(getLocalizedName(product.localizedDescription, context),
+                style: kDescriptionTextStyle,
               ),
               Text(
                 '${product.quantity??1.toString()}x',
-                style: TextStyle(
-                  color: Colors.black54,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12.0,
-                ),
+                style: kDescriptionTextStyle,
               ),
               if (product.checkedAddon !=
                   null)
                 Column(
                   children: [
+                    Divider(),
                     Row(
                       children: [
-                        Text(
-                          '${product.checkedAddon.localizedName[AppLocalizations.of(context).locale.languageCode]??''}',
-                          style: TextStyle(
-                            color: Colors.black54,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12.0,
-                          ),
+                        Text(getLocalizedName(product.checkedAddon?.localizedName, context),
+                          style: kDescriptionTextStyle,
                         ),
                         if(product.checkedAddon?.price!=null)
                           Text(
                             ': +${product.checkedAddon.price}₾',
-                            style: kSmallHeader,
+                            style: kAddonPriceTextStyle,
                           ),
                       ],
                     ),
@@ -1008,27 +990,17 @@ class OrderedProductWidget extends StatelessWidget {
                 ),
               if((product.selectedSelectableAddons?.length??0)>0)Column(children: [
                 Divider(),
-                Text(
-                  AppLocalizations.of(context)
-                      .translate('Addons'),
-                  style: kSmallHeader,
-                ),
                 ...?product.selectedSelectableAddons
                     ?.map(
                       (e) => Row(
                     children: [
-                      Text(
-                        '${e.localizedName[AppLocalizations.of(context).locale.languageCode]}',
-                        style: TextStyle(
-                          color: Colors.black54,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12.0,
-                        ),
+                      Text(getLocalizedName(e.localizedName, context),
+                        style: kDescriptionTextStyle,
                       ),
                       if (e.price!=null)
                         Text(
                           ': +${e.price}₾',
-                          style: kSmallHeader,
+                          style: kAddonPriceTextStyle,
                         ),
                     ],
                   ),
@@ -1036,10 +1008,11 @@ class OrderedProductWidget extends StatelessWidget {
               ],),
 
 
-              Text(
-                '₾${product.totalProductPrice.toString()}',
-                style: TextStyle(
-                    color: kPrimary, fontFamily: 'Sans'),
+              Align(alignment: Alignment.centerRight,
+                child: Text(
+                  '₾${product.totalProductPrice.toString()}',
+                  style: kPriceTextStyle,
+                ),
               ),
             ],
           ),
